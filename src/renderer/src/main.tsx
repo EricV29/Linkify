@@ -6,7 +6,12 @@ import Login from './Login'
 import Menu from './Menu'
 import Herramientas from './Herramientas'
 import LegoSpike from './LegoSpike'
-import Kittec from './Kittec'
+import KitAlum from './KitAlum'
+import RaspBerry from './RaspBerry'
+import Arduino from './Arduino'
+import KitExt from './KitExt'
+import Soli from './Solicitud'
+import KitRasp from './KitRasp'
 
 const rootElement = document.getElementById('root')
 
@@ -25,8 +30,12 @@ root.render(
           <Route path="herramientas" element={<Herramientas />} />
         </Route>
         <Route path="/legospike" element={<LegoSpike />}>
-          <Route path="kittec" element={<Kittec />} />
+          <Route path="kittec" element={<KitAlum />} />
+          <Route path="kitext" element={<KitExt />} />
+          <Route path="solicitud" element={<Soli />} />
         </Route>
+        <Route path="/raspberry" element={<RaspBerry />}></Route>
+        <Route path="/arduino" element={<Arduino />}></Route>
       </Routes>
     </HashRouter>
   </React.StrictMode>

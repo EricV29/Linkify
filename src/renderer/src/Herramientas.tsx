@@ -15,10 +15,12 @@ function Herramientas(): JSX.Element {
 
   function windowRasp() {
     console.log('Ventana Raspberry Pi')
+    ipcRenderer.send('windowRasp', 'RaspBerry')
   }
 
   function windowArd() {
     console.log('Ventana Arduino')
+    ipcRenderer.send('windowArd', 'Arduino')
   }
 
   return (

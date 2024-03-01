@@ -5,7 +5,7 @@ import { Icon } from '@iconify/react'
 function Sidebar(): JSX.Element {
   return (
     <>
-      <div className="h-full w-1/6 bg-[#C80000] rounded-[10px] flex justify-center items-start pt-5 drop-shadow-xl ">
+      <div className="h-full w-1/6 bg-[#a2191a] rounded-[10px] flex justify-center items-start pt-5 drop-shadow-xl ">
         <Button
           color="default"
           variant="ghost"

@@ -33,7 +33,7 @@ function Navbar(): JSX.Element {
           <img src={prep6l} alt="Prepa6Logotipo" className="w-[250px]" />
         </Link>
         <Button
-          className="w-[117px] bg-[#C80000] text-[#fff] font-bold"
+          className="w-[117px] bg-[#a2191a] text-[#fff] font-bold"
           variant="shadow"
           color="danger"
           onClick={exitMenu}

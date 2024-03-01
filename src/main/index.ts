@@ -8,6 +8,8 @@ import { getConnection } from './database'
 let dataUser = ''
 let newWindow
 let legoWindow
+let raspWindow
+let ardWindow
 
 // LOGEARSE Y CREAR NUEVA VENTANA MENU (SECOND) NOMBRE = newWindow
 ipcMain.on('login', async (event, argumentos) => {
@@ -154,5 +156,53 @@ ipcMain.on('windowSpike', async (event, argumentos) => {
     is.dev
       ? process.env['ELECTRON_RENDERER_URL'] + '#/legospike'
       : `file://${join(__dirname, '../renderer/index.html')}#/legospike`
+  )
+})
+
+// CREAR VENTANA RASPBERRY NOMBRE = raspWindow
+ipcMain.on('windowRasp', async (event, argumentos) => {
+  console.log('Ventana abierta de raspberry')
+  // Crea una nueva ventana
+  raspWindow = new BrowserWindow({
+    width: 1400,
+    height: 800,
+    ...(process.platform === 'linux' ? { icon } : { icon }),
+    webPreferences: {
+      preload: join(__dirname, '../preload/index.js'),
+      sandbox: false,
+      nodeIntegration: true,
+      contextIsolation: false
+    }
+  })
+
+  // Carga la ruta deseada en la nueva ventana
+  raspWindow.loadURL(
+    is.dev
+      ? process.env['ELECTRON_RENDERER_URL'] + '#/raspberry'
+      : `file://${join(__dirname, '../renderer/index.html')}#/raspberry`
+  )
+})
+
+// CREAR VENTANA ARDUINO NOMBRE = ardWindow
+ipcMain.on('windowArd', async (event, argumentos) => {
+  console.log('Ventana abierta de raspberry')
+  // Crea una nueva ventana
+  ardWindow = new BrowserWindow({
+    width: 1400,
+    height: 800,
+    ...(process.platform === 'linux' ? { icon } : { icon }),
+    webPreferences: {
+      preload: join(__dirname, '../preload/index.js'),
+      sandbox: false,
+      nodeIntegration: true,
+      contextIsolation: false
+    }
+  })
+
+  // Carga la ruta deseada en la nueva ventana
+  ardWindow.loadURL(
+    is.dev
+      ? process.env['ELECTRON_RENDERER_URL'] + '#/arduino'
+      : `file://${join(__dirname, '../renderer/index.html')}#/arduino`
   )
 })
