@@ -11,7 +11,7 @@ let legoWindow
 let raspWindow
 let ardWindow
 
-// LOGEARSE Y CREAR NUEVA VENTANA MENU (SECOND) NOMBRE = newWindow
+//TODO: LOGEARSE Y CREAR NUEVA VENTANA MENU (SECOND) NOMBRE = newWindow
 ipcMain.on('login', async (event, argumentos) => {
   //console.log(argumentos)
   const conn = await getConnection()
@@ -82,7 +82,7 @@ ipcMain.on('exitApp', (event, arg) => {
 
 let mainWindow: BrowserWindow | null
 
-//CREAR VENTANA DE LOGIN (MAIN) NOMBRE = mainWindow
+//TODO: CREAR VENTANA DE LOGIN (MAIN) NOMBRE = mainWindow
 function createWindow(): void {
   // Create the browser window.
   mainWindow = new BrowserWindow({
@@ -135,7 +135,7 @@ app.on('window-all-closed', () => {
   }
 })
 
-// CREAR VENTANA LEGO SPIKE (LEGO) NOMBRE = legoWindow
+//TODO: CREAR VENTANA LEGO SPIKE (LEGO) NOMBRE = legoWindow
 ipcMain.on('windowSpike', async (event, argumentos) => {
   console.log('Ventana abierta de lego')
   // Crea una nueva ventana
@@ -159,7 +159,7 @@ ipcMain.on('windowSpike', async (event, argumentos) => {
   )
 })
 
-// CREAR VENTANA RASPBERRY NOMBRE = raspWindow
+//TODO: CREAR VENTANA RASPBERRY NOMBRE = raspWindow
 ipcMain.on('windowRasp', async (event, argumentos) => {
   console.log('Ventana abierta de raspberry')
   // Crea una nueva ventana
@@ -183,7 +183,7 @@ ipcMain.on('windowRasp', async (event, argumentos) => {
   )
 })
 
-// CREAR VENTANA ARDUINO NOMBRE = ardWindow
+//TODO: CREAR VENTANA ARDUINO NOMBRE = ardWindow
 ipcMain.on('windowArd', async (event, argumentos) => {
   console.log('Ventana abierta de raspberry')
   // Crea una nueva ventana

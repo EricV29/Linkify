@@ -14,7 +14,7 @@ import {
 } from '@nextui-org/react'
 import { EditIcon } from './icons/EditIcon'
 import { DeleteIcon } from './icons/DeleteIcon'
-import { columns, users } from './data/data'
+import { useState, useEffect } from 'react'
 
 const statusColorMap = {
   active: 'success',
@@ -22,7 +22,46 @@ const statusColorMap = {
   vacation: 'warning'
 }
 
+type User = {
+  id: number
+  namestudent: string
+  numaccount: string
+}
+
+const columns = [
+  { name: 'NOMBRE', uid: 'namestudent' },
+  { name: 'NÚMERO DE CUENTA', uid: 'numaccount' },
+  { name: 'ACCIONES', uid: 'actions' }
+]
+
 function Kittec(): JSX.Element {
+  const [userss, setUsers] = useState<User[]>([])
+  const [namestudent, setNombre] = useState('')
+  const [numaccount, setNumcu] = useState('')
+  const [numbox, setNumbox] = useState('')
+  const [userId, setUserId] = useState(1)
+
+  useEffect(() => {
+    console.log(userss)
+  }, [userss])
+
+  const agregarUsuario = () => {
+    if (namestudent === '' || numaccount === '') {
+      //console.log('vacios')
+    } else {
+      const newUser: User = {
+        id: userId,
+        namestudent: namestudent,
+        numaccount: numaccount
+      }
+
+      setUsers([...userss, newUser])
+      setNombre('')
+      setNumcu('')
+      setUserId(userId + 1)
+    }
+  }
+
   const renderCell = React.useCallback((user, columnKey) => {
     const cellValue = user[columnKey]
 
@@ -55,10 +94,19 @@ function Kittec(): JSX.Element {
     }
   }, [])
 
+  const sendReq = () => {
+    if (userss.length === 0 || numbox === '') {
+      console.log('no hay nada para enviar')
+    } else {
+      console.log('listo')
+    }
+  }
+
   return (
     <>
       <div className="w-full h-full flex flex-col m-0 p-5 justify-start items-center overflow-y-scroll">
         <p className="text-[#C80000] font-bold text-[40px]">Kit Lego para Alumno</p>
+
         <div className="flex flex-col justify-start p-5 w-full">
           <h2 className="text-black font-bold text-[25px]">Lego</h2>
           <div className="flex space-x-5 items-center pl-7 text-[20px]">
@@ -66,7 +114,10 @@ function Kittec(): JSX.Element {
             <p>Escribe el Número de Caja:</p>
             <input
               type="number"
+              id="numbox"
               className="w-[170px] rounded-[8px] h-[40px] font-bold p-2 text-center drop-shadow-lg"
+              value={numbox}
+              onChange={(e) => setNumbox(e.target.value)}
             />
           </div>
           <h2 className="text-black font-bold text-[25px]">Alumno</h2>
@@ -75,7 +126,10 @@ function Kittec(): JSX.Element {
             <p>Número de Cuenta:</p>
             <input
               type="number"
+              id="numaccount"
               className="w-[170px] rounded-[8px] h-[40px] font-bold p-2 text-center drop-shadow-lg"
+              value={namestudent}
+              onChange={(e) => setNombre(e.target.value)}
             />
           </div>
           <div className="flex space-x-5 items-center pl-7 text-[20px] mb-5">
@@ -83,12 +137,16 @@ function Kittec(): JSX.Element {
             <p>Nombre Completo:</p>
             <input
               type="text"
+              id="namestudent"
               className="w-[700px] rounded-[8px] h-[40px] font-bold p-2 drop-shadow-lg"
+              value={numaccount}
+              onChange={(e) => setNumcu(e.target.value)}
             />
             <Button
               className="w-[160px] bg-[#a2191a] text-[#fff] font-bold"
               variant="shadow"
               color="danger"
+              onClick={agregarUsuario}
             >
               AGREGAR <Icon icon="solar:user-plus-bold" className="pt-1" width={30} />
             </Button>
@@ -101,7 +159,7 @@ function Kittec(): JSX.Element {
                 </TableColumn>
               )}
             </TableHeader>
-            <TableBody items={users}>
+            <TableBody items={userss}>
               {(item) => (
                 <TableRow key={item.id}>
                   {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
@@ -114,6 +172,7 @@ function Kittec(): JSX.Element {
               className="w-[200px] bg-[#55AB01] text-[#fff] font-bold"
               variant="shadow"
               color="success"
+              onClick={sendReq}
             >
               ENVIAR <Icon icon="mingcute:mail-send-fill" className="pt-1" width={50} />
             </Button>
