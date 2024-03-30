@@ -39,7 +39,7 @@ function Kittec(): JSX.Element {
   const [namestudent, setNombre] = useState('')
   const [numaccount, setNumcu] = useState('')
   const [numbox, setNumbox] = useState('')
-  const [userId, setUserId] = useState(1)
+  const [userId, setUserId] = useState(0)
 
   useEffect(() => {
     console.log(userss)
@@ -62,6 +62,13 @@ function Kittec(): JSX.Element {
     }
   }
 
+  const deleteUser = (id) => {
+    console.log(id)
+    setUsers((userss) => userss.filter((user) => user.id !== id))
+  }
+
+  const editUser = (id) => {}
+
   const renderCell = React.useCallback((user, columnKey) => {
     const cellValue = user[columnKey]
 
@@ -78,12 +85,18 @@ function Kittec(): JSX.Element {
         return (
           <div className="relative flex items-center gap-2">
             <Tooltip content="Editar usuario">
-              <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+              <span
+                className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                onClick={() => editUser(user.id)}
+              >
                 <EditIcon />
               </span>
             </Tooltip>
             <Tooltip color="danger" content="Eliminar usuario">
-              <span className="text-lg text-danger cursor-pointer active:opacity-50">
+              <span
+                className="text-lg text-danger cursor-pointer active:opacity-50"
+                onClick={() => deleteUser(user.id)}
+              >
                 <DeleteIcon />
               </span>
             </Tooltip>
