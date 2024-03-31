@@ -11,7 +11,6 @@ import RaspBerry from './RaspBerry'
 import Arduino from './Arduino'
 import KitExt from './KitExt'
 import Soli from './Solicitud'
-import KitRasp from './KitRasp'
 
 const rootElement = document.getElementById('root')
 

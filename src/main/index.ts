@@ -157,6 +157,22 @@ ipcMain.on('windowSpike', async (event, argumentos) => {
       ? process.env['ELECTRON_RENDERER_URL'] + '#/legospike'
       : `file://${join(__dirname, '../renderer/index.html')}#/legospike`
   )
+
+  //Function petition alumns
+  ipcMain.on('petitionA', (event, arg) => {
+    console.log('Peticion de una caja para alumnos')
+    console.log(arg[0])
+    console.log(arg[1])
+  })
+
+  //Message option
+  ipcMain.on('msgOption', (event, arg) => {
+    const notification = {
+      title: 'Linkify',
+      body: arg
+    }
+    new Notification(notification).show()
+  })
 })
 
 //TODO: CREAR VENTANA RASPBERRY NOMBRE = raspWindow

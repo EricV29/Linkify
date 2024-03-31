@@ -12,9 +12,11 @@ import {
   Chip,
   Tooltip
 } from '@nextui-org/react'
-import { EditIcon } from './icons/EditIcon'
 import { DeleteIcon } from './icons/DeleteIcon'
 import { useState, useEffect } from 'react'
+import Message from './components/Message'
+import msgLego from './store/message'
+const { ipcRenderer } = require('electron')
 
 const statusColorMap = {
   active: 'success',
@@ -40,14 +42,16 @@ function Kittec(): JSX.Element {
   const [numaccount, setNumcu] = useState('')
   const [numbox, setNumbox] = useState('')
   const [userId, setUserId] = useState(0)
+  const { visible, toggleVisible } = msgLego()
+  const [textMsg, setTextMsg] = useState('')
 
   useEffect(() => {
     console.log(userss)
   }, [userss])
 
-  const agregarUsuario = () => {
+  const addUser = () => {
     if (namestudent === '' || numaccount === '') {
-      //console.log('vacios')
+      ipcRenderer.send('msgOption', 'Campos incompletos para agregar un usuario')
     } else {
       const newUser: User = {
         id: userId,
@@ -67,8 +71,6 @@ function Kittec(): JSX.Element {
     setUsers((userss) => userss.filter((user) => user.id !== id))
   }
 
-  const editUser = (id) => {}
-
   const renderCell = React.useCallback((user, columnKey) => {
     const cellValue = user[columnKey]
 
@@ -84,14 +86,6 @@ function Kittec(): JSX.Element {
       case 'actions':
         return (
           <div className="relative flex items-center gap-2">
-            <Tooltip content="Editar usuario">
-              <span
-                className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                onClick={() => editUser(user.id)}
-              >
-                <EditIcon />
-              </span>
-            </Tooltip>
             <Tooltip color="danger" content="Eliminar usuario">
               <span
                 className="text-lg text-danger cursor-pointer active:opacity-50"
@@ -109,17 +103,32 @@ function Kittec(): JSX.Element {
 
   const sendReq = () => {
     if (userss.length === 0 || numbox === '') {
-      console.log('no hay nada para enviar')
+      ipcRenderer.send('msgOption', 'Faltan campos por llenar')
     } else {
-      console.log('listo')
+      setTextMsg('¿Estás seguro de que quieres enviar la petición?')
+      toggleVisible()
     }
+  }
+
+  const handleYes = () => {
+    console.log('El usuario hizo clic en Sí')
+    ipcRenderer.send('petitionA', [numbox, userss])
+    ipcRenderer.send('msgOption', 'Petició enviada')
+    setNumbox('')
+    setNumcu('')
+    setNombre('')
+    setUsers([])
+  }
+
+  const handleNo = () => {
+    ipcRenderer.send('msgOption', 'Petició no enviada')
   }
 
   return (
     <>
+      {visible && <Message textMsg={textMsg} onYes={handleYes} onNo={handleNo} />}
       <div className="w-full h-full flex flex-col m-0 p-5 justify-start items-center overflow-y-scroll">
         <p className="text-[#C80000] font-bold text-[40px]">Kit Lego para Alumno</p>
-
         <div className="flex flex-col justify-start p-5 w-full">
           <h2 className="text-black font-bold text-[25px]">Lego</h2>
           <div className="flex space-x-5 items-center pl-7 text-[20px]">
@@ -159,7 +168,7 @@ function Kittec(): JSX.Element {
               className="w-[160px] bg-[#a2191a] text-[#fff] font-bold"
               variant="shadow"
               color="danger"
-              onClick={agregarUsuario}
+              onClick={addUser}
             >
               AGREGAR <Icon icon="solar:user-plus-bold" className="pt-1" width={30} />
             </Button>
