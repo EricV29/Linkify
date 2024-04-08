@@ -4,12 +4,32 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/linki.ico?asset'
 import './database'
 import { getConnection } from './database'
+import { sendEmail } from './mail'
+const fs = require('fs')
+const path = require('path')
 
 let dataUser = ''
 let newWindow
 let legoWindow
 let raspWindow
 let ardWindow
+
+//TODO: CREAR CARPETA LINKIFY EN /Documentos
+app.on('ready', () => {
+  const folderPath = path.join(app.getPath('documents'), 'Linkify')
+
+  if (!fs.existsSync(folderPath)) {
+    fs.mkdir(folderPath, { recursive: true }, (err) => {
+      if (err) {
+        console.error('Error al crear la carpeta:', err)
+      } else {
+        console.log('Carpeta creada en:', folderPath)
+      }
+    })
+  } else {
+    console.log('La carpeta ya existe:', folderPath)
+  }
+})
 
 //TODO: LOGEARSE Y CREAR NUEVA VENTANA MENU (SECOND) NOMBRE = newWindow
 ipcMain.on('login', async (event, argumentos) => {
@@ -163,6 +183,8 @@ ipcMain.on('windowSpike', async (event, argumentos) => {
     console.log('Peticion de una caja para alumnos')
     console.log(arg[0])
     console.log(arg[1])
+    console.log(arg[2])
+    sendEmail(arg[2])
   })
 
   //Message option

@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react'
-import { Button } from '@nextui-org/react'
+import { Button, user } from '@nextui-org/react'
 import React from 'react'
 import {
   Table,
@@ -13,9 +13,10 @@ import {
   Tooltip
 } from '@nextui-org/react'
 import { DeleteIcon } from './icons/DeleteIcon'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Message from './components/Message'
 import msgLego from './store/message'
+import AlumnGenerate from './functions/AlumnGenerate'
 const { ipcRenderer } = require('electron')
 
 const statusColorMap = {
@@ -45,14 +46,10 @@ function Kittec(): JSX.Element {
   const { visible, toggleVisible } = msgLego()
   const [textMsg, setTextMsg] = useState('')
 
-  useEffect(() => {
-    console.log(userss)
-  }, [userss])
-
   const addUser = () => {
     if (namestudent === '' || numaccount === '') {
       ipcRenderer.send('msgOption', 'Campos incompletos para agregar un usuario')
-    } else {
+    } else if (userss.length <= 9) {
       const newUser: User = {
         id: userId,
         namestudent: namestudent,
@@ -63,11 +60,12 @@ function Kittec(): JSX.Element {
       setNombre('')
       setNumcu('')
       setUserId(userId + 1)
+    } else {
+      ipcRenderer.send('msgOption', 'No esta permitido agregar mas de 10 alumnos')
     }
   }
 
   const deleteUser = (id) => {
-    console.log(id)
     setUsers((userss) => userss.filter((user) => user.id !== id))
   }
 
@@ -111,9 +109,11 @@ function Kittec(): JSX.Element {
   }
 
   const handleYes = () => {
-    console.log('El usuario hizo clic en Sí')
-    ipcRenderer.send('petitionA', [numbox, userss])
-    ipcRenderer.send('msgOption', 'Petició enviada')
+    //console.log('El usuario hizo clic en Sí')
+    AlumnGenerate([numbox, userss]).then((outputPath) => {
+      ipcRenderer.send('petitionA', [numbox, userss, outputPath])
+    })
+    ipcRenderer.send('msgOption', 'Petición enviada')
     setNumbox('')
     setNumcu('')
     setNombre('')
@@ -121,7 +121,7 @@ function Kittec(): JSX.Element {
   }
 
   const handleNo = () => {
-    ipcRenderer.send('msgOption', 'Petició no enviada')
+    ipcRenderer.send('msgOption', 'Petición no enviada')
   }
 
   return (
@@ -150,8 +150,8 @@ function Kittec(): JSX.Element {
               type="number"
               id="numaccount"
               className="w-[170px] rounded-[8px] h-[40px] font-bold p-2 text-center drop-shadow-lg"
-              value={namestudent}
-              onChange={(e) => setNombre(e.target.value)}
+              value={numaccount}
+              onChange={(e) => setNumcu(e.target.value)}
             />
           </div>
           <div className="flex space-x-5 items-center pl-7 text-[20px] mb-5">
@@ -161,8 +161,8 @@ function Kittec(): JSX.Element {
               type="text"
               id="namestudent"
               className="w-[700px] rounded-[8px] h-[40px] font-bold p-2 drop-shadow-lg"
-              value={numaccount}
-              onChange={(e) => setNumcu(e.target.value)}
+              value={namestudent}
+              onChange={(e) => setNombre(e.target.value)}
             />
             <Button
               className="w-[160px] bg-[#a2191a] text-[#fff] font-bold"
