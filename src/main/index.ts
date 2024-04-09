@@ -7,6 +7,8 @@ import { getConnection } from './database'
 import { sendEmail } from './mail'
 const fs = require('fs')
 const path = require('path')
+import { insertData } from './petitionSQL'
+import { viableBoxes } from './dataConsult'
 
 let dataUser = ''
 let newWindow
@@ -178,13 +180,29 @@ ipcMain.on('windowSpike', async (event, argumentos) => {
       : `file://${join(__dirname, '../renderer/index.html')}#/legospike`
   )
 
+  //Function see viable Boxes
+  ipcMain.on('viableBoxes', async (event, arg) => {
+    console.log('Peticion de una caja disponible')
+    try {
+      const result = await viableBoxes(arg)
+      console.log(result)
+      event.reply('viableBoxes-reply', result)
+    } catch (error) {
+      console.error(error)
+    }
+  })
+
   //Function petition alumns
   ipcMain.on('petitionA', (event, arg) => {
     console.log('Peticion de una caja para alumnos')
-    console.log(arg[0])
-    console.log(arg[1])
-    console.log(arg[2])
-    sendEmail(arg[2])
+    console.log(arg[0]) //?numero de caja
+    console.log(arg[1]) //?arreglo alumnos
+    console.log(arg[2]) //?ruta de archivo
+    let nombreArchivo = path.basename(arg[2])
+    console.log(nombreArchivo) //?nombre del archivo
+    console.log(arg)
+    insertData(arg)
+    //sendEmail(arg[2])
   })
 
   //Message option

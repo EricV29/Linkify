@@ -99,25 +99,49 @@ function Kittec(): JSX.Element {
     }
   }, [])
 
+  let fechToday = new Date()
+  let fechTodayF = fechToday.toISOString().slice(0, 19).replace('T', ' ')
+  let boxes = ['123', '124', '125']
+  React.useEffect(() => {
+    ipcRenderer.send('viableBoxes', fechTodayF)
+    ipcRenderer.on('viableBoxes-reply', (event, arg) => {
+      console.log(arg)
+      let argNums = arg.map((row) => row.numbox.toString())
+
+      // Filtrar boxes para excluir los números en argNums
+      let filteredBoxes = boxes.filter((box) => !argNums.includes(box))
+    })
+  }, [])
+
+  //Enviar petición
   const sendReq = () => {
     if (userss.length === 0 || numbox === '') {
       ipcRenderer.send('msgOption', 'Faltan campos por llenar')
     } else {
-      setTextMsg('¿Estás seguro de que quieres enviar la petición?')
-      toggleVisible()
+      if (boxes.includes(numbox)) {
+        setTextMsg('¿Estás seguro de que quieres enviar la petición?')
+        toggleVisible()
+      } else {
+        ipcRenderer.send('msgOption', 'El numero de caja seleccionado no existe')
+      }
     }
   }
 
+  //Confirmar envio de petición
   const handleYes = () => {
     //console.log('El usuario hizo clic en Sí')
+    //Genera el documento
     AlumnGenerate([numbox, userss]).then((outputPath) => {
-      ipcRenderer.send('petitionA', [numbox, userss, outputPath])
+      //Guardar registro en base de datos y envio de mail
+      ipcRenderer.send('petitionA', [numbox, userss, outputPath, fechTodayF])
+      ipcRenderer.send('msgOption', 'Petición enviada')
     })
-    ipcRenderer.send('msgOption', 'Petición enviada')
+    /*
     setNumbox('')
     setNumcu('')
     setNombre('')
     setUsers([])
+    */
   }
 
   const handleNo = () => {
@@ -134,13 +158,22 @@ function Kittec(): JSX.Element {
           <div className="flex space-x-5 items-center pl-7 text-[20px]">
             <Icon icon="solar:box-bold" color="#FED700" width={40} />
             <p>Escribe el Número de Caja:</p>
-            <input
-              type="number"
+            <select
               id="numbox"
               className="w-[170px] rounded-[8px] h-[40px] font-bold p-2 text-center drop-shadow-lg"
               value={numbox}
-              onChange={(e) => setNumbox(e.target.value)}
-            />
+              onChange={(e) => {
+                if (e.target.value.length <= 3) {
+                  setNumbox(e.target.value)
+                }
+              }}
+            >
+              {filteredBoxes.map((box) => (
+                <option key={box} value={box}>
+                  {box}
+                </option>
+              ))}
+            </select>
           </div>
           <h2 className="text-black font-bold text-[25px]">Alumno</h2>
           <div className="flex space-x-5 items-center pl-7 mb-3 text-[20px]">
@@ -151,7 +184,11 @@ function Kittec(): JSX.Element {
               id="numaccount"
               className="w-[170px] rounded-[8px] h-[40px] font-bold p-2 text-center drop-shadow-lg"
               value={numaccount}
-              onChange={(e) => setNumcu(e.target.value)}
+              onChange={(e) => {
+                if (e.target.value.length <= 6) {
+                  setNumcu(e.target.value)
+                }
+              }}
             />
           </div>
           <div className="flex space-x-5 items-center pl-7 text-[20px] mb-5">
