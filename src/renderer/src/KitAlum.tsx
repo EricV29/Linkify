@@ -101,7 +101,9 @@ function Kittec(): JSX.Element {
 
   let fechToday = new Date()
   let fechTodayF = fechToday.toISOString().slice(0, 19).replace('T', ' ')
-  let boxes = ['123', '124', '125']
+  let boxes = ['123', '124', '125', '302', '230']
+  const [filteredBoxes, setFilteredBoxes] = React.useState([])
+
   React.useEffect(() => {
     ipcRenderer.send('viableBoxes', fechTodayF)
     ipcRenderer.on('viableBoxes-reply', (event, arg) => {
@@ -109,7 +111,10 @@ function Kittec(): JSX.Element {
       let argNums = arg.map((row) => row.numbox.toString())
 
       // Filtrar boxes para excluir los números en argNums
-      let filteredBoxes = boxes.filter((box) => !argNums.includes(box))
+      let newFilteredBoxes = boxes.filter((box) => !argNums.includes(box))
+
+      // Actualizar el estado de filteredBoxes
+      setFilteredBoxes(newFilteredBoxes)
     })
   }, [])
 
@@ -168,6 +173,9 @@ function Kittec(): JSX.Element {
                 }
               }}
             >
+              <option value="" disabled selected>
+                Selecciona
+              </option>
               {filteredBoxes.map((box) => (
                 <option key={box} value={box}>
                   {box}
