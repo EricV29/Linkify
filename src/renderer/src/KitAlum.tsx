@@ -39,6 +39,7 @@ const columns = [
 
 function Kittec(): JSX.Element {
   const [userss, setUsers] = useState<User[]>([])
+  const [dateFinish, setFinishdate] = useState('')
   const [namestudent, setNombre] = useState('')
   const [numaccount, setNumcu] = useState('')
   const [numbox, setNumbox] = useState('')
@@ -120,7 +121,7 @@ function Kittec(): JSX.Element {
 
   //Enviar petición
   const sendReq = () => {
-    if (userss.length === 0 || numbox === '') {
+    if (userss.length === 0 || numbox === '' || dateFinish === '') {
       ipcRenderer.send('msgOption', 'Faltan campos por llenar')
     } else {
       if (boxes.includes(numbox)) {
@@ -136,12 +137,13 @@ function Kittec(): JSX.Element {
   const handleYes = () => {
     //console.log('El usuario hizo clic en Sí')
     //Genera el documento
-    AlumnGenerate([numbox, userss]).then(([outputPath, folio]) => {
+    AlumnGenerate([numbox, userss, dateFinish]).then(([outputPath, folio]) => {
       //Guardar registro en base de datos y envio de mail
-      ipcRenderer.send('petitionA', [numbox, userss, outputPath, fechTodayF, folio])
+      ipcRenderer.send('petitionA', [numbox, userss, outputPath, fechTodayF, folio, dateFinish])
       ipcRenderer.on('petitionA-reply', (event, arg) => {
         if (arg === 1) {
           setNumbox('')
+          setFinishdate('')
           setNumcu('')
           setNombre('')
           setUsers([])
@@ -156,6 +158,11 @@ function Kittec(): JSX.Element {
   const handleNo = () => {
     ipcRenderer.send('msgOption', 'Petición no enviada')
   }
+
+  let dd = String(fechToday.getDate()).padStart(2, '0')
+  let mm = String(fechToday.getMonth() + 1).padStart(2, '0')
+  let yyyy = fechToday.getFullYear()
+  let currentDate = yyyy + '-' + mm + '-' + dd
 
   return (
     <>
@@ -186,6 +193,15 @@ function Kittec(): JSX.Element {
                 </option>
               ))}
             </select>
+            <Icon icon="fluent-mdl2:date-time" color="#FED700" width={40} />
+            <p>Selecciona la fecha de entrega:</p>
+            <input
+              type="date"
+              className="w-[200px] rounded-[8px] h-[50px] font-bold p-2 text-center drop-shadow-lg"
+              min={currentDate}
+              value={dateFinish}
+              onChange={(e) => setFinishdate(e.target.value)}
+            />
           </div>
           <h2 className="text-black font-bold text-[25px]">Alumno</h2>
           <div className="flex space-x-5 items-center pl-7 mb-3 text-[20px]">

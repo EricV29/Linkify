@@ -3,7 +3,7 @@ import Docxtemplater from 'docxtemplater'
 const fs = require('fs')
 const path = require('path')
 
-function AlumnGenerate([numbox, userss]) {
+function AlumnGenerate([numbox, userss, fechalimit]) {
   function mesANombre(mes) {
     let nombresDeMeses = [
       'Enero',
@@ -34,7 +34,7 @@ function AlumnGenerate([numbox, userss]) {
   let año = fechact.getFullYear()
   let fechdiaa = fechdia < 10 ? '0' + fechdia.toString() : fechdia.toString()
   let fechmess = fechmes < 10 ? '0' + fechmes.toString() : fechmes.toString()
-  let fechlimt = fechdiaa + '/' + fechmess + '/' + año
+  //let fechlimt = fechdiaa + '/' + fechmess + '/' + año
   const folio = numbox + fechdiaa + fechmess + año
 
   return fetch('/LegoSpikeCajaAlumnos.docx')
@@ -48,7 +48,7 @@ function AlumnGenerate([numbox, userss]) {
         fechdia: fechdiaa,
         fechmes: fechmesl,
         numcaja: numbox,
-        fechlimite: fechlimt,
+        fechlimite: fechalimit,
         tabla: tabla,
         folio: folio
       }

@@ -18,7 +18,7 @@ export function sendEmail(pathdoc, numbox, tool, ide) {
       name: 'Linkify (Solicitud ' + ide + ' )',
       address: 'elinkify@gmail.com'
     },
-    to: 'kevin_serrano@uaeh.edu.mx',
+    to: 'ericjared29@gmail.com',
     subject: 'Solicitud de caja ' + numbox + ' de ' + tool,
     text: 'Documento',
     attachments: [

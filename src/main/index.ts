@@ -202,6 +202,7 @@ ipcMain.on('windowSpike', async (event, argumentos) => {
     //console.log(nombreArchivo) //?nombre del archivo
     //console.log(arg[3])//?fecha del registro
     //console.log(arg[4])//?folio del registro
+    //console.log(arg[5])//?fecha para finalizar
     //console.log(arg)
     insertData(arg)
     sendEmail(arg[2], arg[0], 'LegoSpike', arg[4])
