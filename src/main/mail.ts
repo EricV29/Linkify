@@ -1,7 +1,7 @@
 const nodemailer = require('nodemailer')
 let path = require('path')
 
-export function sendEmail(pathdoc) {
+export function sendEmail(pathdoc, numbox, tool, ide) {
   let transporter = nodemailer.createTransport({
     service: 'gmail',
     host: 'smtp.gmail.com',
@@ -15,12 +15,12 @@ export function sendEmail(pathdoc) {
 
   let mailOptions = {
     from: {
-      name: 'Email de react',
+      name: 'Linkify (Solicitud ' + ide + ' )',
       address: 'elinkify@gmail.com'
     },
-    to: 'ericjared29@gmail.com',
-    subject: 'Enviando correo desde React',
-    text: '¡Hola mundo!',
+    to: 'kevin_serrano@uaeh.edu.mx',
+    subject: 'Solicitud de caja ' + numbox + ' de ' + tool,
+    text: 'Documento',
     attachments: [
       {
         path: pathdoc,
@@ -29,11 +29,16 @@ export function sendEmail(pathdoc) {
     ]
   }
 
-  transporter.sendMail(mailOptions, function (error, info) {
-    if (error) {
-      console.log(error)
-    } else {
-      console.log('Correo enviado: ' + info.response)
-    }
+  // Devolvemos una nueva promesa
+  return new Promise((resolve, reject) => {
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        console.log(error)
+        reject(error) // Si hay un error, rechazamos la promesa
+      } else {
+        //console.log('Correo enviado: ' + info.response)
+        resolve(info.response) // Si todo va bien, resolvemos la promesa con la respuesta
+      }
+    })
   })
 }

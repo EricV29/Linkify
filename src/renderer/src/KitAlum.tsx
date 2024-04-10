@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react'
-import { Button, user } from '@nextui-org/react'
+import { Button } from '@nextui-org/react'
 import React from 'react'
 import {
   Table,
@@ -102,12 +102,12 @@ function Kittec(): JSX.Element {
   let fechToday = new Date()
   let fechTodayF = fechToday.toISOString().slice(0, 19).replace('T', ' ')
   let boxes = ['123', '124', '125', '302', '230']
-  const [filteredBoxes, setFilteredBoxes] = React.useState([])
+  const [filteredBoxes, setFilteredBoxes] = React.useState<string[]>([])
 
   React.useEffect(() => {
     ipcRenderer.send('viableBoxes', fechTodayF)
     ipcRenderer.on('viableBoxes-reply', (event, arg) => {
-      console.log(arg)
+      //console.log(arg)
       let argNums = arg.map((row) => row.numbox.toString())
 
       // Filtrar boxes para excluir los números en argNums
@@ -127,7 +127,7 @@ function Kittec(): JSX.Element {
         setTextMsg('¿Estás seguro de que quieres enviar la petición?')
         toggleVisible()
       } else {
-        ipcRenderer.send('msgOption', 'El numero de caja seleccionado no existe')
+        ipcRenderer.send('msgOption', 'El numero de caja seleccionado no existe.')
       }
     }
   }
@@ -136,17 +136,21 @@ function Kittec(): JSX.Element {
   const handleYes = () => {
     //console.log('El usuario hizo clic en Sí')
     //Genera el documento
-    AlumnGenerate([numbox, userss]).then((outputPath) => {
+    AlumnGenerate([numbox, userss]).then(([outputPath, folio]) => {
       //Guardar registro en base de datos y envio de mail
-      ipcRenderer.send('petitionA', [numbox, userss, outputPath, fechTodayF])
-      ipcRenderer.send('msgOption', 'Petición enviada')
+      ipcRenderer.send('petitionA', [numbox, userss, outputPath, fechTodayF, folio])
+      ipcRenderer.on('petitionA-reply', (event, arg) => {
+        if (arg === 1) {
+          setNumbox('')
+          setNumcu('')
+          setNombre('')
+          setUsers([])
+        } else {
+          ipcRenderer.send('msgOption', 'Error al enviar la petición, intenta de nuevo.')
+        }
+      })
+      //ipcRenderer.send('msgOption', 'Petición enviada')
     })
-    /*
-    setNumbox('')
-    setNumcu('')
-    setNombre('')
-    setUsers([])
-    */
   }
 
   const handleNo = () => {
@@ -162,10 +166,10 @@ function Kittec(): JSX.Element {
           <h2 className="text-black font-bold text-[25px]">Lego</h2>
           <div className="flex space-x-5 items-center pl-7 text-[20px]">
             <Icon icon="solar:box-bold" color="#FED700" width={40} />
-            <p>Escribe el Número de Caja:</p>
+            <p>Selecciona el Número de Caja:</p>
             <select
               id="numbox"
-              className="w-[170px] rounded-[8px] h-[40px] font-bold p-2 text-center drop-shadow-lg"
+              className="w-[200px] rounded-[8px] h-[50px] font-bold p-2 text-center drop-shadow-lg"
               value={numbox}
               onChange={(e) => {
                 if (e.target.value.length <= 3) {
@@ -173,8 +177,8 @@ function Kittec(): JSX.Element {
                 }
               }}
             >
-              <option value="" disabled selected>
-                Selecciona
+              <option value="" disabled>
+                Número de caja
               </option>
               {filteredBoxes.map((box) => (
                 <option key={box} value={box}>

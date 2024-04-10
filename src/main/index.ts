@@ -44,8 +44,8 @@ ipcMain.on('login', async (event, argumentos) => {
       if (err) throw err
       if (rows.length > 0) {
         event.returnValue = true
-        console.log(rows[0].Nameuser)
-        console.log(rows)
+        //console.log(rows[0].Nameuser)
+        //console.log(rows)
 
         const notification = {
           title: 'Linkify',
@@ -78,7 +78,7 @@ ipcMain.on('login', async (event, argumentos) => {
         )
 
         // Cierra la ventana de inicio de sesión
-        mainWindow.close()
+        mainWindow?.close()
       } else {
         event.returnValue = false
         const notification = {
@@ -182,27 +182,45 @@ ipcMain.on('windowSpike', async (event, argumentos) => {
 
   //Function see viable Boxes
   ipcMain.on('viableBoxes', async (event, arg) => {
-    console.log('Peticion de una caja disponible')
+    //console.log('Peticion de una caja disponible')
     try {
       const result = await viableBoxes(arg)
-      console.log(result)
+      //console.log(result)
       event.reply('viableBoxes-reply', result)
     } catch (error) {
       console.error(error)
     }
   })
 
-  //Function petition alumns
+  //Function petition alumns box LegoSpike alumno
   ipcMain.on('petitionA', (event, arg) => {
-    console.log('Peticion de una caja para alumnos')
-    console.log(arg[0]) //?numero de caja
-    console.log(arg[1]) //?arreglo alumnos
-    console.log(arg[2]) //?ruta de archivo
-    let nombreArchivo = path.basename(arg[2])
-    console.log(nombreArchivo) //?nombre del archivo
-    console.log(arg)
+    //console.log('Peticion de una caja para alumnos')
+    //console.log(arg[0]) //?numero de caja
+    //console.log(arg[1]) //?arreglo alumnos
+    //console.log(arg[2]) //?ruta de archivo
+    //let nombreArchivo = path.basename(arg[2])
+    //console.log(nombreArchivo) //?nombre del archivo
+    //console.log(arg[3])//?fecha del registro
+    //console.log(arg[4])//?folio del registro
+    //console.log(arg)
     insertData(arg)
-    //sendEmail(arg[2])
+    sendEmail(arg[2], arg[0], 'LegoSpike', arg[4])
+      .then((response) => {
+        const notification = {
+          title: 'Linkify',
+          body: 'La petición y correo se enviaron correctamente'
+        }
+        new Notification(notification).show()
+        event.reply('petitionA-reply', 1)
+      })
+      .catch((error) => {
+        const notification = {
+          title: 'Linkify',
+          body: 'Hubo un error al enviar el correo'
+        }
+        new Notification(notification).show()
+        event.reply('petitionA-reply', 'No enviado')
+      })
   })
 
   //Message option

@@ -5,14 +5,15 @@ export async function insertData(arg) {
   let students = arg[1]
   let namepath = arg[2]
   let fechreg = arg[3]
+  let folio = arg[4]
   let namedoc = namepath.split('\\').pop()
   const connection = await getConnection()
 
   let petitionQuery =
-    'INSERT INTO petition (numbox, namedoc, namepath, fechreg, state) VALUES (?, ?, ?, ?, 1)'
+    'INSERT INTO petition (numbox, namedoc, namepath, folio, fechreg, state) VALUES (?, ?, ?, ?, ?, 1)'
   connection.query(
     petitionQuery,
-    [numbox, namedoc, namepath, fechreg],
+    [numbox, namedoc, namepath, folio, fechreg],
     (error, results, fields) => {
       if (error) throw error
       let idPetition = results.insertId
@@ -25,6 +26,7 @@ export async function insertData(arg) {
           [idPetition, student.numaccount, student.namestudent],
           (error, results, fields) => {
             if (error) throw error
+            //console.log('Registro exitoso')
           }
         )
       })

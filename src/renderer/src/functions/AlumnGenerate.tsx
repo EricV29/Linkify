@@ -64,13 +64,13 @@ function AlumnGenerate([numbox, userss]) {
 
       // Define la ruta de descarga personalizada
       let homeDir = process.env.HOME || process.env.USERPROFILE
-      homeDir = homeDir.replace(/\\/g, '/')
+      homeDir = homeDir?.replace(/\\/g, '/')
       homeDir = homeDir + '/Documents/Linkify'
       const outputPath = path.join(homeDir, `LegoSpikeCajaAlumnos${folio}.docx`)
 
       // Escribe el archivo en la ruta especificada
       fs.writeFileSync(outputPath, documentBuffer)
-      return outputPath
+      return [outputPath, folio]
     })
 }
 
