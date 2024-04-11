@@ -8,7 +8,7 @@ import { sendEmail } from './mail'
 const fs = require('fs')
 const path = require('path')
 import { insertData } from './petitionSQL'
-import { viableBoxes } from './dataConsult'
+import { viableBoxesLego } from './dataConsult'
 
 let dataUser = ''
 let newWindow
@@ -184,7 +184,7 @@ ipcMain.on('windowSpike', async (event, argumentos) => {
   ipcMain.on('viableBoxes', async (event, arg) => {
     //console.log('Peticion de una caja disponible')
     try {
-      const result = await viableBoxes(arg)
+      const result = await viableBoxesLego(arg)
       //console.log(result)
       event.reply('viableBoxes-reply', result)
     } catch (error) {

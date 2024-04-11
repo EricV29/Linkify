@@ -12,51 +12,51 @@ function NavbarLego(): JSX.Element {
     <>
       <div className="w-full h-full bg-[#FED700] drop-shadow-xl flex justify-between items-center pr-6 pl-6">
         <div className="flex space-x-3 w-1/3">
-          <Button
-            className={`w-[117px] font-bold ${activeButton === 'kitAlumno' ? 'text-[#fff] bg-[#C80000]' : 'text-[#C80000] hover:text-[#fff]'} `}
-            variant="light"
-            color="danger"
-            onClick={() => setActiveButton('kitAlumno')}
-          >
-            <Link to="/legospike/kittec" className="flex">
+          <Link to="/legospike/kittec" className="flex">
+            <Button
+              className={`w-[140px] font-bold ${activeButton === 'kitAlumno' ? 'text-[#fff] bg-[#C80000]' : 'text-[#C80000] hover:text-[#fff]'} `}
+              variant="light"
+              color="danger"
+              onClick={() => setActiveButton('kitAlumno')}
+            >
               <Icon
                 icon="ph:student"
                 color={`${activeButton === 'kitAlumno' ? '#ffffff' : '#C80000'}`}
                 className="h-full w-[22px]"
               />
               Kit Alumno
-            </Link>
-          </Button>
-          <Button
-            className={`w-[117px] font-bold ${activeButton === 'kitExtra' ? 'text-[#fff] bg-[#C80000]' : 'text-[#C80000] hover:text-[#fff]'} `}
-            variant="light"
-            color="danger"
-            onClick={() => setActiveButton('kitExtra')}
-          >
-            <Link to="/legospike/kitext" className="flex">
+            </Button>
+          </Link>
+          <Link to="/legospike/kitext" className="flex">
+            <Button
+              className={`w-[117px] font-bold ${activeButton === 'kitExtra' ? 'text-[#fff] bg-[#C80000]' : 'text-[#C80000] hover:text-[#fff]'} `}
+              variant="light"
+              color="danger"
+              onClick={() => setActiveButton('kitExtra')}
+            >
               <Icon
                 icon="tabler:lego"
                 color={`${activeButton === 'kitExtra' ? '#ffffff' : '#C80000'}`}
                 className="h-full w-[22px]"
               />
               Kit Extra
-            </Link>
-          </Button>
-          <Button
-            className={`w-[117px] font-bold ${activeButton === 'solicitud' ? 'text-[#fff] bg-[#C80000]' : 'text-[#C80000] hover:text-[#fff]'} `}
-            variant="light"
-            color="danger"
-            onClick={() => setActiveButton('solicitud')}
-          >
-            <Link to="/legospike/solicitud" className="flex">
+            </Button>
+          </Link>
+          <Link to="/legospike/solicitud" className="flex">
+            <Button
+              className={`w-[117px] font-bold ${activeButton === 'solicitud' ? 'text-[#fff] bg-[#C80000]' : 'text-[#C80000] hover:text-[#fff]'} `}
+              variant="light"
+              color="danger"
+              onClick={() => setActiveButton('solicitud')}
+            >
               <Icon
                 icon="solar:card-send-broken"
                 color={`${activeButton === 'solicitud' ? '#ffffff' : '#C80000'}`}
                 className="h-full w-[22px]"
               />
               Solicitud
-            </Link>
-          </Button>
+            </Button>
+          </Link>
         </div>
         <div className="w-1/3">
           <img src={spikelo} alt="Prepa6Logotipo" className="w-[100px]" />

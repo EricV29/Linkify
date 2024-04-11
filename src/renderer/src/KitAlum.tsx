@@ -102,11 +102,13 @@ function Kittec(): JSX.Element {
 
   let fechToday = new Date()
   let fechTodayF = fechToday.toISOString().slice(0, 19).replace('T', ' ')
+  let fecha = fechTodayF.split(' ')[0]
   let boxes = ['123', '124', '125', '302', '230']
   const [filteredBoxes, setFilteredBoxes] = React.useState<string[]>([])
+  console.log(fecha)
 
   React.useEffect(() => {
-    ipcRenderer.send('viableBoxes', fechTodayF)
+    ipcRenderer.send('viableBoxes', fecha)
     ipcRenderer.on('viableBoxes-reply', (event, arg) => {
       //console.log(arg)
       let argNums = arg.map((row) => row.numbox.toString())
@@ -137,22 +139,25 @@ function Kittec(): JSX.Element {
   const handleYes = () => {
     //console.log('El usuario hizo clic en Sí')
     //Genera el documento
-    AlumnGenerate([numbox, userss, dateFinish]).then(([outputPath, folio]) => {
-      //Guardar registro en base de datos y envio de mail
-      ipcRenderer.send('petitionA', [numbox, userss, outputPath, fechTodayF, folio, dateFinish])
-      ipcRenderer.on('petitionA-reply', (event, arg) => {
-        if (arg === 1) {
-          setNumbox('')
-          setFinishdate('')
-          setNumcu('')
-          setNombre('')
-          setUsers([])
-        } else {
-          ipcRenderer.send('msgOption', 'Error al enviar la petición, intenta de nuevo.')
-        }
-      })
-      //ipcRenderer.send('msgOption', 'Petición enviada')
-    })
+    AlumnGenerate([numbox, userss, dateFinish, 'LegoSpikeCajaAlumnos']).then(
+      ([outputPath, folio]) => {
+        //Guardar registro en base de datos y envio de mail
+        ipcRenderer.send('petitionA', [numbox, userss, outputPath, fechTodayF, folio, dateFinish])
+        ipcRenderer.on('petitionA-reply', (event, arg) => {
+          if (arg === 1) {
+            /*setNumbox('')
+            setFinishdate('')
+            setNumcu('')
+            setNombre('')
+            setUsers([])*/
+            location.reload()
+          } else {
+            ipcRenderer.send('msgOption', 'Error al enviar la petición, intenta de nuevo.')
+          }
+        })
+        //ipcRenderer.send('msgOption', 'Petición enviada')
+      }
+    )
   }
 
   const handleNo = () => {

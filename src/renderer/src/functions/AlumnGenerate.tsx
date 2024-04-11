@@ -3,7 +3,7 @@ import Docxtemplater from 'docxtemplater'
 const fs = require('fs')
 const path = require('path')
 
-function AlumnGenerate([numbox, userss, fechalimit]) {
+function AlumnGenerate([numbox, userss, fechalimit, kit]) {
   function mesANombre(mes) {
     let nombresDeMeses = [
       'Enero',
@@ -37,7 +37,7 @@ function AlumnGenerate([numbox, userss, fechalimit]) {
   //let fechlimt = fechdiaa + '/' + fechmess + '/' + año
   const folio = numbox + fechdiaa + fechmess + año
 
-  return fetch('/LegoSpikeCajaAlumnos.docx')
+  return fetch('/' + kit + '.docx')
     .then((response) => response.arrayBuffer())
     .then((templateBuffer) => {
       const zip = new PizZip(templateBuffer)
@@ -66,7 +66,7 @@ function AlumnGenerate([numbox, userss, fechalimit]) {
       let homeDir = process.env.HOME || process.env.USERPROFILE
       homeDir = homeDir?.replace(/\\/g, '/')
       homeDir = homeDir + '/Documents/Linkify'
-      const outputPath = path.join(homeDir, `LegoSpikeCajaAlumnos${folio}.docx`)
+      const outputPath = path.join(homeDir, kit + `${folio}.docx`)
 
       // Escribe el archivo en la ruta especificada
       fs.writeFileSync(outputPath, documentBuffer)
