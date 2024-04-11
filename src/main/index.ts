@@ -176,8 +176,8 @@ ipcMain.on('windowSpike', async (event, argumentos) => {
   // Carga la ruta deseada en la nueva ventana
   legoWindow.loadURL(
     is.dev
-      ? process.env['ELECTRON_RENDERER_URL'] + '#/legospike'
-      : `file://${join(__dirname, '../renderer/index.html')}#/legospike`
+      ? process.env['ELECTRON_RENDERER_URL'] + '#/legospike/kittec'
+      : `file://${join(__dirname, '../renderer/index.html')}#/legospike/kittec`
   )
 
   //Function see viable Boxes

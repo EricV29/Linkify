@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 import linkify from '../images/linki.png'
 
 function NavbarLego(): JSX.Element {
-  const [activeButton, setActiveButton] = useState(null)
+  const [activeButton, setActiveButton] = useState('kitAlumno')
 
   return (
     <>

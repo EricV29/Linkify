@@ -178,7 +178,7 @@ function Kittec(): JSX.Element {
           <h2 className="text-black font-bold text-[25px]">Lego</h2>
           <div className="flex space-x-5 items-center pl-7 text-[20px]">
             <Icon icon="solar:box-bold" color="#FED700" width={40} />
-            <p>Selecciona el Número de Caja:</p>
+            <p>Selecciona el número de caja:</p>
             <select
               id="numbox"
               className="w-[200px] rounded-[8px] h-[50px] font-bold p-2 text-center drop-shadow-lg"
@@ -190,7 +190,7 @@ function Kittec(): JSX.Element {
               }}
             >
               <option value="" disabled>
-                Número de caja
+                Caja
               </option>
               {filteredBoxes.map((box) => (
                 <option key={box} value={box}>
@@ -211,7 +211,7 @@ function Kittec(): JSX.Element {
           <h2 className="text-black font-bold text-[25px]">Alumno</h2>
           <div className="flex space-x-5 items-center pl-7 mb-3 text-[20px]">
             <Icon icon="teenyicons:id-solid" color="#FED700" width={40} />
-            <p>Número de Cuenta:</p>
+            <p>Número de cuenta:</p>
             <input
               type="number"
               id="numaccount"
@@ -226,7 +226,7 @@ function Kittec(): JSX.Element {
           </div>
           <div className="flex space-x-5 items-center pl-7 text-[20px] mb-5">
             <Icon icon="mdi:user" color="#FED700" width={40} />
-            <p>Nombre Completo:</p>
+            <p>Nombre completo:</p>
             <input
               type="text"
               id="namestudent"
