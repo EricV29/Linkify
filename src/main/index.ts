@@ -8,7 +8,13 @@ import { sendEmail } from './mail'
 const fs = require('fs')
 const path = require('path')
 import { insertData } from './petitionSQL'
-import { viableBoxesLego } from './dataConsult'
+import {
+  viableBoxesLego,
+  activeRequests,
+  completedRequests,
+  alumnsforRequest,
+  finishidRequest
+} from './dataConsult'
 
 let dataUser = ''
 let newWindow
@@ -157,6 +163,15 @@ app.on('window-all-closed', () => {
   }
 })
 
+interface Request {
+  numbox: string
+  namedoc: string
+  folio: string
+  fechreg: string
+  fechfinish: string
+  state: boolean
+}
+
 //TODO: CREAR VENTANA LEGO SPIKE (LEGO) NOMBRE = legoWindow
 ipcMain.on('windowSpike', async (event, argumentos) => {
   console.log('Ventana abierta de lego')
@@ -231,6 +246,76 @@ ipcMain.on('windowSpike', async (event, argumentos) => {
       body: arg
     }
     new Notification(notification).show()
+  })
+
+  //All requests
+  ipcMain.on('AllRequests', async (event, arg) => {
+    try {
+      const resultactiveRequests = (await activeRequests()) as Request[]
+      resultactiveRequests.forEach((item) => {
+        let fechar = new Date(item.fechreg)
+        let fechaf = new Date(item.fechfinish)
+        item.fechreg = fechar.toLocaleDateString('es-MX')
+        item.fechfinish = fechaf.toLocaleDateString('es-MX', { timeZone: 'America/Mexico_City' })
+      })
+      //console.log(resultactiveRequests)
+      const resultcompletedRequests = (await completedRequests()) as Request[]
+      resultcompletedRequests.forEach((item) => {
+        let fechar = new Date(item.fechreg)
+        let fechaf = new Date(item.fechfinish)
+        item.fechreg = fechar.toLocaleDateString('es-MX')
+        item.fechfinish = fechaf.toLocaleDateString('es-MX', { timeZone: 'America/Mexico_City' })
+      })
+      //console.log(resultcompletedRequests)
+      event.reply('AllRequests-reply', [resultactiveRequests, resultcompletedRequests])
+    } catch (error) {
+      console.error(error)
+    }
+  })
+
+  //Alumns request
+  ipcMain.on('AlumnsRequest', async (event, arg) => {
+    //console.log(arg)
+    try {
+      const alumnsRe = await alumnsforRequest(arg)
+      //console.log(alumnsRe)
+      event.reply('AlumnsRequest-reply', alumnsRe)
+    } catch (error) {
+      console.error(error)
+    }
+  })
+
+  //Finish request
+  ipcMain.on('FinishRequest', async (event, arg) => {
+    //console.log(arg)
+    if (arg[0] === '5690') {
+      try {
+        finishidRequest(arg)
+          .then((results) => {
+            const notification = {
+              title: 'Linkify',
+              body: 'Prestamo finalizado.'
+            }
+            new Notification(notification).show()
+            event.reply('FinishRequest-reply', 1)
+          })
+          .catch((error) => {
+            const notification = {
+              title: 'Linkify',
+              body: 'Error, intentalo de nuevo.'
+            }
+            new Notification(notification).show()
+          })
+      } catch (error) {
+        console.error(error)
+      }
+    } else {
+      const notification = {
+        title: 'Linkify',
+        body: 'PIN incorrecto.'
+      }
+      new Notification(notification).show()
+    }
   })
 })
 

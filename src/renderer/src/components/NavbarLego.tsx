@@ -44,7 +44,7 @@ function NavbarLego(): JSX.Element {
           </Link>
           <Link to="/legospike/solicitud" className="flex">
             <Button
-              className={`w-[117px] font-bold ${activeButton === 'solicitud' ? 'text-[#fff] bg-[#C80000]' : 'text-[#C80000] hover:text-[#fff]'} `}
+              className={`w-[133px] font-bold ${activeButton === 'solicitud' ? 'text-[#fff] bg-[#C80000]' : 'text-[#C80000] hover:text-[#fff]'} `}
               variant="light"
               color="danger"
               onClick={() => setActiveButton('solicitud')}
@@ -54,7 +54,7 @@ function NavbarLego(): JSX.Element {
                 color={`${activeButton === 'solicitud' ? '#ffffff' : '#C80000'}`}
                 className="h-full w-[22px]"
               />
-              Solicitud
+              Solicitudes
             </Button>
           </Link>
         </div>

@@ -18,6 +18,7 @@ import Message from './components/Message'
 import msgLego from './store/message'
 import AlumnGenerate from './functions/AlumnGenerate'
 const { ipcRenderer } = require('electron')
+import loading from './store/load'
 
 const statusColorMap = {
   active: 'success',
@@ -46,6 +47,7 @@ function Kittec(): JSX.Element {
   const [userId, setUserId] = useState(0)
   const { visible, toggleVisible } = msgLego()
   const [textMsg, setTextMsg] = useState('')
+  const { load, toggleLoad } = loading()
 
   const addUser = () => {
     if (namestudent === '' || numaccount === '') {
@@ -105,7 +107,6 @@ function Kittec(): JSX.Element {
   let fecha = fechTodayF.split(' ')[0]
   let boxes = ['123', '124', '125', '302', '230']
   const [filteredBoxes, setFilteredBoxes] = React.useState<string[]>([])
-  console.log(fecha)
 
   React.useEffect(() => {
     ipcRenderer.send('viableBoxes', fecha)
@@ -139,6 +140,7 @@ function Kittec(): JSX.Element {
   const handleYes = () => {
     //console.log('El usuario hizo clic en Sí')
     //Genera el documento
+    toggleLoad()
     AlumnGenerate([numbox, userss, dateFinish, 'LegoSpikeCajaAlumnos']).then(
       ([outputPath, folio]) => {
         //Guardar registro en base de datos y envio de mail
@@ -151,8 +153,10 @@ function Kittec(): JSX.Element {
             setNombre('')
             setUsers([])*/
             location.reload()
+            toggleLoad()
           } else {
             ipcRenderer.send('msgOption', 'Error al enviar la petición, intenta de nuevo.')
+            toggleLoad()
           }
         })
         //ipcRenderer.send('msgOption', 'Petición enviada')
@@ -215,6 +219,7 @@ function Kittec(): JSX.Element {
             <input
               type="number"
               id="numaccount"
+              placeholder="000000"
               className="w-[170px] rounded-[8px] h-[40px] font-bold p-2 text-center drop-shadow-lg"
               value={numaccount}
               onChange={(e) => {
@@ -225,11 +230,12 @@ function Kittec(): JSX.Element {
             />
           </div>
           <div className="flex space-x-5 items-center pl-7 text-[20px] mb-5">
-            <Icon icon="mdi:user" color="#FED700" width={40} />
+            <Icon icon="ph:lego-smiley-fill" color="#FED700" width={40} />
             <p>Nombre completo:</p>
             <input
               type="text"
               id="namestudent"
+              placeholder="Nombres Apellidos"
               className="w-[700px] rounded-[8px] h-[40px] font-bold p-2 drop-shadow-lg"
               value={namestudent}
               onChange={(e) => setNombre(e.target.value)}

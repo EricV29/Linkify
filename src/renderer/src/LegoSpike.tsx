@@ -1,11 +1,16 @@
 import { Outlet } from 'react-router-dom'
 import NavbarLego from './components/NavbarLego'
 import legoSpikebg from './images/legospikebg.png'
+import Loading from './components/Loading'
+import loading from './store/load'
 
 function LegoSpike(): JSX.Element {
+  const { load, toggleLoad } = loading()
+
   return (
     <>
       <div className="w-screen h-screen flex flex-col m-0 p-0 justify-center overflow-hidden">
+        {load && <Loading />}
         <div className="w-full h-[100px] z-10">
           <NavbarLego />
         </div>
