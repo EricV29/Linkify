@@ -105,7 +105,22 @@ function Kittec(): JSX.Element {
   let fechToday = new Date()
   let fechTodayF = fechToday.toISOString().slice(0, 19).replace('T', ' ')
   let fecha = fechTodayF.split(' ')[0]
-  let boxes = ['123', '124', '125', '302', '230']
+  let boxes = [
+    '690',
+    '689',
+    '679',
+    '675',
+    '671',
+    '667',
+    '665',
+    '657',
+    '643',
+    '658',
+    '673',
+    '686',
+    '661',
+    '680'
+  ]
   const [filteredBoxes, setFilteredBoxes] = React.useState<string[]>([])
 
   React.useEffect(() => {
