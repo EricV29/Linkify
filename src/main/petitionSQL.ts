@@ -30,6 +30,16 @@ export async function insertData(arg) {
             //console.log('Registro exitoso')
           }
         )
+
+        let userEmailQuery = 'INSERT INTO user_email (numaccount, email) VALUES (?, ?)'
+        connection.query(
+          userEmailQuery,
+          [student.numaccount, student.email],
+          (error, results, fields) => {
+            if (error) throw error
+            //console.log('Registro de correo electrónico exitoso')
+          }
+        )
       })
     }
   )

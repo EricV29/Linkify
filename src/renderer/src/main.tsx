@@ -11,6 +11,7 @@ import RaspBerry from './RaspBerry'
 import Arduino from './Arduino'
 import KitExt from './KitExt'
 import Soli from './Solicitud'
+import Welcome from './Welcome'
 
 const rootElement = document.getElementById('root')
 
@@ -26,6 +27,7 @@ root.render(
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/menu" element={<Menu />}>
+          <Route path="/menu" element={<Welcome />} />
           <Route path="herramientas" element={<Herramientas />} />
         </Route>
         <Route path="/legospike" element={<LegoSpike />}>

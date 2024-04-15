@@ -15,6 +15,7 @@ import {
   alumnsforRequest,
   finishidRequest
 } from './dataConsult'
+import { deleteDoc } from './deleteDocument'
 
 let dataUser = ''
 let newWindow
@@ -105,6 +106,9 @@ ipcMain.on('nameuser', (event, arg) => {
 // CERRAR SESION
 ipcMain.on('exitApp', (event, arg) => {
   newWindow.close()
+  if (legoWindow) legoWindow.close()
+  if (raspWindow) raspWindow.close()
+  if (ardWindow) ardWindow.close()
   createWindow()
 })
 
@@ -219,23 +223,24 @@ ipcMain.on('windowSpike', async (event, argumentos) => {
     //console.log(arg[4])//?folio del registro
     //console.log(arg[5])//?fecha para finalizar
     //console.log(arg)
-    insertData(arg)
-    sendEmail(arg[2], arg[0], 'LegoSpike', arg[4])
+    sendEmail(arg[2], arg[0], 'LegoSpike', arg[4], arg[1])
       .then((response) => {
         const notification = {
           title: 'Linkify',
           body: 'La petición y correo se enviaron correctamente'
         }
         new Notification(notification).show()
+        insertData(arg)
         event.reply('petitionA-reply', 1)
       })
       .catch((error) => {
         const notification = {
           title: 'Linkify',
-          body: 'Hubo un error al enviar el correo'
+          body: 'Error al enviar correo, verifica tu conexión de internet.'
         }
         new Notification(notification).show()
-        event.reply('petitionA-reply', 'No enviado')
+        deleteDoc(arg[2])
+        event.reply('petitionA-reply', 'No enviado, intentalo de nuevo')
       })
   })
 

@@ -30,11 +30,13 @@ type User = {
   id: number
   namestudent: string
   numaccount: string
+  email: string
 }
 
 const columns = [
   { name: 'NOMBRE', uid: 'namestudent' },
   { name: 'NÚMERO DE CUENTA', uid: 'numaccount' },
+  { name: 'EMAIL', uid: 'email' },
   { name: 'ACCIONES', uid: 'actions' }
 ]
 
@@ -44,6 +46,7 @@ function Kittec(): JSX.Element {
   const [namestudent, setNombre] = useState('')
   const [numaccount, setNumcu] = useState('')
   const [numbox, setNumbox] = useState('')
+  const [email, setEmail] = useState('')
   const [userId, setUserId] = useState(0)
   const { visible, toggleVisible } = msgLego()
   const [textMsg, setTextMsg] = useState('')
@@ -51,20 +54,24 @@ function Kittec(): JSX.Element {
 
   const addUser = () => {
     if (namestudent === '' || numaccount === '') {
-      ipcRenderer.send('msgOption', 'Campos incompletos para agregar un usuario')
+      ipcRenderer.send('msgOption', 'Campos incompletos para agregar un usuario.')
+    } else if (!/^[a-zA-Z]{2}\d{6}@uaeh\.edu\.mx$/.test(email)) {
+      ipcRenderer.send('msgOption', 'Correo electrónico incorrecto.')
     } else if (userss.length <= 9) {
       const newUser: User = {
         id: userId,
         namestudent: namestudent,
-        numaccount: numaccount
+        numaccount: numaccount,
+        email: email
       }
 
       setUsers([...userss, newUser])
       setNombre('')
       setNumcu('')
+      setEmail('')
       setUserId(userId + 1)
     } else {
-      ipcRenderer.send('msgOption', 'No esta permitido agregar mas de 10 alumnos')
+      ipcRenderer.send('msgOption', 'No esta permitido agregar mas de 10 alumnos.')
     }
   }
 
@@ -188,6 +195,25 @@ function Kittec(): JSX.Element {
   let yyyy = fechToday.getFullYear()
   let currentDate = yyyy + '-' + mm + '-' + dd
 
+  function soloLetras(e) {
+    var key = e.keyCode || e.which
+    var tecla = String.fromCharCode(key).toLowerCase()
+    var letras = ' áéíóúabcdefghijklmnñopqrstuvwxyz'
+    var especiales = [8, 37, 39, 46]
+
+    var tecla_especial = false
+    for (var i in especiales) {
+      if (key === especiales[i]) {
+        tecla_especial = true
+        break
+      }
+    }
+
+    if (letras.indexOf(tecla) === -1 && !tecla_especial) {
+      e.preventDefault()
+    }
+  }
+
   return (
     <>
       {visible && <Message textMsg={textMsg} onYes={handleYes} onNo={handleNo} />}
@@ -237,6 +263,7 @@ function Kittec(): JSX.Element {
               placeholder="000000"
               className="w-[170px] rounded-[8px] h-[40px] font-bold p-2 text-center drop-shadow-lg"
               value={numaccount}
+              min={0}
               onChange={(e) => {
                 if (e.target.value.length <= 6) {
                   setNumcu(e.target.value)
@@ -254,6 +281,19 @@ function Kittec(): JSX.Element {
               className="w-[700px] rounded-[8px] h-[40px] font-bold p-2 drop-shadow-lg"
               value={namestudent}
               onChange={(e) => setNombre(e.target.value)}
+              onKeyPress={soloLetras}
+            />
+          </div>
+          <div className="flex space-x-5 items-center pl-7 text-[20px] mb-5">
+            <Icon icon="mi:email" color="#FED700" width={40} />
+            <p>Correo electrónico institucional:</p>
+            <input
+              type="text"
+              id="email"
+              placeholder="xx000000@uaeh.edu.mx"
+              className="w-[585px] rounded-[8px] h-[40px] font-bold p-2 drop-shadow-lg"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
             <Button
               className="w-[160px] bg-[#a2191a] text-[#fff] font-bold"

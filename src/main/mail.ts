@@ -1,7 +1,8 @@
 const nodemailer = require('nodemailer')
 let path = require('path')
 
-export function sendEmail(pathdoc, numbox, tool, ide) {
+export function sendEmail(pathdoc, numbox, tool, ide, users) {
+  console.log(users)
   let transporter = nodemailer.createTransport({
     service: 'gmail',
     host: 'smtp.gmail.com',
@@ -29,16 +30,34 @@ export function sendEmail(pathdoc, numbox, tool, ide) {
     ]
   }
 
-  // Devolvemos una nueva promesa
   return new Promise((resolve, reject) => {
     transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
         console.log(error)
-        reject(error) // Si hay un error, rechazamos la promesa
+        reject(error)
       } else {
         //console.log('Correo enviado: ' + info.response)
-        resolve(info.response) // Si todo va bien, resolvemos la promesa con la respuesta
+        resolve(info.response)
       }
     })
+
+    for (let i = 0; i < users.length; i++) {
+      let user = users[i]
+      mailOptions.to = user.email
+      mailOptions.text =
+        'Alumno(a) de la Escuela Preparatoria Número 6, se te informa que se recbio la solicitud para adquirir caja de equipo “Lego Spike Prime Education” con un contenido de 528 piezas, con número de serie ' +
+        numbox +
+        ' en calidad de préstamo, precisando que el equipo es propiedad de la Escuela Preparatoria Número 6. Alumno(a) asumes la responsabilidad del cuidado y seguridad del material deberas reponer el equipo conforme lo dispone la normativa universitaria. Una vez concluidas las actividades, el equipo deberá ser devuelto en las mismas condiciones y con la misma cantidad de piezas con las que cuenta cada caja al Ing. Kevin Serrano Bautista, responsable del Centro de Cómputo de la Escuela Preparatoria Número 6, para su debido resguardo.'
+
+      transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+          console.log(error)
+          reject(error)
+        } else {
+          //console.log('Correo enviado: ' + info.response)
+          resolve(info.response)
+        }
+      })
+    }
   })
 }

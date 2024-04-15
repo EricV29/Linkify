@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import prep6l from '../images/prep6l.png'
 import { Button } from '@nextui-org/react'
 import { Icon } from '@iconify/react'
