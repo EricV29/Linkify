@@ -12,6 +12,8 @@ import Arduino from './Arduino'
 import KitExt from './KitExt'
 import Soli from './Solicitud'
 import Welcome from './Welcome'
+import KitRasp from './KitRasp'
+import SoliRasp from './SoliRasp'
 
 const rootElement = document.getElementById('root')
 
@@ -35,7 +37,11 @@ root.render(
           <Route path="kitext" element={<KitExt />} />
           <Route path="solicitud" element={<Soli />} />
         </Route>
-        <Route path="/raspberry" element={<RaspBerry />}></Route>
+        <Route path="/raspberry" element={<RaspBerry />}>
+          <Route path="kitalumnrasp" element={<KitRasp />} />
+          <Route path="solirasp" element={<SoliRasp />} />
+        </Route>
+
         <Route path="/arduino" element={<Arduino />}></Route>
       </Routes>
     </HashRouter>

@@ -14,7 +14,7 @@ function NavbarLego(): JSX.Element {
         <div className="flex space-x-3 w-1/3">
           <Link to="/legospike/kittec" className="flex">
             <Button
-              className={`w-[140px] font-bold ${activeButton === 'kitAlumno' ? 'text-[#fff] bg-[#C80000]' : 'text-[#C80000] hover:text-[#fff]'} `}
+              className={`w-[140px] font-bold ${activeButton === 'kitAlumno' ? 'text-[#fff] bg-[#C80000]' : 'text-[#C80000] hover:text-[#fff]'}`}
               variant="light"
               color="danger"
               onClick={() => setActiveButton('kitAlumno')}

@@ -220,10 +220,10 @@ function Kittec(): JSX.Element {
       <div className="w-full h-full flex flex-col m-0 p-5 justify-start items-center overflow-y-scroll">
         <p className="text-[#C80000] font-bold text-[40px]">Kit Lego para Alumno</p>
         <div className="flex flex-col justify-start p-5 w-full">
-          <h2 className="text-black font-bold text-[25px]">Lego</h2>
+          <h2 className="text-[#C80000] font-bold text-[25px]">Lego</h2>
           <div className="flex space-x-5 items-center pl-7 text-[20px]">
             <Icon icon="solar:box-bold" color="#FED700" width={40} />
-            <p>Selecciona el número de caja:</p>
+            <p className="text-white">Selecciona el número de caja:</p>
             <select
               id="numbox"
               className="w-[200px] rounded-[8px] h-[50px] font-bold p-2 text-center drop-shadow-lg"
@@ -244,7 +244,7 @@ function Kittec(): JSX.Element {
               ))}
             </select>
             <Icon icon="fluent-mdl2:date-time" color="#FED700" width={40} />
-            <p>Selecciona la fecha de entrega:</p>
+            <p className="text-white">Selecciona la fecha de entrega:</p>
             <input
               type="date"
               className="w-[200px] rounded-[8px] h-[50px] font-bold p-2 text-center drop-shadow-lg"
@@ -253,10 +253,10 @@ function Kittec(): JSX.Element {
               onChange={(e) => setFinishdate(e.target.value)}
             />
           </div>
-          <h2 className="text-black font-bold text-[25px]">Alumno</h2>
+          <h2 className="text-[#C80000] font-bold text-[25px]">Alumno</h2>
           <div className="flex space-x-5 items-center pl-7 mb-3 text-[20px]">
             <Icon icon="teenyicons:id-solid" color="#FED700" width={40} />
-            <p>Número de cuenta:</p>
+            <p className="text-white">Número de cuenta:</p>
             <input
               type="number"
               id="numaccount"
@@ -273,7 +273,7 @@ function Kittec(): JSX.Element {
           </div>
           <div className="flex space-x-5 items-center pl-7 text-[20px] mb-5">
             <Icon icon="ph:lego-smiley-fill" color="#FED700" width={40} />
-            <p>Nombre completo:</p>
+            <p className="text-white">Nombre completo:</p>
             <input
               type="text"
               id="namestudent"
@@ -286,7 +286,7 @@ function Kittec(): JSX.Element {
           </div>
           <div className="flex space-x-5 items-center pl-7 text-[20px] mb-5">
             <Icon icon="mi:email" color="#FED700" width={40} />
-            <p>Correo electrónico institucional:</p>
+            <p className="text-white">Correo electrónico institucional:</p>
             <input
               type="text"
               id="email"

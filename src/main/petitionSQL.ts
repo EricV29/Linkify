@@ -1,6 +1,6 @@
 import { getConnection } from './database'
 
-export async function insertData(arg) {
+export async function insertData(arg, tool) {
   let numbox = arg[0]
   let students = arg[1]
   let namepath = arg[2]
@@ -11,10 +11,10 @@ export async function insertData(arg) {
   const connection = await getConnection()
 
   let petitionQuery =
-    'INSERT INTO petition (numbox, namedoc, namepath, folio, fechreg, fechfinish, state) VALUES (?, ?, ?, ?, ?, ?, 1)'
+    'INSERT INTO petition (numbox, namedoc, namepath, folio, fechreg, fechfinish, state, tool) VALUES (?, ?, ?, ?, ?, ?, 1, ?)'
   connection.query(
     petitionQuery,
-    [numbox, namedoc, namepath, folio, fechreg, fechfinish],
+    [numbox, namedoc, namepath, folio, fechreg, fechfinish, tool],
     (error, results, fields) => {
       if (error) throw error
       let idPetition = results.insertId
