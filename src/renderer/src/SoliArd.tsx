@@ -38,7 +38,7 @@ interface Alumn {
   numaccount: string
 }
 
-function SoliRasp(): JSX.Element {
+function SoliArd(): JSX.Element {
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const [activeR, setActiveR] = useState<Request[]>([])
   const [completeR, setCompleteR] = useState<Request[]>([])
@@ -51,8 +51,8 @@ function SoliRasp(): JSX.Element {
   const location = useLocation()
 
   useEffect(() => {
-    ipcRenderer.send('AllRequestsR', 'Solicitudes')
-    ipcRenderer.on('AllRequestsR-reply', (event, arg) => {
+    ipcRenderer.send('AllRequestsA', 'Solicitudes')
+    ipcRenderer.on('AllRequestsA-reply', (event, arg) => {
       setActiveR(arg[0])
       setCompleteR(arg[1])
     })
@@ -60,9 +60,9 @@ function SoliRasp(): JSX.Element {
 
   const descPetition = ([arg, folio, numbox]) => {
     //console.log(arg)
-    ipcRenderer.send('AlumnsRequest', arg)
+    ipcRenderer.send('AlumnsRequestA', arg)
     setID(arg)
-    ipcRenderer.once('AlumnsRequest-reply', (event, arg) => {
+    ipcRenderer.once('AlumnsRequestA-reply', (event, arg) => {
       //console.log(arg)
       setFolio(folio)
       setNumbox(numbox)
@@ -84,7 +84,7 @@ function SoliRasp(): JSX.Element {
     }
     ipcRenderer.once('FinishRequest-reply', (event, arg) => {
       if (arg === 1) {
-        navigate('/raspberry/kitalumnrasp')
+        navigate('/arduino/kitalumnard')
         console.log(location.pathname)
         window.location.reload()
       }
@@ -110,8 +110,8 @@ function SoliRasp(): JSX.Element {
 
   return (
     <>
-      <div className="w-full h-full flex flex-col m-0 justify-start items-start overflow-y-scroll p-5">
-        <Tabs aria-label="Options" color="danger" variant="solid">
+      <div className="w-full h-full flex flex-col m-0 p-5 justify-start items-start overflow-y-scroll">
+        <Tabs aria-label="Options" color="primary" variant="solid">
           <Tab
             key="enable"
             className="w-full"
@@ -136,25 +136,21 @@ function SoliRasp(): JSX.Element {
                   >
                     <div className="flex justify-between items-center w-full ">
                       <div className="flex items-center font-semibold">
-                        <Icon
-                          icon="mdi:raspberry-pi"
-                          className="w-[50px] h-[50px] mr-5"
-                          color="#DC0941"
-                        />
-                        <div className="w-[100px] h-[60px] rounded-lg text-white bg-[#DC0941] space-y-1">
+                        <Icon icon="mdi:chip" className="w-[50px] h-[50px] mr-5" color="#00989E" />
+                        <div className="w-[100px] h-[60px] rounded-lg text-white bg-[#00989E] space-y-1">
                           <p className="text-black">Caja</p>
                           <p className="font-bold text-[30px]">{request.numbox}</p>
                         </div>
                       </div>
-                      <div className="flex flex-col font-semibold w-[390px] h-[60px] rounded-lg bg-[#DC0941] items-center justify-center">
+                      <div className="flex flex-col font-semibold w-[390px] h-[60px] rounded-lg bg-[#00989E] items-center justify-center">
                         <p>Nombre del documento</p>
                         <p className="text-white text-[20px]">{request.namedoc}</p>
                       </div>
-                      <div className="flex flex-col font-semibold w-[130px] h-[60px] rounded-lg bg-[#DC0941] items-center justify-center">
+                      <div className="flex flex-col font-semibold w-[130px] h-[60px] rounded-lg bg-[#00989E] items-center justify-center">
                         <p>Folio</p>
                         <p className="text-white text-[20px]">{request.folio}</p>
                       </div>
-                      <div className="flex items-center justify-center space-x-2 bg-[#DC0941] rounded-lg w-[250px] h-[60px]">
+                      <div className="flex items-center justify-center space-x-2 bg-[#00989E] rounded-lg w-[250px] h-[60px]">
                         <Icon
                           icon="fluent-mdl2:date-time"
                           className="w-[40px] h-[40px]"
@@ -179,9 +175,9 @@ function SoliRasp(): JSX.Element {
                         <ModalBody className="flex items-center">
                           <ModalHeader className="flex gap-1">
                             <Icon
-                              icon="mdi:raspberry-pi"
+                              icon="mdi:chip"
                               className="w-[50px] h-[50px] mr-5"
-                              color="#DC0941"
+                              color="#00989E"
                             />
                             <p>
                               Solcitud de caja {numbox} con folio: {folio}
@@ -267,25 +263,21 @@ function SoliRasp(): JSX.Element {
                   >
                     <div className="flex justify-between items-center w-full ">
                       <div className="flex items-center font-semibold">
-                        <Icon
-                          icon="mdi:raspberry-pi"
-                          className="w-[50px] h-[50px] mr-5"
-                          color="#DC0941"
-                        />
-                        <div className="w-[100px] h-[60px] rounded-lg text-white bg-[#DC0941] space-y-1">
+                        <Icon icon="mdi:chip" className="w-[50px] h-[50px] mr-5" color="#00989E" />
+                        <div className="w-[100px] h-[60px] rounded-lg text-white bg-[#00989E] space-y-1">
                           <p className="text-black">Caja</p>
                           <p className="font-bold text-[30px]">{request.numbox}</p>
                         </div>
                       </div>
-                      <div className="flex flex-col font-semibold w-[390px] h-[60px] rounded-lg bg-[#DC0941] items-center justify-center">
+                      <div className="flex flex-col font-semibold w-[390px] h-[60px] rounded-lg bg-[#00989E] items-center justify-center">
                         <p>Nombre del documento</p>
                         <p className="text-white text-[20px]">{request.namedoc}</p>
                       </div>
-                      <div className="flex flex-col font-semibold w-[130px] h-[60px] rounded-lg bg-[#DC0941] items-center justify-center">
+                      <div className="flex flex-col font-semibold w-[130px] h-[60px] rounded-lg bg-[#00989E] items-center justify-center">
                         <p>Folio</p>
                         <p className="text-white text-[20px]">{request.folio}</p>
                       </div>
-                      <div className="flex items-center justify-center space-x-2 bg-[#DC0941] rounded-lg w-[250px] h-[60px]">
+                      <div className="flex items-center justify-center space-x-2 bg-[#00989E] rounded-lg w-[250px] h-[60px]">
                         <Icon
                           icon="fluent-mdl2:date-time"
                           className="w-[40px] h-[40px]"
@@ -310,9 +302,9 @@ function SoliRasp(): JSX.Element {
                         <ModalBody>
                           <ModalHeader className="flex gap-1">
                             <Icon
-                              icon="mdi:raspberry-pi"
+                              icon="mdi:chip"
                               className="w-[50px] h-[50px] mr-5"
-                              color="#DC0941"
+                              color="#00989E"
                             />
                             <p>
                               Solcitud de caja {numbox} con folio: {folio}
@@ -359,4 +351,4 @@ function SoliRasp(): JSX.Element {
   )
 }
 
-export default SoliRasp
+export default SoliArd

@@ -17,7 +17,11 @@ import {
   viableBoxesRasp,
   activeRequestsRasp,
   completedRequestsRasp,
-  alumnsforRequestRasp
+  alumnsforRequestRasp,
+  viableBoxesArd,
+  activeRequestsArd,
+  completedRequestsArd,
+  alumnsforRequestArd
 } from './dataConsult'
 import { deleteDoc } from './deleteDocument'
 
@@ -406,7 +410,7 @@ ipcMain.on('windowRasp', async (event, argumentos) => {
   })
 
   //All requests
-  ipcMain.on('AllRequests', async (event, arg) => {
+  ipcMain.on('AllRequestsR', async (event, arg) => {
     try {
       const resultactiveRequests = (await activeRequestsRasp()) as Request[]
       resultactiveRequests.forEach((item) => {
@@ -424,7 +428,7 @@ ipcMain.on('windowRasp', async (event, argumentos) => {
         item.fechfinish = fechaf.toLocaleDateString('es-MX', { timeZone: 'America/Mexico_City' })
       })
       //console.log(resultcompletedRequests)
-      event.reply('AllRequests-reply', [resultactiveRequests, resultcompletedRequests])
+      event.reply('AllRequestsR-reply', [resultactiveRequests, resultcompletedRequests])
     } catch (error) {
       console.error(error)
     }
@@ -495,7 +499,131 @@ ipcMain.on('windowArd', async (event, argumentos) => {
   // Carga la ruta deseada en la nueva ventana
   ardWindow.loadURL(
     is.dev
-      ? process.env['ELECTRON_RENDERER_URL'] + '#/arduino'
-      : `file://${join(__dirname, '../renderer/index.html')}#/arduino`
+      ? process.env['ELECTRON_RENDERER_URL'] + '#/arduino/kitalumnard'
+      : `file://${join(__dirname, '../renderer/index.html')}#/arduino/kitalumnard`
   )
+
+  //Function see viable Boxes
+  ipcMain.on('viableBoxesArd', async (event, arg) => {
+    //console.log('Peticion de una caja disponible')
+    try {
+      const result = await viableBoxesArd(arg)
+      //console.log(result)
+      event.reply('viableBoxesArd-reply', result)
+    } catch (error) {
+      console.error(error)
+    }
+  })
+
+  //Function petition alumns box LegoSpike alumno
+  ipcMain.on('petitionA', (event, arg) => {
+    //console.log('Peticion de una caja para alumnos')
+    //console.log(arg[0]) //?numero de caja
+    //console.log(arg[1]) //?arreglo alumnos
+    //console.log(arg[2]) //?ruta de archivo
+    //let nombreArchivo = path.basename(arg[2])
+    //console.log(nombreArchivo) //?nombre del archivo
+    //console.log(arg[3])//?fecha del registro
+    //console.log(arg[4])//?folio del registro
+    //console.log(arg[5])//?fecha para finalizar
+    //console.log(arg)
+    sendEmail(arg[2], arg[0], 'LegoSpike', arg[4], arg[1])
+      .then((response) => {
+        const notification = {
+          title: 'Linkify',
+          body: 'La petición y correo se enviaron correctamente'
+        }
+        new Notification(notification).show()
+        insertData(arg, 'arduino')
+        event.reply('petitionA-reply', 1)
+      })
+      .catch((error) => {
+        const notification = {
+          title: 'Linkify',
+          body: 'Error al enviar correo, verifica tu conexión de internet.'
+        }
+        new Notification(notification).show()
+        deleteDoc(arg[2])
+        event.reply('petitionA-reply', 'No enviado, intentalo de nuevo')
+      })
+  })
+
+  //Message option
+  ipcMain.on('msgOption', (event, arg) => {
+    const notification = {
+      title: 'Linkify',
+      body: arg
+    }
+    new Notification(notification).show()
+  })
+
+  //All requests
+  ipcMain.on('AllRequestsA', async (event, arg) => {
+    try {
+      const resultactiveRequests = (await activeRequestsArd()) as Request[]
+      resultactiveRequests.forEach((item) => {
+        let fechar = new Date(item.fechreg)
+        let fechaf = new Date(item.fechfinish)
+        item.fechreg = fechar.toLocaleDateString('es-MX')
+        item.fechfinish = fechaf.toLocaleDateString('es-MX', { timeZone: 'America/Mexico_City' })
+      })
+      //console.log(resultactiveRequests)
+      const resultcompletedRequests = (await completedRequestsArd()) as Request[]
+      resultcompletedRequests.forEach((item) => {
+        let fechar = new Date(item.fechreg)
+        let fechaf = new Date(item.fechfinish)
+        item.fechreg = fechar.toLocaleDateString('es-MX')
+        item.fechfinish = fechaf.toLocaleDateString('es-MX', { timeZone: 'America/Mexico_City' })
+      })
+      //console.log(resultcompletedRequests)
+      event.reply('AllRequestsA-reply', [resultactiveRequests, resultcompletedRequests])
+    } catch (error) {
+      console.error(error)
+    }
+  })
+
+  //Alumns request
+  ipcMain.on('AlumnsRequestA', async (event, arg) => {
+    //console.log(arg)
+    try {
+      const alumnsRe = await alumnsforRequestArd(arg)
+      //console.log(alumnsRe)
+      event.reply('AlumnsRequestA-reply', alumnsRe)
+    } catch (error) {
+      console.error(error)
+    }
+  })
+
+  //Finish request
+  ipcMain.on('FinishRequest', async (event, arg) => {
+    //console.log(arg)
+    if (arg[0] === '5690') {
+      try {
+        finishidRequest(arg)
+          .then((results) => {
+            const notification = {
+              title: 'Linkify',
+              body: 'Prestamo finalizado.'
+            }
+            new Notification(notification).show()
+            event.reply('FinishRequest-reply', 1)
+          })
+          .catch((error) => {
+            const notification = {
+              title: 'Linkify',
+              body: 'Error, intentalo de nuevo.'
+            }
+            new Notification(notification).show()
+          })
+      } catch (error) {
+        console.error(error)
+      }
+    } else {
+      const notification = {
+        title: 'Linkify',
+        body: 'PIN incorrecto.'
+      }
+      new Notification(notification).show()
+    }
+  })
 })

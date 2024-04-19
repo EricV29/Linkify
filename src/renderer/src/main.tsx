@@ -14,6 +14,8 @@ import Soli from './Solicitud'
 import Welcome from './Welcome'
 import KitRasp from './KitRasp'
 import SoliRasp from './SoliRasp'
+import KitArd from './KitArd'
+import SoliArd from './SoliArd'
 
 const rootElement = document.getElementById('root')
 
@@ -42,7 +44,10 @@ root.render(
           <Route path="solirasp" element={<SoliRasp />} />
         </Route>
 
-        <Route path="/arduino" element={<Arduino />}></Route>
+        <Route path="/arduino" element={<Arduino />}>
+          <Route path="kitalumnard" element={<KitArd />} />
+          <Route path="soliard" element={<SoliArd />} />
+        </Route>
       </Routes>
     </HashRouter>
   </React.StrictMode>

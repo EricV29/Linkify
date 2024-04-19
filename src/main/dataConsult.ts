@@ -128,3 +128,57 @@ export async function alumnsforRequestRasp(arg) {
 }
 
 //!ARDUINO QUERY
+
+export async function viableBoxesArd(arg) {
+  const connection = await getConnection()
+
+  let petitionQuery = `SELECT numbox FROM petition WHERE fechreg LIKE ? AND state = 1 and tool = 'arduino'`
+  let formattedArg = '%' + arg + '%'
+
+  return new Promise((resolve, reject) => {
+    connection.query(petitionQuery, [formattedArg], (error, results, fields) => {
+      if (error) reject(error)
+      resolve(results)
+    })
+  })
+}
+
+export async function activeRequestsArd() {
+  const connection = await getConnection()
+
+  let petitionQuery = `SELECT idPetition, numbox, namedoc, folio, fechreg, fechfinish, state FROM petition where state = 1 and tool = 'arduino'`
+
+  return new Promise((resolve, reject) => {
+    connection.query(petitionQuery, (error, results, fields) => {
+      if (error) reject(error)
+      resolve(results)
+    })
+  })
+}
+
+export async function completedRequestsArd() {
+  const connection = await getConnection()
+
+  let petitionQuery = `SELECT idPetition, numbox, namedoc, folio, fechreg, fechfinish, state FROM petition where state = 0 and tool = 'arduino'`
+
+  return new Promise((resolve, reject) => {
+    connection.query(petitionQuery, (error, results, fields) => {
+      if (error) reject(error)
+      resolve(results)
+    })
+  })
+}
+
+export async function alumnsforRequestArd(arg) {
+  const connection = await getConnection()
+
+  let petitionQuery =
+    'SELECT numaccount, nameAlumn FROM petition_users as ptu inner join petition as pet on ptu.idPetition = pet.idPetition where ptu.idPetition = ?'
+
+  return new Promise((resolve, reject) => {
+    connection.query(petitionQuery, [arg], (error, results, fields) => {
+      if (error) reject(error)
+      resolve(results)
+    })
+  })
+}
