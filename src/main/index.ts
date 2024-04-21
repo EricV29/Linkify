@@ -5,8 +5,6 @@ import icon from '../../resources/linki.ico?asset'
 import './database'
 import { getConnection } from './database'
 import { sendEmail } from './mail'
-const fs = require('fs')
-const path = require('path')
 import { insertData } from './petitionSQL'
 import {
   viableBoxes,
@@ -17,6 +15,8 @@ import {
 } from './dataConsult'
 import { deleteDoc } from './deleteDocument'
 
+const fs = require('fs')
+const path = require('path')
 let dataUser = ''
 let newWindow
 let legoWindow
@@ -68,6 +68,7 @@ ipcMain.on('login', async (event, argumentos) => {
         newWindow = new BrowserWindow({
           width: 1400,
           height: 800,
+          autoHideMenuBar: true,
           ...(process.platform === 'linux' ? { icon } : { icon }),
           webPreferences: {
             preload: join(__dirname, '../preload/index.js'),
@@ -131,7 +132,7 @@ function createWindow(): void {
     minHeight: 670,
     minWidth: 900,
     show: false,
-    //autoHideMenuBar: true,
+    autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : { icon }),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
@@ -186,11 +187,12 @@ interface Request {
 
 //TODO: CREAR VENTANA LEGO SPIKE (LEGO) NOMBRE = legoWindow
 ipcMain.on('windowSpike', async (event, argumentos) => {
-  console.log('Ventana abierta de lego')
+  //console.log('Ventana abierta de lego')
   // Crea una nueva ventana
   legoWindow = new BrowserWindow({
     width: 1400,
     height: 800,
+    autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : { icon }),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
@@ -210,11 +212,12 @@ ipcMain.on('windowSpike', async (event, argumentos) => {
 
 //TODO: CREAR VENTANA RASPBERRY NOMBRE = raspWindow
 ipcMain.on('windowRasp', async (event, argumentos) => {
-  console.log('Ventana abierta de raspberry')
+  //console.log('Ventana abierta de raspberry')
   // Crea una nueva ventana
   raspWindow = new BrowserWindow({
     width: 1400,
     height: 800,
+    autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : { icon }),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
@@ -234,11 +237,12 @@ ipcMain.on('windowRasp', async (event, argumentos) => {
 
 //TODO: CREAR VENTANA ARDUINO NOMBRE = ardWindow
 ipcMain.on('windowArd', async (event, argumentos) => {
-  console.log('Ventana abierta de arduino')
+  //console.log('Ventana abierta de arduino')
   // Crea una nueva ventana
   ardWindow = new BrowserWindow({
     width: 1400,
     height: 800,
+    autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : { icon }),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),

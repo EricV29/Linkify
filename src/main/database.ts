@@ -1,3 +1,4 @@
+require('dotenv').config()
 import * as mysql from 'promise-mysql'
 
 let connection
@@ -5,10 +6,10 @@ let connection
 export const getConnection = async () => {
   if (!connection) {
     connection = await mysql.createConnection({
-      host: 'localhost',
-      user: 'root',
-      password: 'jared100',
-      database: 'linkifydb'
+      host: process.env.HOST,
+      user: process.env.USER,
+      password: process.env.PASSWORDDB,
+      database: process.env.DB
     })
   }
   return connection

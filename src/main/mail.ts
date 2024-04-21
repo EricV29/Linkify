@@ -1,3 +1,4 @@
+require('dotenv').config()
 const nodemailer = require('nodemailer')
 let path = require('path')
 
@@ -7,19 +8,19 @@ export function sendEmail(pathdoc, numbox, tool, ide, users) {
     service: 'gmail',
     host: 'smtp.gmail.com',
     secure: true,
-    port: 465,
+    port: process.env.PORTEMAIL,
     auth: {
-      user: 'elinkify@gmail.com',
-      pass: 'ymiy ttli lyla iahn'
+      user: process.env.USEREMAIL,
+      pass: process.env.TOKENEMAIL
     }
   })
 
   let mailOptions = {
     from: {
       name: 'Linkify (Solicitud ' + ide + ' )',
-      address: 'elinkify@gmail.com'
+      address: process.env.USEREMAIL
     },
-    to: 'ericjared29@gmail.com',
+    to: process.env.ADDRESSEEEMAIL,
     subject: 'Solicitud de caja ' + numbox + ' de ' + tool,
     text: 'Documento',
     attachments: [

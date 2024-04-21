@@ -31,14 +31,6 @@ function App(): JSX.Element {
   const mutate = async (data: FormValues) => {
     //console.log(data)
     ipcRenderer.send('login', data)
-    /*ipcRenderer.once('login-reply', (event, success, name) => {
-      if (success) {
-        console.log(name)
-      } else {
-        console.log('Tu usuario o contraseña son incorrectos')
-      }
-    })*/
-    //ipcRenderer.send('ff', 'hola')
   }
 
   return (

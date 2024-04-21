@@ -98,7 +98,9 @@ function KitRasp(): JSX.Element {
       ipcRenderer.send('msgOption', 'Campos incompletos para agregar un usuario.')
     } else if (!/^[a-zA-Z]{2}\d{6}@uaeh\.edu\.mx$/.test(email)) {
       ipcRenderer.send('msgOption', 'Correo electrónico incorrecto.')
-    } else if (userss.length < 1) {
+    } else if (!/^.{6}$/.test(numaccount)) {
+      ipcRenderer.send('msgOption', 'El número de cuenta debe tener exactamente 6 caracteres.')
+    } else if (userss.length <= 9) {
       const newUser: User = {
         id: userId,
         namestudent: namestudent,
@@ -112,7 +114,7 @@ function KitRasp(): JSX.Element {
       setEmail('')
       setUserId(userId + 1)
     } else {
-      ipcRenderer.send('msgOption', 'No esta permitido agregar mas de un alumno.')
+      ipcRenderer.send('msgOption', 'No está permitido agregar más de 10 alumnos.')
     }
   }
 
