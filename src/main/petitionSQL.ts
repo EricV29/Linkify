@@ -1,12 +1,13 @@
 import { getConnection } from './database'
 
-export async function insertData(arg, tool) {
+export async function insertData(arg) {
   let numbox = arg[0]
   let students = arg[1]
   let namepath = arg[2]
   let fechreg = arg[3]
   let folio = arg[4]
   let fechfinish = arg[5]
+  let tool = arg[6]
   let namedoc = namepath.split('\\').pop()
   const connection = await getConnection()
 
@@ -37,7 +38,6 @@ export async function insertData(arg, tool) {
           [student.numaccount, student.email],
           (error, results, fields) => {
             if (error) throw error
-            //console.log('Registro de correo electrónico exitoso')
           }
         )
       })

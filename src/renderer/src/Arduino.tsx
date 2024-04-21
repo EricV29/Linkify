@@ -1,17 +1,21 @@
 import { Outlet } from 'react-router-dom'
 import NavbarArd from './components/NavbarArd'
-import legoSpikebg from './images/arduino.jpg'
-import KitArd from './KitArd'
+import arduinobg from './images/arduino.jpg'
+import Loading from './components/Loading'
+import loading from './store/load'
 
-function LegoSpike(): JSX.Element {
+function Arduino(): JSX.Element {
+  const { load } = loading()
+
   return (
     <>
-      <div className="w-screen h-screen flex flex-col m-0 p-0 justify-center overflow-hidden">
-        <div className="w-full h-[100px] z-10">
+      <div className="w-screen h-screen flex flex-col m-0 p-0 justify-center overflow-hidden ">
+        {load && <Loading />}
+        <div className="w-full h-[100px] z-10 animate-fade animate-once animate-duration-1000 animate-ease-in">
           <NavbarArd />
         </div>
         <div className="w-full h-full z-9 flex justify- p-0 m-0 items-center space-x-5 bg-[#fff] object-fill overflow-hidden">
-          <img src={legoSpikebg} alt="fondo" className="opacity-25" />
+          <img src={arduinobg} alt="fondo" className="opacity-25" />
           <div className="absolute bg-[#00989E55] w-[180vh] h-[85vh] rounded-[10px]">
             <Outlet />
           </div>
@@ -21,4 +25,4 @@ function LegoSpike(): JSX.Element {
   )
 }
 
-export default LegoSpike
+export default Arduino

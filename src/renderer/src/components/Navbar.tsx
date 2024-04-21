@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
-import prep6l from '../images/prep6l.png'
+//import prep6l from '../images/prep6l.png'
 import { Button } from '@nextui-org/react'
 import { Icon } from '@iconify/react'
 const ipcRenderer = require('electron').ipcRenderer
 import { Link } from 'react-router-dom'
+import linkilogo from '../images/linkilogo.png'
 
 function Navbar(): JSX.Element {
   const [nameuser, setNameuser] = useState(null)
@@ -25,17 +26,25 @@ function Navbar(): JSX.Element {
     ipcRenderer.send('exitApp', 'exit')
   }
 
+  //<img src={prep6l} alt="Prepa6Logotipo" className="w-[250px]" />
+
   return (
     <>
-      <div className="w-full h-full bg-[#ffffff] drop-shadow-xl flex justify-between items-center pr-6 pl-6">
-        <p className="text-[25px] font-bold">{nameuser}</p>
+      <div className="w-full h-full bg-[#343434] drop-shadow-xl flex justify-between items-center pr-6 pl-6">
+        <p className="text-[25px] font-bold text-[#00a539] animate-fade-right animate-once animate-ease-in-out">
+          {nameuser}
+        </p>
         <Link to="/menu">
-          <img src={prep6l} alt="Prepa6Logotipo" className="w-[250px]" />
+          <img
+            src={linkilogo}
+            alt="LinkiLogotipo"
+            className="w-[250px] animate-fade animate-once animate-ease-in"
+          />
         </Link>
         <Button
-          className="w-[117px] bg-[#a2191a] text-[#fff] font-bold"
+          className="w-[117px] bg-[#00a539] text-[#fff] font-bold"
           variant="shadow"
-          color="danger"
+          color="success"
           onClick={exitMenu}
         >
           SALIR <Icon icon="line-md:login" className="pt-1" width={25} />

@@ -11,7 +11,7 @@ function Menu(): JSX.Element {
         </div>
         <div className="w-full h-full z-9 flex justify-start items-center space-x-5 p-5 overflow-auto">
           <Sidebar />
-          <div className="w-full h-full bg-[#ffffff] rounded-[10px] overflow-auto drop-shadow-xl">
+          <div className="w-full h-full bg-[#ffffff] rounded-[10px] overflow-auto drop-shadow-xl border-1 border-[#34343430]">
             <Outlet />
           </div>
         </div>

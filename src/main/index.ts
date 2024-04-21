@@ -9,19 +9,11 @@ const fs = require('fs')
 const path = require('path')
 import { insertData } from './petitionSQL'
 import {
-  viableBoxesLego,
+  viableBoxes,
   activeRequests,
   completedRequests,
   alumnsforRequest,
-  finishidRequest,
-  viableBoxesRasp,
-  activeRequestsRasp,
-  completedRequestsRasp,
-  alumnsforRequestRasp,
-  viableBoxesArd,
-  activeRequestsArd,
-  completedRequestsArd,
-  alumnsforRequestArd
+  finishidRequest
 } from './dataConsult'
 import { deleteDoc } from './deleteDocument'
 
@@ -113,10 +105,18 @@ ipcMain.on('nameuser', (event, arg) => {
 
 // CERRAR SESION
 ipcMain.on('exitApp', (event, arg) => {
-  newWindow.close()
-  if (legoWindow) legoWindow.close()
-  if (raspWindow) raspWindow.close()
-  if (ardWindow) ardWindow.close()
+  if (newWindow && !newWindow.isDestroyed()) {
+    newWindow.close()
+  }
+  if (legoWindow && !legoWindow.isDestroyed()) {
+    legoWindow.close()
+  }
+  if (raspWindow && !raspWindow.isDestroyed()) {
+    raspWindow.close()
+  }
+  if (ardWindow && !ardWindow.isDestroyed()) {
+    ardWindow.close()
+  }
   createWindow()
 })
 
@@ -203,133 +203,9 @@ ipcMain.on('windowSpike', async (event, argumentos) => {
   // Carga la ruta deseada en la nueva ventana
   legoWindow.loadURL(
     is.dev
-      ? process.env['ELECTRON_RENDERER_URL'] + '#/legospike/kittec'
-      : `file://${join(__dirname, '../renderer/index.html')}#/legospike/kittec`
+      ? process.env['ELECTRON_RENDERER_URL'] + '#/legospike/kitleg'
+      : `file://${join(__dirname, '../renderer/index.html')}#/legospike/kitleg`
   )
-
-  //Function see viable Boxes
-  ipcMain.on('viableBoxes', async (event, arg) => {
-    //console.log('Peticion de una caja disponible')
-    try {
-      const result = await viableBoxesLego(arg)
-      //console.log(result)
-      event.reply('viableBoxes-reply', result)
-    } catch (error) {
-      console.error(error)
-    }
-  })
-
-  //Function petition alumns box LegoSpike alumno
-  ipcMain.on('petitionA', (event, arg) => {
-    //console.log('Peticion de una caja para alumnos')
-    //console.log(arg[0]) //?numero de caja
-    //console.log(arg[1]) //?arreglo alumnos
-    //console.log(arg[2]) //?ruta de archivo
-    //let nombreArchivo = path.basename(arg[2])
-    //console.log(nombreArchivo) //?nombre del archivo
-    //console.log(arg[3])//?fecha del registro
-    //console.log(arg[4])//?folio del registro
-    //console.log(arg[5])//?fecha para finalizar
-    //console.log(arg)
-    sendEmail(arg[2], arg[0], 'LegoSpike', arg[4], arg[1])
-      .then((response) => {
-        const notification = {
-          title: 'Linkify',
-          body: 'La petición y correo se enviaron correctamente'
-        }
-        new Notification(notification).show()
-        insertData(arg, 'lego')
-        event.reply('petitionA-reply', 1)
-      })
-      .catch((error) => {
-        const notification = {
-          title: 'Linkify',
-          body: 'Error al enviar correo, verifica tu conexión de internet.'
-        }
-        new Notification(notification).show()
-        deleteDoc(arg[2])
-        event.reply('petitionA-reply', 'No enviado, intentalo de nuevo')
-      })
-  })
-
-  //Message option
-  ipcMain.on('msgOption', (event, arg) => {
-    const notification = {
-      title: 'Linkify',
-      body: arg
-    }
-    new Notification(notification).show()
-  })
-
-  //All requests
-  ipcMain.on('AllRequests', async (event, arg) => {
-    try {
-      const resultactiveRequests = (await activeRequests()) as Request[]
-      resultactiveRequests.forEach((item) => {
-        let fechar = new Date(item.fechreg)
-        let fechaf = new Date(item.fechfinish)
-        item.fechreg = fechar.toLocaleDateString('es-MX')
-        item.fechfinish = fechaf.toLocaleDateString('es-MX', { timeZone: 'America/Mexico_City' })
-      })
-      //console.log(resultactiveRequests)
-      const resultcompletedRequests = (await completedRequests()) as Request[]
-      resultcompletedRequests.forEach((item) => {
-        let fechar = new Date(item.fechreg)
-        let fechaf = new Date(item.fechfinish)
-        item.fechreg = fechar.toLocaleDateString('es-MX')
-        item.fechfinish = fechaf.toLocaleDateString('es-MX', { timeZone: 'America/Mexico_City' })
-      })
-      //console.log(resultcompletedRequests)
-      event.reply('AllRequests-reply', [resultactiveRequests, resultcompletedRequests])
-    } catch (error) {
-      console.error(error)
-    }
-  })
-
-  //Alumns request
-  ipcMain.on('AlumnsRequest', async (event, arg) => {
-    //console.log(arg)
-    try {
-      const alumnsRe = await alumnsforRequest(arg)
-      //console.log(alumnsRe)
-      event.reply('AlumnsRequest-reply', alumnsRe)
-    } catch (error) {
-      console.error(error)
-    }
-  })
-
-  //Finish request
-  ipcMain.on('FinishRequest', async (event, arg) => {
-    //console.log(arg)
-    if (arg[0] === '5690') {
-      try {
-        finishidRequest(arg)
-          .then((results) => {
-            const notification = {
-              title: 'Linkify',
-              body: 'Prestamo finalizado.'
-            }
-            new Notification(notification).show()
-            event.reply('FinishRequest-reply', 1)
-          })
-          .catch((error) => {
-            const notification = {
-              title: 'Linkify',
-              body: 'Error, intentalo de nuevo.'
-            }
-            new Notification(notification).show()
-          })
-      } catch (error) {
-        console.error(error)
-      }
-    } else {
-      const notification = {
-        title: 'Linkify',
-        body: 'PIN incorrecto.'
-      }
-      new Notification(notification).show()
-    }
-  })
 })
 
 //TODO: CREAR VENTANA RASPBERRY NOMBRE = raspWindow
@@ -354,135 +230,11 @@ ipcMain.on('windowRasp', async (event, argumentos) => {
       ? process.env['ELECTRON_RENDERER_URL'] + '#/raspberry/kitalumnrasp'
       : `file://${join(__dirname, '../renderer/index.html')}#/raspberry/kitalumnrasp`
   )
-
-  //Function see viable Boxes
-  ipcMain.on('viableBoxesRasp', async (event, arg) => {
-    //console.log('Peticion de una caja disponible')
-    try {
-      const result = await viableBoxesRasp(arg)
-      //console.log(result)
-      event.reply('viableBoxesRasp-reply', result)
-    } catch (error) {
-      console.error(error)
-    }
-  })
-
-  //Function petition alumns box LegoSpike alumno
-  ipcMain.on('petitionA', (event, arg) => {
-    //console.log('Peticion de una caja para alumnos')
-    //console.log(arg[0]) //?numero de caja
-    //console.log(arg[1]) //?arreglo alumnos
-    //console.log(arg[2]) //?ruta de archivo
-    //let nombreArchivo = path.basename(arg[2])
-    //console.log(nombreArchivo) //?nombre del archivo
-    //console.log(arg[3])//?fecha del registro
-    //console.log(arg[4])//?folio del registro
-    //console.log(arg[5])//?fecha para finalizar
-    //console.log(arg)
-    sendEmail(arg[2], arg[0], 'RaspBerry', arg[4], arg[1])
-      .then((response) => {
-        const notification = {
-          title: 'Linkify',
-          body: 'La petición y correo se enviaron correctamente'
-        }
-        new Notification(notification).show()
-        insertData(arg, 'raspberry')
-        event.reply('petitionA-reply', 1)
-      })
-      .catch((error) => {
-        const notification = {
-          title: 'Linkify',
-          body: 'Error al enviar correo, verifica tu conexión de internet.'
-        }
-        new Notification(notification).show()
-        deleteDoc(arg[2])
-        event.reply('petitionA-reply', 'No enviado, intentalo de nuevo')
-      })
-  })
-
-  //Message option
-  ipcMain.on('msgOption', (event, arg) => {
-    const notification = {
-      title: 'Linkify',
-      body: arg
-    }
-    new Notification(notification).show()
-  })
-
-  //All requests
-  ipcMain.on('AllRequestsR', async (event, arg) => {
-    try {
-      const resultactiveRequests = (await activeRequestsRasp()) as Request[]
-      resultactiveRequests.forEach((item) => {
-        let fechar = new Date(item.fechreg)
-        let fechaf = new Date(item.fechfinish)
-        item.fechreg = fechar.toLocaleDateString('es-MX')
-        item.fechfinish = fechaf.toLocaleDateString('es-MX', { timeZone: 'America/Mexico_City' })
-      })
-      //console.log(resultactiveRequests)
-      const resultcompletedRequests = (await completedRequestsRasp()) as Request[]
-      resultcompletedRequests.forEach((item) => {
-        let fechar = new Date(item.fechreg)
-        let fechaf = new Date(item.fechfinish)
-        item.fechreg = fechar.toLocaleDateString('es-MX')
-        item.fechfinish = fechaf.toLocaleDateString('es-MX', { timeZone: 'America/Mexico_City' })
-      })
-      //console.log(resultcompletedRequests)
-      event.reply('AllRequestsR-reply', [resultactiveRequests, resultcompletedRequests])
-    } catch (error) {
-      console.error(error)
-    }
-  })
-
-  //Alumns request
-  ipcMain.on('AlumnsRequest', async (event, arg) => {
-    //console.log(arg)
-    try {
-      const alumnsRe = await alumnsforRequestRasp(arg)
-      //console.log(alumnsRe)
-      event.reply('AlumnsRequest-reply', alumnsRe)
-    } catch (error) {
-      console.error(error)
-    }
-  })
-
-  //Finish request
-  ipcMain.on('FinishRequest', async (event, arg) => {
-    //console.log(arg)
-    if (arg[0] === '5690') {
-      try {
-        finishidRequest(arg)
-          .then((results) => {
-            const notification = {
-              title: 'Linkify',
-              body: 'Prestamo finalizado.'
-            }
-            new Notification(notification).show()
-            event.reply('FinishRequest-reply', 1)
-          })
-          .catch((error) => {
-            const notification = {
-              title: 'Linkify',
-              body: 'Error, intentalo de nuevo.'
-            }
-            new Notification(notification).show()
-          })
-      } catch (error) {
-        console.error(error)
-      }
-    } else {
-      const notification = {
-        title: 'Linkify',
-        body: 'PIN incorrecto.'
-      }
-      new Notification(notification).show()
-    }
-  })
 })
 
 //TODO: CREAR VENTANA ARDUINO NOMBRE = ardWindow
 ipcMain.on('windowArd', async (event, argumentos) => {
-  console.log('Ventana abierta de raspberry')
+  console.log('Ventana abierta de arduino')
   // Crea una nueva ventana
   ardWindow = new BrowserWindow({
     width: 1400,
@@ -502,128 +254,130 @@ ipcMain.on('windowArd', async (event, argumentos) => {
       ? process.env['ELECTRON_RENDERER_URL'] + '#/arduino/kitalumnard'
       : `file://${join(__dirname, '../renderer/index.html')}#/arduino/kitalumnard`
   )
+})
 
-  //Function see viable Boxes
-  ipcMain.on('viableBoxesArd', async (event, arg) => {
-    //console.log('Peticion de una caja disponible')
-    try {
-      const result = await viableBoxesArd(arg)
-      //console.log(result)
-      event.reply('viableBoxesArd-reply', result)
-    } catch (error) {
-      console.error(error)
-    }
-  })
+//TODO: FUNCTIONS FOR TOOLS
+//Message option
+ipcMain.on('msgOption', (event, arg) => {
+  const notification = {
+    title: 'Linkify',
+    body: arg
+  }
+  new Notification(notification).show()
+})
 
-  //Function petition alumns box LegoSpike alumno
-  ipcMain.on('petitionA', (event, arg) => {
-    //console.log('Peticion de una caja para alumnos')
-    //console.log(arg[0]) //?numero de caja
-    //console.log(arg[1]) //?arreglo alumnos
-    //console.log(arg[2]) //?ruta de archivo
-    //let nombreArchivo = path.basename(arg[2])
-    //console.log(nombreArchivo) //?nombre del archivo
-    //console.log(arg[3])//?fecha del registro
-    //console.log(arg[4])//?folio del registro
-    //console.log(arg[5])//?fecha para finalizar
-    //console.log(arg)
-    sendEmail(arg[2], arg[0], 'LegoSpike', arg[4], arg[1])
-      .then((response) => {
-        const notification = {
-          title: 'Linkify',
-          body: 'La petición y correo se enviaron correctamente'
-        }
-        new Notification(notification).show()
-        insertData(arg, 'arduino')
-        event.reply('petitionA-reply', 1)
-      })
-      .catch((error) => {
-        const notification = {
-          title: 'Linkify',
-          body: 'Error al enviar correo, verifica tu conexión de internet.'
-        }
-        new Notification(notification).show()
-        deleteDoc(arg[2])
-        event.reply('petitionA-reply', 'No enviado, intentalo de nuevo')
-      })
-  })
+//Viable Boxes
+ipcMain.on('viableBoxes', async (event, arg) => {
+  try {
+    const result = await viableBoxes(arg)
+    //console.log(result)
+    event.reply('viableBoxes-reply', result)
+  } catch (error) {
+    console.error(error)
+  }
+})
 
-  //Message option
-  ipcMain.on('msgOption', (event, arg) => {
-    const notification = {
-      title: 'Linkify',
-      body: arg
-    }
-    new Notification(notification).show()
-  })
-
-  //All requests
-  ipcMain.on('AllRequestsA', async (event, arg) => {
-    try {
-      const resultactiveRequests = (await activeRequestsArd()) as Request[]
-      resultactiveRequests.forEach((item) => {
-        let fechar = new Date(item.fechreg)
-        let fechaf = new Date(item.fechfinish)
-        item.fechreg = fechar.toLocaleDateString('es-MX')
-        item.fechfinish = fechaf.toLocaleDateString('es-MX', { timeZone: 'America/Mexico_City' })
-      })
-      //console.log(resultactiveRequests)
-      const resultcompletedRequests = (await completedRequestsArd()) as Request[]
-      resultcompletedRequests.forEach((item) => {
-        let fechar = new Date(item.fechreg)
-        let fechaf = new Date(item.fechfinish)
-        item.fechreg = fechar.toLocaleDateString('es-MX')
-        item.fechfinish = fechaf.toLocaleDateString('es-MX', { timeZone: 'America/Mexico_City' })
-      })
-      //console.log(resultcompletedRequests)
-      event.reply('AllRequestsA-reply', [resultactiveRequests, resultcompletedRequests])
-    } catch (error) {
-      console.error(error)
-    }
-  })
-
-  //Alumns request
-  ipcMain.on('AlumnsRequestA', async (event, arg) => {
-    //console.log(arg)
-    try {
-      const alumnsRe = await alumnsforRequestArd(arg)
-      //console.log(alumnsRe)
-      event.reply('AlumnsRequestA-reply', alumnsRe)
-    } catch (error) {
-      console.error(error)
-    }
-  })
-
-  //Finish request
-  ipcMain.on('FinishRequest', async (event, arg) => {
-    //console.log(arg)
-    if (arg[0] === '5690') {
-      try {
-        finishidRequest(arg)
-          .then((results) => {
-            const notification = {
-              title: 'Linkify',
-              body: 'Prestamo finalizado.'
-            }
-            new Notification(notification).show()
-            event.reply('FinishRequest-reply', 1)
-          })
-          .catch((error) => {
-            const notification = {
-              title: 'Linkify',
-              body: 'Error, intentalo de nuevo.'
-            }
-            new Notification(notification).show()
-          })
-      } catch (error) {
-        console.error(error)
-      }
-    } else {
+//Function save record to DB and send emails
+ipcMain.on('saveDBsendEM', (event, arg) => {
+  //console.log('Peticion de una caja para alumnos')
+  //? arg[0] numero de caja
+  //? arg[1] arreglo alumnos
+  //? arg[2] ruta de archivo
+  //? let nombreArchivo = path.basename(arg[2]) // nombre del archivo
+  //? arg[3] fecha del registro
+  //? arg[4] folio del registro
+  //? arg[5] fecha para finalizar
+  //? arg[6] herramienta
+  //send emails
+  sendEmail(arg[2], arg[0], arg[6], arg[4], arg[1])
+    .then((response) => {
       const notification = {
         title: 'Linkify',
-        body: 'PIN incorrecto.'
+        body: 'La petición y correo se enviaron correctamente.'
       }
       new Notification(notification).show()
+      //save data to DB
+      insertData(arg)
+      event.reply('saveDBsendEM-reply', 1)
+    })
+    .catch((error) => {
+      const notification = {
+        title: 'Linkify',
+        body: 'Error al enviar correo, verifica tu conexión de internet.'
+      }
+      new Notification(notification).show()
+      deleteDoc(arg[2])
+      event.reply('saveDBsendEM-reply', 0)
+    })
+})
+
+//All requests
+ipcMain.on('AllRequests', async (event, arg) => {
+  try {
+    const resultactiveRequests = (await activeRequests(arg)) as Request[]
+    resultactiveRequests.forEach((item) => {
+      let fechar = new Date(item.fechreg)
+      let fechaf = new Date(item.fechfinish)
+      item.fechreg = fechar.toLocaleDateString('es-MX')
+      item.fechfinish = fechaf.toLocaleDateString('es-MX', { timeZone: 'America/Mexico_City' })
+    })
+    //console.log(resultactiveRequests)
+    const resultcompletedRequests = (await completedRequests(arg)) as Request[]
+    resultcompletedRequests.forEach((item) => {
+      let fechar = new Date(item.fechreg)
+      let fechaf = new Date(item.fechfinish)
+      item.fechreg = fechar.toLocaleDateString('es-MX')
+      item.fechfinish = fechaf.toLocaleDateString('es-MX', { timeZone: 'America/Mexico_City' })
+    })
+    //console.log(resultcompletedRequests)
+    event.reply('AllRequests-reply', [resultactiveRequests, resultcompletedRequests])
+  } catch (error) {
+    console.error(error)
+  }
+})
+
+//Alumns request
+ipcMain.on('AlumnsRequest', async (event, arg) => {
+  //console.log(arg)
+  try {
+    const alumnsRe = await alumnsforRequest(arg)
+    //console.log(alumnsRe)
+    event.reply('AlumnsRequest-reply', alumnsRe)
+  } catch (error) {
+    console.error(error)
+  }
+})
+
+//Finish request
+ipcMain.on('FinishRequest', async (event, arg) => {
+  //console.log(arg)
+  if (arg[0] === '5690') {
+    try {
+      finishidRequest(arg)
+        .then((results) => {
+          const notification = {
+            title: 'Linkify',
+            body: 'Prestamo finalizado.'
+          }
+          new Notification(notification).show()
+          event.reply('FinishRequest-reply', 1)
+        })
+        .catch((error) => {
+          const notification = {
+            title: 'Linkify',
+            body: 'Error, intentalo de nuevo.'
+          }
+          new Notification(notification).show()
+          event.reply('FinishRequest-reply', 0)
+        })
+    } catch (error) {
+      console.error(error)
     }
-  })
+  } else {
+    const notification = {
+      title: 'Linkify',
+      body: 'PIN incorrecto.'
+    }
+    new Notification(notification).show()
+  }
 })

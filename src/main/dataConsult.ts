@@ -1,47 +1,49 @@
 import { getConnection } from './database'
 
-//!LEGOSPIKE QUERY
-
-export async function viableBoxesLego(arg) {
+//VIABLE BOXES
+export async function viableBoxes(arg) {
   const connection = await getConnection()
 
-  let petitionQuery = `SELECT numbox FROM petition WHERE fechreg LIKE ? AND state = 1 and tool = 'lego'`
-  let formattedArg = '%' + arg + '%'
+  let petitionQuery = `SELECT numbox FROM petition WHERE fechreg LIKE ? AND state = 1 and tool = ?`
+  let formattedArg = '%' + arg[0] + '%'
 
   return new Promise((resolve, reject) => {
-    connection.query(petitionQuery, [formattedArg], (error, results, fields) => {
+    connection.query(petitionQuery, [formattedArg, arg[1]], (error, results, fields) => {
       if (error) reject(error)
       resolve(results)
     })
   })
 }
 
-export async function activeRequests() {
+//ACTIVE REQUESTS
+export async function activeRequests(arg) {
   const connection = await getConnection()
 
-  let petitionQuery = `SELECT idPetition, numbox, namedoc, folio, fechreg, fechfinish, state FROM petition where state = 1 and tool = 'lego'`
+  let petitionQuery = `SELECT idPetition, numbox, namedoc, folio, fechreg, fechfinish, state FROM petition where state = 1 and tool = ?`
 
   return new Promise((resolve, reject) => {
-    connection.query(petitionQuery, (error, results, fields) => {
+    connection.query(petitionQuery, arg, (error, results, fields) => {
       if (error) reject(error)
       resolve(results)
     })
   })
 }
 
-export async function completedRequests() {
+//COMPLETE REQUESTS
+export async function completedRequests(arg) {
   const connection = await getConnection()
 
-  let petitionQuery = `SELECT idPetition, numbox, namedoc, folio, fechreg, fechfinish, state FROM petition where state = 0 and tool = 'lego'`
+  let petitionQuery = `SELECT idPetition, numbox, namedoc, folio, fechreg, fechfinish, state FROM petition where state = 0 and tool = ?`
 
   return new Promise((resolve, reject) => {
-    connection.query(petitionQuery, (error, results, fields) => {
+    connection.query(petitionQuery, arg, (error, results, fields) => {
       if (error) reject(error)
       resolve(results)
     })
   })
 }
 
+//ALUMNS FOR REQUEST
 export async function alumnsforRequest(arg) {
   const connection = await getConnection()
 
@@ -56,8 +58,7 @@ export async function alumnsforRequest(arg) {
   })
 }
 
-//!GENERAL QUERY
-
+//FINISH REQUEST
 export async function finishidRequest(arg) {
   const connection = await getConnection()
 
@@ -65,118 +66,6 @@ export async function finishidRequest(arg) {
 
   return new Promise((resolve, reject) => {
     connection.query(petitionQuery, [arg[1]], (error, results, fields) => {
-      if (error) reject(error)
-      resolve(results)
-    })
-  })
-}
-
-//!RASPBERRY QUERY
-
-export async function viableBoxesRasp(arg) {
-  const connection = await getConnection()
-
-  let petitionQuery = `SELECT numbox FROM petition WHERE fechreg LIKE ? AND state = 1 and tool = 'raspberry'`
-  let formattedArg = '%' + arg + '%'
-
-  return new Promise((resolve, reject) => {
-    connection.query(petitionQuery, [formattedArg], (error, results, fields) => {
-      if (error) reject(error)
-      resolve(results)
-    })
-  })
-}
-
-export async function activeRequestsRasp() {
-  const connection = await getConnection()
-
-  let petitionQuery = `SELECT idPetition, numbox, namedoc, folio, fechreg, fechfinish, state FROM petition where state = 1 and tool = 'raspberry'`
-
-  return new Promise((resolve, reject) => {
-    connection.query(petitionQuery, (error, results, fields) => {
-      if (error) reject(error)
-      resolve(results)
-    })
-  })
-}
-
-export async function completedRequestsRasp() {
-  const connection = await getConnection()
-
-  let petitionQuery = `SELECT idPetition, numbox, namedoc, folio, fechreg, fechfinish, state FROM petition where state = 0 and tool = 'raspberry'`
-
-  return new Promise((resolve, reject) => {
-    connection.query(petitionQuery, (error, results, fields) => {
-      if (error) reject(error)
-      resolve(results)
-    })
-  })
-}
-
-export async function alumnsforRequestRasp(arg) {
-  const connection = await getConnection()
-
-  let petitionQuery =
-    'SELECT numaccount, nameAlumn FROM petition_users as ptu inner join petition as pet on ptu.idPetition = pet.idPetition where ptu.idPetition = ?'
-
-  return new Promise((resolve, reject) => {
-    connection.query(petitionQuery, [arg], (error, results, fields) => {
-      if (error) reject(error)
-      resolve(results)
-    })
-  })
-}
-
-//!ARDUINO QUERY
-
-export async function viableBoxesArd(arg) {
-  const connection = await getConnection()
-
-  let petitionQuery = `SELECT numbox FROM petition WHERE fechreg LIKE ? AND state = 1 and tool = 'arduino'`
-  let formattedArg = '%' + arg + '%'
-
-  return new Promise((resolve, reject) => {
-    connection.query(petitionQuery, [formattedArg], (error, results, fields) => {
-      if (error) reject(error)
-      resolve(results)
-    })
-  })
-}
-
-export async function activeRequestsArd() {
-  const connection = await getConnection()
-
-  let petitionQuery = `SELECT idPetition, numbox, namedoc, folio, fechreg, fechfinish, state FROM petition where state = 1 and tool = 'arduino'`
-
-  return new Promise((resolve, reject) => {
-    connection.query(petitionQuery, (error, results, fields) => {
-      if (error) reject(error)
-      resolve(results)
-    })
-  })
-}
-
-export async function completedRequestsArd() {
-  const connection = await getConnection()
-
-  let petitionQuery = `SELECT idPetition, numbox, namedoc, folio, fechreg, fechfinish, state FROM petition where state = 0 and tool = 'arduino'`
-
-  return new Promise((resolve, reject) => {
-    connection.query(petitionQuery, (error, results, fields) => {
-      if (error) reject(error)
-      resolve(results)
-    })
-  })
-}
-
-export async function alumnsforRequestArd(arg) {
-  const connection = await getConnection()
-
-  let petitionQuery =
-    'SELECT numaccount, nameAlumn FROM petition_users as ptu inner join petition as pet on ptu.idPetition = pet.idPetition where ptu.idPetition = ?'
-
-  return new Promise((resolve, reject) => {
-    connection.query(petitionQuery, [arg], (error, results, fields) => {
       if (error) reject(error)
       resolve(results)
     })

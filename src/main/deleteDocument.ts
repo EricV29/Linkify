@@ -1,5 +1,4 @@
 const fs = require('fs')
-const { ipcRenderer } = require('electron')
 
 export async function deleteDoc(ruta) {
   try {

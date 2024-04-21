@@ -2,7 +2,7 @@ const nodemailer = require('nodemailer')
 let path = require('path')
 
 export function sendEmail(pathdoc, numbox, tool, ide, users) {
-  console.log(users)
+  //console.log(users)
   let transporter = nodemailer.createTransport({
     service: 'gmail',
     host: 'smtp.gmail.com',

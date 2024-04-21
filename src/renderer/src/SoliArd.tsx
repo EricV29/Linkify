@@ -49,54 +49,11 @@ function SoliArd(): JSX.Element {
   const [id, setID] = useState(null)
   const navigate = useNavigate()
   const location = useLocation()
-
-  useEffect(() => {
-    ipcRenderer.send('AllRequestsA', 'Solicitudes')
-    ipcRenderer.on('AllRequestsA-reply', (event, arg) => {
-      setActiveR(arg[0])
-      setCompleteR(arg[1])
-    })
-  }, [])
-
-  const descPetition = ([arg, folio, numbox]) => {
-    //console.log(arg)
-    ipcRenderer.send('AlumnsRequestA', arg)
-    setID(arg)
-    ipcRenderer.once('AlumnsRequestA-reply', (event, arg) => {
-      //console.log(arg)
-      setFolio(folio)
-      setNumbox(numbox)
-      setAlumns(arg)
-    })
-
-    onOpen()
-  }
-
-  const requestFinish = () => {
-    //console.log(pin)
-    //console.log(id)
-    if (pin === '') {
-      ipcRenderer.send('msgOption', 'Falta un PIN')
-    } else if (/^\d+$/.test(pin)) {
-      ipcRenderer.send('FinishRequest', [pin, id])
-    } else {
-      ipcRenderer.send('msgOption', 'Error de PIN')
-    }
-    ipcRenderer.once('FinishRequest-reply', (event, arg) => {
-      if (arg === 1) {
-        navigate('/arduino/kitalumnard')
-        console.log(location.pathname)
-        window.location.reload()
-      }
-    })
-  }
-
   const rows = alumns.map((alumn, index) => ({
     key: index.toString(),
     name: alumn.nameAlumn,
     role: alumn.numaccount.toString()
   }))
-
   const columns = [
     {
       key: 'name',
@@ -107,6 +64,47 @@ function SoliArd(): JSX.Element {
       label: 'NÚMERO DE CUENTA'
     }
   ]
+
+  useEffect(() => {
+    ipcRenderer.send('AllRequests', 'Arduino')
+    ipcRenderer.on('AllRequests-reply', (event, arg) => {
+      setActiveR(arg[0])
+      setCompleteR(arg[1])
+    })
+  }, [])
+
+  //Description alumns for request
+  const descRequest = ([arg, folio, numbox]) => {
+    //console.log(arg)
+    ipcRenderer.send('AlumnsRequest', arg)
+    setID(arg)
+    ipcRenderer.once('AlumnsRequest-reply', (event, arg) => {
+      //console.log(arg)
+      setFolio(folio)
+      setNumbox(numbox)
+      setAlumns(arg)
+    })
+
+    onOpen()
+  }
+
+  //Finalize request function
+  const requestFinish = () => {
+    if (pin === '') {
+      ipcRenderer.send('msgOption', 'Falta un PIN.')
+    } else if (/^\d+$/.test(pin)) {
+      ipcRenderer.send('FinishRequest', [pin, id])
+    } else {
+      ipcRenderer.send('msgOption', 'Error de PIN.')
+    }
+    ipcRenderer.once('FinishRequest-reply', (event, arg) => {
+      if (arg === 1) {
+        navigate('/arduino/kitalumnard')
+        console.log(location.pathname)
+        window.location.reload()
+      }
+    })
+  }
 
   return (
     <>
@@ -127,9 +125,7 @@ function SoliArd(): JSX.Element {
                 {activeR.map((request, index) => (
                   <Button
                     key={request.idPetition}
-                    onPress={() =>
-                      descPetition([request.idPetition, request.folio, request.numbox])
-                    }
+                    onPress={() => descRequest([request.idPetition, request.folio, request.numbox])}
                     className="w-full h-[90px] bg-white"
                     variant="solid"
                     color="default"
@@ -184,7 +180,7 @@ function SoliArd(): JSX.Element {
                             </p>
                           </ModalHeader>
                           <p className="text-center">
-                            Los alumnos responsables del equipo RaspBerry son:{' '}
+                            Los alumnos responsables del equipo Arduino son:{' '}
                           </p>
                           <Table aria-label="Example table with dynamic content">
                             <TableHeader columns={columns}>
@@ -254,9 +250,7 @@ function SoliArd(): JSX.Element {
                 {completeR.map((request, index) => (
                   <Button
                     key={request.idPetition}
-                    onPress={() =>
-                      descPetition([request.idPetition, request.folio, request.numbox])
-                    }
+                    onPress={() => descRequest([request.idPetition, request.folio, request.numbox])}
                     className="w-full h-[90px] bg-white"
                     variant="solid"
                     color="default"

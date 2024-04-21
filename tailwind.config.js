@@ -11,5 +11,5 @@ module.exports = {
     extend: { display: ['group-hover'] }
   },
   darkMode: 'class',
-  plugins: [nextui()]
+  plugins: [nextui(), require('tailwindcss-animated')]
 }

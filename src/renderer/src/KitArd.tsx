@@ -50,7 +50,48 @@ function KitArd(): JSX.Element {
   const [userId, setUserId] = useState(0)
   const { visible, toggleVisible } = msgLego()
   const [textMsg, setTextMsg] = useState('')
-  const { load, toggleLoad } = loading()
+  const [tool, setTool] = useState('')
+  const { toggleLoad, setkitTool } = loading()
+  let fechToday = new Date()
+  let fechTodayF = fechToday.toISOString().slice(0, 19).replace('T', ' ')
+  let fecha = fechTodayF.split(' ')[0]
+  let boxes = [
+    '61',
+    '62',
+    '63',
+    '64',
+    '65',
+    '66',
+    '67',
+    '68',
+    '69',
+    '70',
+    '71',
+    '72',
+    '73',
+    '74',
+    '75',
+    '76',
+    '77',
+    '78',
+    '79',
+    '80'
+  ]
+  const [filteredBoxes, setFilteredBoxes] = React.useState<string[]>([])
+  let dd = String(fechToday.getDate()).padStart(2, '0')
+  let mm = String(fechToday.getMonth() + 1).padStart(2, '0')
+  let yyyy = fechToday.getFullYear()
+  let currentDate = yyyy + '-' + mm + '-' + dd
+
+  React.useEffect(() => {
+    ipcRenderer.send('viableBoxes', [fecha, 'Arduino'])
+    ipcRenderer.on('viableBoxes-reply', (event, arg) => {
+      //console.log(arg)
+      let argNums = arg.map((row) => row.numbox.toString())
+      let newFilteredBoxes = boxes.filter((box) => !argNums.includes(box))
+      setFilteredBoxes(newFilteredBoxes)
+    })
+  }, [])
 
   const addUser = () => {
     if (namestudent === '' || numaccount === '') {
@@ -109,55 +150,14 @@ function KitArd(): JSX.Element {
     }
   }, [])
 
-  let fechToday = new Date()
-  let fechTodayF = fechToday.toISOString().slice(0, 19).replace('T', ' ')
-  let fecha = fechTodayF.split(' ')[0]
-  let boxes = [
-    '61',
-    '62',
-    '63',
-    '64',
-    '65',
-    '66',
-    '67',
-    '68',
-    '69',
-    '70',
-    '71',
-    '72',
-    '73',
-    '74',
-    '75',
-    '76',
-    '77',
-    '78',
-    '79',
-    '80'
-  ]
-  const [filteredBoxes, setFilteredBoxes] = React.useState<string[]>([])
-
-  React.useEffect(() => {
-    ipcRenderer.send('viableBoxesArd', fecha)
-    ipcRenderer.on('viableBoxesArd-reply', (event, arg) => {
-      console.log(arg)
-      //console.log(arg)
-      let argNums = arg.map((row) => row.numbox.toString())
-
-      // Filtrar boxes para excluir los números en argNums
-      let newFilteredBoxes = boxes.filter((box) => !argNums.includes(box))
-
-      // Actualizar el estado de filteredBoxes
-      setFilteredBoxes(newFilteredBoxes)
-    })
-  }, [])
-
-  //Enviar petición
+  //Send request
   const sendReq = () => {
     if (userss.length === 0 || numbox === '' || dateFinish === '') {
-      ipcRenderer.send('msgOption', 'Faltan campos por llenar')
+      ipcRenderer.send('msgOption', 'Faltan campos por llenar.')
     } else {
       if (boxes.includes(numbox)) {
         setTextMsg('¿Estás seguro de que quieres enviar la petición?')
+        setTool('Arduino')
         toggleVisible()
       } else {
         ipcRenderer.send('msgOption', 'El numero de caja seleccionado no existe.')
@@ -165,23 +165,26 @@ function KitArd(): JSX.Element {
     }
   }
 
-  //Confirmar envio de petición
+  //Confirm request submission
   const handleYes = () => {
-    console.log('Dijo que si')
     //console.log('El usuario hizo clic en Sí')
-    //Genera el documento
+    setkitTool(tool)
     toggleLoad()
+    //Generate document
     AlumnGenerate([numbox, userss, dateFinish, 'ArduinoCajaAlumnos']).then(
       ([outputPath, folio]) => {
-        //Guardar registro en base de datos y envio de mail
-        ipcRenderer.send('petitionA', [numbox, userss, outputPath, fechTodayF, folio, dateFinish])
-        ipcRenderer.on('petitionA-reply', (event, arg) => {
+        //Save record to DB and send emails
+        ipcRenderer.send('saveDBsendEM', [
+          numbox,
+          userss,
+          outputPath,
+          fechTodayF,
+          folio,
+          dateFinish,
+          'Arduino'
+        ])
+        ipcRenderer.on('saveDBsendEM-reply', (event, arg) => {
           if (arg === 1) {
-            /*setNumbox('')
-            setFinishdate('')
-            setNumcu('')
-            setNombre('')
-            setUsers([])*/
             location.reload()
             toggleLoad()
           } else {
@@ -189,20 +192,16 @@ function KitArd(): JSX.Element {
             toggleLoad()
           }
         })
-        //ipcRenderer.send('msgOption', 'Petición enviada')
       }
     )
   }
 
+  //Cancel request
   const handleNo = () => {
-    ipcRenderer.send('msgOption', 'Petición no enviada')
+    ipcRenderer.send('msgOption', 'Petición no enviada.')
   }
 
-  let dd = String(fechToday.getDate()).padStart(2, '0')
-  let mm = String(fechToday.getMonth() + 1).padStart(2, '0')
-  let yyyy = fechToday.getFullYear()
-  let currentDate = yyyy + '-' + mm + '-' + dd
-
+  //Only letters input name
   function soloLetras(e) {
     var key = e.keyCode || e.which
     var tecla = String.fromCharCode(key).toLowerCase()
@@ -224,7 +223,7 @@ function KitArd(): JSX.Element {
 
   return (
     <>
-      {visible && <Message textMsg={textMsg} onYes={handleYes} onNo={handleNo} />}
+      {visible && <Message textMsg={textMsg} onYes={handleYes} onNo={handleNo} tool={tool} />}
       <div className="w-full h-full flex flex-col m-0 p-5 justify-start items-center overflow-y-scroll">
         <p className="text-[#00989E] font-bold text-[40px]">Kit Arduino para Alumno</p>
         <div className="flex flex-col justify-start p-5 w-full">

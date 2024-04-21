@@ -8,12 +8,12 @@ function Sidebar(): JSX.Element {
 
   return (
     <>
-      <div className="h-full w-1/6 bg-[#a2191a] rounded-[10px] flex justify-center items-start pt-5 drop-shadow-xl ">
+      <div className="h-full w-1/6 bg-[#343434] rounded-[10px] flex justify-center items-start pt-5 drop-shadow-xl ">
         <Button
           //className="text-[#ffffff] hover:bg-white hover:text-black"
-          className={`font-bold ${activeButton === 'kitAlumno' ? 'text-[#000000] bg-[#ffffff]' : 'text-[#ffffff] hover:text-[#fff]'}`}
+          className={`font-bold ${activeButton === 'Tools' ? 'text-[#fff] bg-[#00a539]' : 'text-[#ffffff] hover:text-[#00a539]'}`}
           variant="ghost"
-          onClick={() => setActiveButton('kitAlumno')}
+          onClick={() => setActiveButton('Tools')}
         >
           <Link to="/menu/herramientas" className="w-full h-full flex items-center">
             <Icon icon="jam:tools-f" />

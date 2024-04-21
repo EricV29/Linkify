@@ -5,13 +5,13 @@ import Loading from './components/Loading'
 import loading from './store/load'
 
 function LegoSpike(): JSX.Element {
-  const { load, toggleLoad } = loading()
+  const { load } = loading()
 
   return (
     <>
-      <div className="w-screen h-screen flex flex-col m-0 p-0 justify-center overflow-hidden">
+      <div className="w-screen h-screen flex flex-col m-0 p-0 justify-center overflow-hidden ">
         {load && <Loading />}
-        <div className="w-full h-[100px] z-10">
+        <div className="w-full h-[100px] z-10 animate-fade animate-once animate-duration-1000 animate-ease-in">
           <NavbarLego />
         </div>
         <div className="w-full h-full z-9 flex justify- p-0 m-0 items-center space-x-5 bg-[#fff] object-fill overflow-hidden">

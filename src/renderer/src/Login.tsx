@@ -1,5 +1,5 @@
 import prep6l from './images/prep6l.png'
-import linkilogo2 from './images/linkilogo2.png'
+import linkilogo from './images/linkilogo.png'
 import fondolo from './images/fondolo.png'
 import { Button, Input } from '@nextui-org/react'
 import { Icon } from '@iconify/react'
@@ -47,14 +47,14 @@ function App(): JSX.Element {
         <div className=" h-full w-3/6 flex justify-between items-start flex-col">
           <img src={fondolo} alt="" className="w-full h-full object-cover" />
           <div className="absolute w-1/2 h-full flex justify-center items-center">
-            <p className="text-white text-center text-[15px] w-[400px] top-[160px] absolute">
+            <p className="text-white text-center text-[15px] w-[400px] top-[160px] absolute animate-fade animate-once animate-duration-1000 animate-ease-in">
               “Construye tu camino hacia el conocimiento con bloques de creatividad, desafíos
               electrónicos y exploración ¡El Futuro está en tus manos!”
             </p>
           </div>
         </div>
-        <div className="bg-[#ffffff] h-full w-3/6 flex flex-col justify-center items-center">
-          <img src={linkilogo2} alt="LinkiLogotipo" className="w-[300px] mb-3" />
+        <div className="bg-[#ffffff] h-full w-3/6 flex flex-col justify-center items-center animate-fade-down animate-once animate-duration-[800ms] animate-ease-in">
+          <img src={linkilogo} alt="LinkiLogotipo" className="w-[300px] mb-3 " />
           <Formik
             initialValues={{
               user: '',
@@ -63,7 +63,7 @@ function App(): JSX.Element {
             validate={(values: FormValues) => {
               const errors: Errors = {}
 
-              //! user validation
+              //User validation
               if (!values.user) {
                 errors.user = 'Requerido'
               } else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/.test(values.user)) {
@@ -78,7 +78,7 @@ function App(): JSX.Element {
                 return hasUpperCase && hasLowerCase && hasNumber && hasEightCharacters
               }
 
-              //! password validation
+              //Password validation
               if (!values.password) {
                 errors.password = 'Requerido'
               } else if (!validatePassword(values.password)) {

@@ -11,7 +11,7 @@ const Module: React.VFC<Props> = ({ imgbg, imglog }) => {
   return (
     <>
       <div
-        className="w-[35vw] h-[35vh] border-2 border-[#a2191a] rounded-[10px] overflow-hidden justify-center items-end flex relative"
+        className="w-[35vw] h-[35vh] border-3 border-[#00a539] rounded-[15px] overflow-hidden justify-center items-end flex relative"
         onMouseEnter={() => setIsHovered(false)}
         onMouseLeave={() => setIsHovered(true)}
       >

@@ -40,7 +40,7 @@ const columns = [
   { name: 'ACCIONES', uid: 'actions' }
 ]
 
-function Kittec(): JSX.Element {
+function Kitleg(): JSX.Element {
   const [userss, setUsers] = useState<User[]>([])
   const [dateFinish, setFinishdate] = useState('')
   const [namestudent, setNombre] = useState('')
@@ -50,7 +50,42 @@ function Kittec(): JSX.Element {
   const [userId, setUserId] = useState(0)
   const { visible, toggleVisible } = msgLego()
   const [textMsg, setTextMsg] = useState('')
-  const { load, toggleLoad } = loading()
+  const [tool, setTool] = useState('')
+  const { toggleLoad, setkitTool } = loading()
+  let fechToday = new Date()
+  let fechTodayF = fechToday.toISOString().slice(0, 19).replace('T', ' ')
+  let fecha = fechTodayF.split(' ')[0]
+  let boxes = [
+    '690',
+    '689',
+    '679',
+    '675',
+    '671',
+    '667',
+    '665',
+    '657',
+    '643',
+    '658',
+    '673',
+    '686',
+    '661',
+    '680'
+  ]
+  const [filteredBoxes, setFilteredBoxes] = React.useState<string[]>([])
+  let dd = String(fechToday.getDate()).padStart(2, '0')
+  let mm = String(fechToday.getMonth() + 1).padStart(2, '0')
+  let yyyy = fechToday.getFullYear()
+  let currentDate = yyyy + '-' + mm + '-' + dd
+
+  React.useEffect(() => {
+    ipcRenderer.send('viableBoxes', [fecha, 'LegoSpike'])
+    ipcRenderer.on('viableBoxes-reply', (event, arg) => {
+      //console.log(arg)
+      let argNums = arg.map((row) => row.numbox.toString())
+      let newFilteredBoxes = boxes.filter((box) => !argNums.includes(box))
+      setFilteredBoxes(newFilteredBoxes)
+    })
+  }, [])
 
   const addUser = () => {
     if (namestudent === '' || numaccount === '') {
@@ -109,48 +144,14 @@ function Kittec(): JSX.Element {
     }
   }, [])
 
-  let fechToday = new Date()
-  let fechTodayF = fechToday.toISOString().slice(0, 19).replace('T', ' ')
-  let fecha = fechTodayF.split(' ')[0]
-  let boxes = [
-    '690',
-    '689',
-    '679',
-    '675',
-    '671',
-    '667',
-    '665',
-    '657',
-    '643',
-    '658',
-    '673',
-    '686',
-    '661',
-    '680'
-  ]
-  const [filteredBoxes, setFilteredBoxes] = React.useState<string[]>([])
-
-  React.useEffect(() => {
-    ipcRenderer.send('viableBoxes', fecha)
-    ipcRenderer.on('viableBoxes-reply', (event, arg) => {
-      //console.log(arg)
-      let argNums = arg.map((row) => row.numbox.toString())
-
-      // Filtrar boxes para excluir los números en argNums
-      let newFilteredBoxes = boxes.filter((box) => !argNums.includes(box))
-
-      // Actualizar el estado de filteredBoxes
-      setFilteredBoxes(newFilteredBoxes)
-    })
-  }, [])
-
-  //Enviar petición
+  //Send request
   const sendReq = () => {
     if (userss.length === 0 || numbox === '' || dateFinish === '') {
       ipcRenderer.send('msgOption', 'Faltan campos por llenar')
     } else {
       if (boxes.includes(numbox)) {
         setTextMsg('¿Estás seguro de que quieres enviar la petición?')
+        setTool('LegoSpike')
         toggleVisible()
       } else {
         ipcRenderer.send('msgOption', 'El numero de caja seleccionado no existe.')
@@ -158,22 +159,26 @@ function Kittec(): JSX.Element {
     }
   }
 
-  //Confirmar envio de petición
+  //Confirm request submission
   const handleYes = () => {
     //console.log('El usuario hizo clic en Sí')
-    //Genera el documento
+    setkitTool(tool)
     toggleLoad()
+    //Generate document
     AlumnGenerate([numbox, userss, dateFinish, 'LegoSpikeCajaAlumnos']).then(
       ([outputPath, folio]) => {
-        //Guardar registro en base de datos y envio de mail
-        ipcRenderer.send('petitionA', [numbox, userss, outputPath, fechTodayF, folio, dateFinish])
-        ipcRenderer.on('petitionA-reply', (event, arg) => {
+        //Save record to DB and send emails
+        ipcRenderer.send('saveDBsendEM', [
+          numbox,
+          userss,
+          outputPath,
+          fechTodayF,
+          folio,
+          dateFinish,
+          'LegoSpike'
+        ])
+        ipcRenderer.on('saveDBsendEM-reply', (event, arg) => {
           if (arg === 1) {
-            /*setNumbox('')
-            setFinishdate('')
-            setNumcu('')
-            setNombre('')
-            setUsers([])*/
             location.reload()
             toggleLoad()
           } else {
@@ -181,20 +186,16 @@ function Kittec(): JSX.Element {
             toggleLoad()
           }
         })
-        //ipcRenderer.send('msgOption', 'Petición enviada')
       }
     )
   }
 
+  //Cancel request
   const handleNo = () => {
-    ipcRenderer.send('msgOption', 'Petición no enviada')
+    ipcRenderer.send('msgOption', 'Petición no enviada.')
   }
 
-  let dd = String(fechToday.getDate()).padStart(2, '0')
-  let mm = String(fechToday.getMonth() + 1).padStart(2, '0')
-  let yyyy = fechToday.getFullYear()
-  let currentDate = yyyy + '-' + mm + '-' + dd
-
+  //Only letters input name
   function soloLetras(e) {
     var key = e.keyCode || e.which
     var tecla = String.fromCharCode(key).toLowerCase()
@@ -216,7 +217,7 @@ function Kittec(): JSX.Element {
 
   return (
     <>
-      {visible && <Message textMsg={textMsg} onYes={handleYes} onNo={handleNo} />}
+      {visible && <Message textMsg={textMsg} onYes={handleYes} onNo={handleNo} tool={tool} />}
       <div className="w-full h-full flex flex-col m-0 p-5 justify-start items-center overflow-y-scroll">
         <p className="text-[#C80000] font-bold text-[40px]">Kit Lego para Alumno</p>
         <div className="flex flex-col justify-start p-5 w-full">
@@ -336,4 +337,4 @@ function Kittec(): JSX.Element {
   )
 }
 
-export default Kittec
+export default Kitleg

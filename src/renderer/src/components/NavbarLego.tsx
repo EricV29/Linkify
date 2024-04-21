@@ -12,7 +12,7 @@ function NavbarLego(): JSX.Element {
     <>
       <div className="w-full h-full bg-[#FED700] drop-shadow-xl flex justify-between items-center pr-6 pl-6">
         <div className="flex space-x-3 w-1/3">
-          <Link to="/legospike/kittec" className="flex">
+          <Link to="/legospike/kitleg" className="flex">
             <Button
               className={`w-[140px] font-bold ${activeButton === 'kitAlumno' ? 'text-[#fff] bg-[#C80000]' : 'text-[#C80000] hover:text-[#fff]'}`}
               variant="light"
@@ -43,7 +43,7 @@ function NavbarLego(): JSX.Element {
               Kit Extra
             </Link>
           </Button>
-          <Link to="/legospike/solicitud" className="flex">
+          <Link to="/legospike/solilego" className="flex">
             <Button
               className={`w-[133px] font-bold ${activeButton === 'solicitud' ? 'text-[#fff] bg-[#C80000]' : 'text-[#C80000] hover:text-[#fff]'} `}
               variant="light"

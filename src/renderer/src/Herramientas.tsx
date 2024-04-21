@@ -25,7 +25,7 @@ function Herramientas(): JSX.Element {
 
   return (
     <>
-      <div className="w-full h-full p-5 flex flex-wrap gap-4 justify-start overflow-y-auto">
+      <div className="w-full h-full p-5 flex flex-wrap gap-4 justify-start overflow-y-auto animate-fade animate-once animate-ease-in">
         <button onClick={windowSpike} className="p-0 m-0 w-[35vw] h-[35vh]">
           <Module imgbg={legobg} imglog={legolo} />
         </button>
