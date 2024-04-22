@@ -27,7 +27,7 @@ const statusColorMap = {
 }
 
 type User = {
-  id: number
+id: number
   namestudent: string
   numaccount: string
   email: string
