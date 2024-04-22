@@ -16,3 +16,22 @@
   background-color: #9e9e9e;
   border-radius: 10px;
 }
+
+@font-face {
+  font-family: 'Aileron-Regular';
+  src: url('../public/fonts/Aileron-Regular.otf') format('opentype');
+}
+
+@font-face {
+  font-family: 'Aileron-SemiBold';
+  src: url('../public/fonts/Aileron-SemiBold.otf') format('opentype');
+}
+
+@font-face {
+  font-family: 'Aileron-Bold';
+  src: url('../public/fonts/Aileron-Bold.otf') format('opentype');
+}
+
+.p {
+  font-family: primary;
+}

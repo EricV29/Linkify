@@ -223,13 +223,13 @@ function Kitleg(): JSX.Element {
       <div className="w-full h-full flex flex-col m-0 p-5 justify-start items-center overflow-y-scroll">
         <p className="text-[#C80000] font-bold text-[40px]">Kit Lego para Alumno</p>
         <div className="flex flex-col justify-start p-5 w-full">
-          <h2 className="text-[#C80000] font-bold text-[25px]">Lego</h2>
+          <h2 className="text-[#C80000] font-semibold text-[25px]">Lego</h2>
           <div className="flex space-x-5 items-center pl-7 text-[20px]">
             <Icon icon="solar:box-bold" color="#FED700" width={40} />
             <p className="text-white">Selecciona el número de caja:</p>
             <select
               id="numbox"
-              className="w-[200px] rounded-[8px] h-[50px] font-bold p-2 text-center drop-shadow-lg"
+              className="w-[200px] rounded-[8px] h-[50px] font-semibold p-2 text-center drop-shadow-lg"
               value={numbox}
               onChange={(e) => {
                 if (e.target.value.length <= 3) {
@@ -250,13 +250,13 @@ function Kitleg(): JSX.Element {
             <p className="text-white">Selecciona la fecha de entrega:</p>
             <input
               type="date"
-              className="w-[200px] rounded-[8px] h-[50px] font-bold p-2 text-center drop-shadow-lg"
+              className="w-[200px] rounded-[8px] h-[50px] font-semibold p-2 text-center drop-shadow-lg"
               min={currentDate}
               value={dateFinish}
               onChange={(e) => setFinishdate(e.target.value)}
             />
           </div>
-          <h2 className="text-[#C80000] font-bold text-[25px]">Alumno</h2>
+          <h2 className="text-[#C80000] font-semibold text-[25px]">Alumno</h2>
           <div className="flex space-x-5 items-center pl-7 mb-3 text-[20px]">
             <Icon icon="teenyicons:id-solid" color="#FED700" width={40} />
             <p className="text-white">Número de cuenta:</p>
@@ -264,7 +264,7 @@ function Kitleg(): JSX.Element {
               type="number"
               id="numaccount"
               placeholder="000000"
-              className="w-[170px] rounded-[8px] h-[40px] font-bold p-2 text-center drop-shadow-lg"
+              className="w-[170px] rounded-[8px] h-[40px] font-semibold p-2 text-center drop-shadow-lg"
               value={numaccount}
               min={0}
               onChange={(e) => {
@@ -281,7 +281,7 @@ function Kitleg(): JSX.Element {
               type="text"
               id="namestudent"
               placeholder="Nombres Apellidos"
-              className="w-[700px] rounded-[8px] h-[40px] font-bold p-2 drop-shadow-lg"
+              className="w-[700px] rounded-[8px] h-[40px] font-semibold p-2 drop-shadow-lg"
               value={namestudent}
               onChange={(e) => setNombre(e.target.value)}
               onKeyPress={soloLetras}
@@ -294,7 +294,7 @@ function Kitleg(): JSX.Element {
               type="text"
               id="email"
               placeholder="xx000000@uaeh.edu.mx"
-              className="w-[585px] rounded-[8px] h-[40px] font-bold p-2 drop-shadow-lg"
+              className="w-[585px] rounded-[8px] h-[40px] font-semibold p-2 drop-shadow-lg"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />

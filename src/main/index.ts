@@ -85,7 +85,7 @@ ipcMain.on('login', async (event, argumentos) => {
             : `file://${join(__dirname, '../renderer/index.html')}#/menu/herramientas`
         )
 
-        // Cierra la ventana de inicio de sesión
+        //Close window login
         mainWindow?.close()
       } else {
         event.returnValue = false

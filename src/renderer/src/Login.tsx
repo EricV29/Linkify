@@ -1,6 +1,6 @@
 import prep6l from './images/prep6l.png'
 import linkilogo from './images/linkilogo.png'
-import fondolo from './images/fondolo.png'
+import fondolo from './images/fondolo.webp'
 import { Button, Input } from '@nextui-org/react'
 import { Icon } from '@iconify/react'
 import { MailIcon } from './icons/Maillcon'
@@ -96,7 +96,7 @@ function App(): JSX.Element {
                   placeholder="Nombre de usuario"
                   label="Usuario"
                   labelPlacement="outside"
-                  className="w-[340px] text-[#B2B2B2]"
+                  className="w-[340px] text-[#B2B2B2] font-bold"
                   startContent={
                     <MailIcon className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
                   }

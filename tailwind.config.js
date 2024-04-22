@@ -8,7 +8,14 @@ module.exports = {
     './node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}'
   ],
   theme: {
-    extend: { display: ['group-hover'] }
+    extend: {
+      display: ['group-hover'],
+      fontFamily: {
+        primary: 'Aileron-Regular',
+        bold: 'Aileron-Bold',
+        semibold: 'Aileron-SemiBold'
+      }
+    }
   },
   darkMode: 'class',
   plugins: [nextui(), require('tailwindcss-animated')]

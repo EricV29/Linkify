@@ -1,10 +1,10 @@
 import Module from './components/Module'
-import arduinobg from './images/arudinof.jpg'
-import arduinolo from './images/arduinolo.png'
-import legolo from './images/legolo.png'
-import legobg from './images/legobg.jpg'
-import raspbg from './images/raspbg.jpg'
-import rasplo from './images/rasplo.png'
+import arduinobg from './images/arudinof.webp'
+import arduinolo from './images/arduinolo.webp'
+import legolo from './images/legolo.webp'
+import legobg from './images/legobg.webp'
+import raspbg from './images/raspbg.webp'
+import rasplo from './images/rasplo.webp'
 const { ipcRenderer } = require('electron')
 
 function Herramientas(): JSX.Element {

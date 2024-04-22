@@ -31,7 +31,7 @@ function Navbar(): JSX.Element {
   return (
     <>
       <div className="w-full h-full bg-[#343434] drop-shadow-xl flex justify-between items-center pr-6 pl-6">
-        <p className="text-[25px] font-bold text-[#00a539] animate-fade-right animate-once animate-ease-in-out">
+        <p className="text-[25px] font-semibold text-[#00a539] animate-fade-right animate-once animate-ease-in-out">
           {nameuser}
         </p>
         <Link to="/menu">

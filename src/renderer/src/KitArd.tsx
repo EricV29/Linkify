@@ -235,7 +235,7 @@ function KitArd(): JSX.Element {
             <p className="text-white">Selecciona el número de caja:</p>
             <select
               id="numbox"
-              className="w-[200px] rounded-[8px] h-[50px] font-bold p-2 text-center drop-shadow-lg"
+              className="w-[200px] rounded-[8px] h-[50px] font-semibold p-2 text-center drop-shadow-lg"
               value={numbox}
               onChange={(e) => {
                 if (e.target.value.length <= 3) {
@@ -256,7 +256,7 @@ function KitArd(): JSX.Element {
             <p className="text-white">Selecciona la fecha de entrega:</p>
             <input
               type="date"
-              className="w-[200px] rounded-[8px] h-[50px] font-bold p-2 text-center drop-shadow-lg"
+              className="w-[200px] rounded-[8px] h-[50px] font-semibold p-2 text-center drop-shadow-lg"
               min={currentDate}
               value={dateFinish}
               onChange={(e) => setFinishdate(e.target.value)}

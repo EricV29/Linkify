@@ -143,11 +143,11 @@ function SoliLego(): JSX.Element {
                       </div>
                       <div className="flex flex-col font-semibold w-[390px] h-[60px] rounded-lg bg-[#FED700] items-center justify-center">
                         <p>Nombre del documento</p>
-                        <p className="text-white text-[20px]">{request.namedoc}</p>
+                        <p className="text-white text-[18px]">{request.namedoc}</p>
                       </div>
                       <div className="flex flex-col font-semibold w-[130px] h-[60px] rounded-lg bg-[#FED700] items-center justify-center">
                         <p>Folio</p>
-                        <p className="text-white text-[20px]">{request.folio}</p>
+                        <p className="text-white text-[18px]">{request.folio}</p>
                       </div>
                       <div className="flex items-center justify-center space-x-2 bg-[#FED700] rounded-lg w-[250px] h-[60px]">
                         <Icon

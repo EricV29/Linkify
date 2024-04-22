@@ -31,7 +31,7 @@ const Message = ({ textMsg, onYes, onNo, tool }: Props) => {
       <div className="bg-[#0000005d] w-full h-full absolute flex justify-center items-center z-10 rounded-[10px] animate-fade animate-once animate-duration-1000 animate-ease-out">
         <div className="w-[400px] min-h-[150px] rounded-[15px] border-3" style={sty[tool]}>
           <div className="p-3 min-h-24 flex justify-center items-center font-bold text-[20px] text-center">
-            <p className="break-words">{textMsg}</p>
+            <p className="break-words font-primary">{textMsg}</p>
           </div>
           <div className="flex">
             <button

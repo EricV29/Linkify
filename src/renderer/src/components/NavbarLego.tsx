@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import spikelo from '../images/spikelo.png'
+import spikelo from '../images/spikelo.webp'
 import { Button } from '@nextui-org/react'
 import { Icon } from '@iconify/react'
 import { Link } from 'react-router-dom'

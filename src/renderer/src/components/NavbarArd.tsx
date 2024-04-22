@@ -1,4 +1,4 @@
-import rasplo from '../images/arduinolo.png'
+import rasplo from '../images/arduinolo.webp'
 import { Button } from '@nextui-org/react'
 import { Icon } from '@iconify/react'
 import { Link } from 'react-router-dom'
