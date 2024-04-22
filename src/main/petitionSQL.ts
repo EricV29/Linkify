@@ -8,14 +8,15 @@ export async function insertData(arg) {
   let folio = arg[4]
   let fechfinish = arg[5]
   let tool = arg[6]
+  let locker = arg[7]
   let namedoc = namepath.split('\\').pop()
   const connection = await getConnection()
 
   let petitionQuery =
-    'INSERT INTO petition (numbox, namedoc, namepath, folio, fechreg, fechfinish, state, tool) VALUES (?, ?, ?, ?, ?, ?, 1, ?)'
+    'INSERT INTO petition (numbox, numlocker, namedoc, namepath, folio, fechreg, fechfinish, state, tool) VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?)'
   connection.query(
     petitionQuery,
-    [numbox, namedoc, namepath, folio, fechreg, fechfinish, tool],
+    [numbox, locker, namedoc, namepath, folio, fechreg, fechfinish, tool],
     (error, results, fields) => {
       if (error) throw error
       let idPetition = results.insertId

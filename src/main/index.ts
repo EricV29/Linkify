@@ -8,6 +8,7 @@ import { sendEmail } from './mail'
 import { insertData } from './petitionSQL'
 import {
   viableBoxes,
+  viableLockers,
   activeRequests,
   completedRequests,
   alumnsforRequest,
@@ -281,6 +282,17 @@ ipcMain.on('viableBoxes', async (event, arg) => {
   }
 })
 
+//Viable Llockers
+ipcMain.on('viableLockers', async (event, arg) => {
+  try {
+    const result = await viableLockers(arg)
+    console.log(result)
+    event.reply('viableLockers-reply', result)
+  } catch (error) {
+    console.error(error)
+  }
+})
+
 //Function save record to DB and send emails
 ipcMain.on('saveDBsendEM', (event, arg) => {
   //console.log('Peticion de una caja para alumnos')
@@ -292,8 +304,9 @@ ipcMain.on('saveDBsendEM', (event, arg) => {
   //? arg[4] folio del registro
   //? arg[5] fecha para finalizar
   //? arg[6] herramienta
+  //? arg[7] numero de locker
   //send emails
-  sendEmail(arg[2], arg[0], arg[6], arg[4], arg[1])
+  sendEmail(arg[2], arg[0], arg[6], arg[4], arg[1], arg[7])
     .then((response) => {
       const notification = {
         title: 'Linkify',

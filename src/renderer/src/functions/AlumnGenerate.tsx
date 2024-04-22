@@ -3,7 +3,7 @@ import Docxtemplater from 'docxtemplater'
 const fs = require('fs')
 const path = require('path')
 
-function AlumnGenerate([numbox, userss, fechalimit, kit]) {
+function AlumnGenerate([numbox, userss, fechalimit, kit, locker]) {
   function mesANombre(mes) {
     let nombresDeMeses = [
       'Enero',
@@ -50,7 +50,8 @@ function AlumnGenerate([numbox, userss, fechalimit, kit]) {
         numcaja: numbox,
         fechlimite: fechalimit,
         tabla: tabla,
-        folio: folio
+        folio: folio,
+        locker: locker
       }
 
       doc.setData(inputData)

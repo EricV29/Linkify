@@ -14,7 +14,6 @@ function Welcome(): JSX.Element {
           Un sistema para la solicitud de préstamos de kits educativos como LegoSpike, Arduino y
           Raspberry Pi.
         </p>
-        <p className="text-[#000] text-[20px]">Eric Jared Villeda Reyes and</p>
       </div>
     </>
   )

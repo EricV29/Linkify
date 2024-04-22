@@ -4,7 +4,22 @@ import { getConnection } from './database'
 export async function viableBoxes(arg) {
   const connection = await getConnection()
 
-  let petitionQuery = `SELECT numbox FROM petition WHERE fechreg LIKE ? AND state = 1 and tool = ?`
+  let petitionQuery = `SELECT numbox FROM petition WHERE state = 1 and tool = ?`
+  //let formattedArg = '%' + arg[0] + '%'
+
+  return new Promise((resolve, reject) => {
+    connection.query(petitionQuery, [/*formattedArg,*/ arg[1]], (error, results, fields) => {
+      if (error) reject(error)
+      resolve(results)
+    })
+  })
+}
+
+//VIABLE LOCKERS
+export async function viableLockers(arg) {
+  const connection = await getConnection()
+
+  let petitionQuery = `SELECT numlocker FROM petition WHERE fechreg LIKE ? AND state = 1 and tool = ? GROUP BY numlocker HAVING COUNT(numlocker) > 1`
   let formattedArg = '%' + arg[0] + '%'
 
   return new Promise((resolve, reject) => {

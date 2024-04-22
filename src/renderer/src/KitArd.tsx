@@ -78,10 +78,12 @@ function KitArd(): JSX.Element {
     '80'
   ]
   const [filteredBoxes, setFilteredBoxes] = React.useState<string[]>([])
+  const [filteredLockers, setFilteredLockers] = React.useState<string[]>([])
   let dd = String(fechToday.getDate()).padStart(2, '0')
   let mm = String(fechToday.getMonth() + 1).padStart(2, '0')
   let yyyy = fechToday.getFullYear()
   let currentDate = yyyy + '-' + mm + '-' + dd
+  let lockers = ['1', '2', '3']
 
   React.useEffect(() => {
     ipcRenderer.send('viableBoxes', [fecha, 'Arduino'])
@@ -90,6 +92,14 @@ function KitArd(): JSX.Element {
       let argNums = arg.map((row) => row.numbox.toString())
       let newFilteredBoxes = boxes.filter((box) => !argNums.includes(box))
       setFilteredBoxes(newFilteredBoxes)
+    })
+
+    ipcRenderer.send('viableLockers', [fecha, 'Arduino'])
+    ipcRenderer.on('viableLockers-reply', (event, arg) => {
+      //console.log(arg)
+      let argNums = arg.map((row) => row.numlocker.toString())
+      let newFilteredLockers = lockers.filter((locker) => !argNums.includes(locker))
+      setFilteredLockers(newFilteredLockers)
     })
   }, [])
 
@@ -172,8 +182,9 @@ function KitArd(): JSX.Element {
     //console.log('El usuario hizo clic en Sí')
     setkitTool(tool)
     toggleLoad()
+    let selectedLocker = filteredLockers[0]
     //Generate document
-    AlumnGenerate([numbox, userss, dateFinish, 'ArduinoCajaAlumnos']).then(
+    AlumnGenerate([numbox, userss, dateFinish, 'ArduinoCajaAlumnos', selectedLocker]).then(
       ([outputPath, folio]) => {
         //Save record to DB and send emails
         ipcRenderer.send('saveDBsendEM', [
@@ -183,7 +194,8 @@ function KitArd(): JSX.Element {
           fechTodayF,
           folio,
           dateFinish,
-          'Arduino'
+          'Arduino',
+          selectedLocker
         ])
         ipcRenderer.on('saveDBsendEM-reply', (event, arg) => {
           if (arg === 1) {
