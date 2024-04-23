@@ -17,7 +17,7 @@ export async function insertData(arg) {
   connection.query(
     petitionQuery,
     [numbox, locker, namedoc, namepath, folio, fechreg, fechfinish, tool],
-    (error, results, fields) => {
+    (error, results) => {
       if (error) throw error
       let idPetition = results.insertId
 
@@ -27,20 +27,16 @@ export async function insertData(arg) {
         connection.query(
           petitionUsersQuery,
           [idPetition, student.numaccount, student.namestudent],
-          (error, results, fields) => {
+          (error) => {
             if (error) throw error
             //console.log('Registro exitoso')
           }
         )
 
         let userEmailQuery = 'INSERT INTO user_email (numaccount, email) VALUES (?, ?)'
-        connection.query(
-          userEmailQuery,
-          [student.numaccount, student.email],
-          (error, results, fields) => {
-            if (error) throw error
-          }
-        )
+        connection.query(userEmailQuery, [student.numaccount, student.email], (error) => {
+          if (error) throw error
+        })
       })
     }
   )

@@ -12,9 +12,9 @@ function Navbar(): JSX.Element {
   // TRAER NOMBRE COMPLETO DEL USUARIO
   useEffect(() => {
     ipcRenderer.send('nameuser', 'dataUser')
-    ipcRenderer.once('nameu', (event, success, name) => {
+    ipcRenderer.once('nameu', (success, arg) => {
       if (success) {
-        setNameuser(name)
+        setNameuser(arg[0])
       } else {
         console.log('Nombre de usuario no encontrado')
       }

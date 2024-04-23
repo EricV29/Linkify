@@ -69,6 +69,7 @@ function SoliRasp(): JSX.Element {
   useEffect(() => {
     ipcRenderer.send('AllRequests', 'RaspBerry')
     ipcRenderer.on('AllRequests-reply', (event, arg) => {
+      console.log(event)
       setActiveR(arg[0])
       setCompleteR(arg[1])
     })
@@ -80,6 +81,7 @@ function SoliRasp(): JSX.Element {
     ipcRenderer.send('AlumnsRequest', arg)
     setID(arg)
     ipcRenderer.once('AlumnsRequest-reply', (event, arg) => {
+      console.log(event)
       //console.log(arg)
       setFolio(folio)
       setNumbox(numbox)
@@ -99,6 +101,7 @@ function SoliRasp(): JSX.Element {
       ipcRenderer.send('msgOption', 'Error de PIN.')
     }
     ipcRenderer.once('FinishRequest-reply', (event, arg) => {
+      console.log(event)
       if (arg === 1) {
         navigate('/raspberry/kitalumnrasp')
         console.log(location.pathname)
@@ -123,7 +126,7 @@ function SoliRasp(): JSX.Element {
           >
             <Card className="bg-[#00000000]">
               <CardBody className="space-y-3">
-                {activeR.map((request, index) => (
+                {activeR.map((request) => (
                   <Button
                     key={request.idPetition}
                     onPress={() => descRequest([request.idPetition, request.folio, request.numbox])}
@@ -252,7 +255,7 @@ function SoliRasp(): JSX.Element {
           >
             <Card className="bg-[#00000000]">
               <CardBody className="space-y-3">
-                {completeR.map((request, index) => (
+                {completeR.map((request) => (
                   <Button
                     key={request.idPetition}
                     onPress={() => descRequest([request.idPetition, request.folio, request.numbox])}

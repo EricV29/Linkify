@@ -83,13 +83,34 @@ function KitArd(): JSX.Element {
   let mm = String(fechToday.getMonth() + 1).padStart(2, '0')
   let yyyy = fechToday.getFullYear()
   let currentDate = yyyy + '-' + mm + '-' + dd
-  let lockers = ['1', '2', '3']
+  let lockers = [
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    '10',
+    '11',
+    '12',
+    '13',
+    '14',
+    '15',
+    '17',
+    '18',
+    '19',
+    '20'
+  ]
 
   React.useEffect(() => {
     ipcRenderer.send('viableBoxes', [fecha, 'Arduino'])
     ipcRenderer.on('viableBoxes-reply', (event, arg) => {
       //console.log(arg)
       let argNums = arg.map((row) => row.numbox.toString())
+      console.log(event)
       let newFilteredBoxes = boxes.filter((box) => !argNums.includes(box))
       setFilteredBoxes(newFilteredBoxes)
     })
@@ -98,6 +119,7 @@ function KitArd(): JSX.Element {
     ipcRenderer.on('viableLockers-reply', (event, arg) => {
       //console.log(arg)
       let argNums = arg.map((row) => row.numlocker.toString())
+      console.log(event)
       let newFilteredLockers = lockers.filter((locker) => !argNums.includes(locker))
       setFilteredLockers(newFilteredLockers)
     })
@@ -198,6 +220,7 @@ function KitArd(): JSX.Element {
           selectedLocker
         ])
         ipcRenderer.on('saveDBsendEM-reply', (event, arg) => {
+          console.log(event)
           if (arg === 1) {
             location.reload()
             toggleLoad()

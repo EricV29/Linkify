@@ -68,6 +68,7 @@ function SoliLego(): JSX.Element {
   useEffect(() => {
     ipcRenderer.send('AllRequests', 'LegoSpike')
     ipcRenderer.on('AllRequests-reply', (event, arg) => {
+      console.log(event)
       setActiveR(arg[0])
       setCompleteR(arg[1])
     })
@@ -79,6 +80,7 @@ function SoliLego(): JSX.Element {
     ipcRenderer.send('AlumnsRequest', arg)
     setID(arg)
     ipcRenderer.once('AlumnsRequest-reply', (event, arg) => {
+      console.log(event)
       //console.log(arg)
       setFolio(folio)
       setNumbox(numbox)
@@ -97,6 +99,7 @@ function SoliLego(): JSX.Element {
       ipcRenderer.send('msgOption', 'Error de PIN.')
     }
     ipcRenderer.once('FinishRequest-reply', (event, arg) => {
+      console.log(event)
       if (arg === 1) {
         navigate('/legospike/kitleg')
         console.log(location.pathname)
@@ -121,7 +124,7 @@ function SoliLego(): JSX.Element {
           >
             <Card className="bg-[#00000000]">
               <CardBody className="space-y-3">
-                {activeR.map((request, index) => (
+                {activeR.map((request) => (
                   <Button
                     key={request.idPetition}
                     onPress={() => descRequest([request.idPetition, request.folio, request.numbox])}
@@ -250,7 +253,7 @@ function SoliLego(): JSX.Element {
           >
             <Card className="bg-[#00000000]">
               <CardBody className="space-y-3">
-                {completeR.map((request, index) => (
+                {completeR.map((request) => (
                   <Button
                     key={request.idPetition}
                     onPress={() => descRequest([request.idPetition, request.folio, request.numbox])}

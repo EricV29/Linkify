@@ -19,6 +19,8 @@ import { deleteDoc } from './deleteDocument'
 const fs = require('fs')
 const path = require('path')
 let dataUser = ''
+let rolUser = ''
+//let idUser = 0
 let newWindow
 let legoWindow
 let raspWindow
@@ -48,8 +50,13 @@ ipcMain.on('login', async (event, argumentos) => {
   conn.query(
     'SELECT * FROM users WHERE BINARY Nickname = ? AND BINARY PassUser = ?',
     [argumentos.user, argumentos.password],
-    (err, rows, fields) => {
+    (err, rows) => {
       if (err) throw err
+      const notification = {
+        title: 'Linkify',
+        body: 'Bienvenido ' + err
+      }
+      new Notification(notification).show()
       if (rows.length > 0) {
         event.returnValue = true
         //console.log(rows[0].Nameuser)
@@ -62,6 +69,8 @@ ipcMain.on('login', async (event, argumentos) => {
         new Notification(notification).show()
 
         dataUser = rows[0].Nameuser + ' ' + rows[0].ApepUser + ' ' + rows[0].ApemUser
+        rolUser = rows[0].RolUser
+        //idUser = rows[0].idUser
 
         //event.reply('login-reply', true, rows[0].Nameuser)
 
@@ -69,7 +78,7 @@ ipcMain.on('login', async (event, argumentos) => {
         newWindow = new BrowserWindow({
           width: 1400,
           height: 800,
-          autoHideMenuBar: true,
+          autoHideMenuBar: false,
           ...(process.platform === 'linux' ? { icon } : { icon }),
           webPreferences: {
             preload: join(__dirname, '../preload/index.js'),
@@ -101,12 +110,12 @@ ipcMain.on('login', async (event, argumentos) => {
 })
 
 // ENVIAR NOMBRE COMPLETO DE USUARIO A MENU (newWindow)
-ipcMain.on('nameuser', (event, arg) => {
-  event.reply('nameu', true, dataUser)
+ipcMain.on('nameuser', (event) => {
+  event.reply('nameu', true, [dataUser, rolUser])
 })
 
 // CERRAR SESION
-ipcMain.on('exitApp', (event, arg) => {
+ipcMain.on('exitApp', () => {
   if (newWindow && !newWindow.isDestroyed()) {
     newWindow.close()
   }
@@ -133,7 +142,7 @@ function createWindow(): void {
     minHeight: 670,
     minWidth: 900,
     show: false,
-    autoHideMenuBar: true,
+    autoHideMenuBar: false,
     ...(process.platform === 'linux' ? { icon } : { icon }),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
@@ -143,9 +152,13 @@ function createWindow(): void {
     }
   })
 
-  mainWindow.on('ready-to-show', () => {
-    mainWindow.show()
-  })
+  if (mainWindow) {
+    mainWindow.on('ready-to-show', () => {
+      if (mainWindow) {
+        mainWindow.show()
+      }
+    })
+  }
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
@@ -187,13 +200,13 @@ interface Request {
 }
 
 //TODO: CREAR VENTANA LEGO SPIKE (LEGO) NOMBRE = legoWindow
-ipcMain.on('windowSpike', async (event, argumentos) => {
+ipcMain.on('windowSpike', async () => {
   //console.log('Ventana abierta de lego')
   // Crea una nueva ventana
   legoWindow = new BrowserWindow({
     width: 1400,
     height: 800,
-    autoHideMenuBar: true,
+    autoHideMenuBar: false,
     ...(process.platform === 'linux' ? { icon } : { icon }),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
@@ -212,7 +225,7 @@ ipcMain.on('windowSpike', async (event, argumentos) => {
 })
 
 //TODO: CREAR VENTANA RASPBERRY NOMBRE = raspWindow
-ipcMain.on('windowRasp', async (event, argumentos) => {
+ipcMain.on('windowRasp', async () => {
   //console.log('Ventana abierta de raspberry')
   // Crea una nueva ventana
   raspWindow = new BrowserWindow({
@@ -237,7 +250,7 @@ ipcMain.on('windowRasp', async (event, argumentos) => {
 })
 
 //TODO: CREAR VENTANA ARDUINO NOMBRE = ardWindow
-ipcMain.on('windowArd', async (event, argumentos) => {
+ipcMain.on('windowArd', async () => {
   //console.log('Ventana abierta de arduino')
   // Crea una nueva ventana
   ardWindow = new BrowserWindow({
@@ -268,6 +281,7 @@ ipcMain.on('msgOption', (event, arg) => {
     title: 'Linkify',
     body: arg
   }
+  console.log(event)
   new Notification(notification).show()
 })
 
@@ -305,9 +319,10 @@ ipcMain.on('saveDBsendEM', (event, arg) => {
   //? arg[5] fecha para finalizar
   //? arg[6] herramienta
   //? arg[7] numero de locker
+  //console.log(idUser)
   //send emails
   sendEmail(arg[2], arg[0], arg[6], arg[4], arg[1], arg[7])
-    .then((response) => {
+    .then(() => {
       const notification = {
         title: 'Linkify',
         body: 'La petición y correo se enviaron correctamente.'
@@ -325,6 +340,7 @@ ipcMain.on('saveDBsendEM', (event, arg) => {
       new Notification(notification).show()
       deleteDoc(arg[2])
       event.reply('saveDBsendEM-reply', 0)
+      console.log(error)
     })
 })
 
@@ -371,7 +387,7 @@ ipcMain.on('FinishRequest', async (event, arg) => {
   if (arg[0] === '5690') {
     try {
       finishidRequest(arg)
-        .then((results) => {
+        .then(() => {
           const notification = {
             title: 'Linkify',
             body: 'Prestamo finalizado.'
@@ -386,6 +402,7 @@ ipcMain.on('FinishRequest', async (event, arg) => {
           }
           new Notification(notification).show()
           event.reply('FinishRequest-reply', 0)
+          console.log(error)
         })
     } catch (error) {
       console.error(error)
