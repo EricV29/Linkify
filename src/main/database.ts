@@ -7,7 +7,7 @@ export const getConnection = async () => {
     connection = await mysql.createConnection({
       host: 'localhost',
       user: 'root',
-      password: 'root',
+      password: 'jared100',
       database: 'linkifydb'
     })
   }

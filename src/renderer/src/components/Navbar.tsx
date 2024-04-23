@@ -15,6 +15,7 @@ function Navbar(): JSX.Element {
     ipcRenderer.once('nameu', (success, arg) => {
       if (success) {
         setNameuser(arg[0])
+        ipcRenderer.send('msgOption', 'Bienvenido ' + arg[0])
       } else {
         console.log('Nombre de usuario no encontrado')
       }
@@ -25,8 +26,6 @@ function Navbar(): JSX.Element {
   function exitMenu() {
     ipcRenderer.send('exitApp', 'exit')
   }
-
-  //<img src={prep6l} alt="Prepa6Logotipo" className="w-[250px]" />
 
   return (
     <>

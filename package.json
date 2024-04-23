@@ -1,9 +1,9 @@
 {
-  "name": "productgest",
+  "name": "linkify",
   "version": "1.0.0",
   "description": "An Electron application with React and TypeScript",
   "main": "./out/main/index.js",
-  "author": "example.com",
+  "author": "Eric Jared Villeda Reyes",
   "homepage": "https://electron-vite.org",
   "scripts": {
     "format": "prettier --write .",
@@ -19,6 +19,10 @@
     "build:mac": "electron-vite build && electron-builder --mac --config",
     "build:linux": "electron-vite build && electron-builder --linux --config",
     "dist": "electron-builder"
+  },
+  "build": {
+    "asar": true,
+    "asarUnpack": "**/*.docx"
   },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.0",

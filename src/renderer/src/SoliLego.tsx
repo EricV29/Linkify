@@ -67,8 +67,7 @@ function SoliLego(): JSX.Element {
 
   useEffect(() => {
     ipcRenderer.send('AllRequests', 'LegoSpike')
-    ipcRenderer.on('AllRequests-reply', (event, arg) => {
-      console.log(event)
+    ipcRenderer.on('AllRequests-reply', (_event, arg) => {
       setActiveR(arg[0])
       setCompleteR(arg[1])
     })
@@ -79,8 +78,7 @@ function SoliLego(): JSX.Element {
     //console.log(arg)
     ipcRenderer.send('AlumnsRequest', arg)
     setID(arg)
-    ipcRenderer.once('AlumnsRequest-reply', (event, arg) => {
-      console.log(event)
+    ipcRenderer.once('AlumnsRequest-reply', (_event, arg) => {
       //console.log(arg)
       setFolio(folio)
       setNumbox(numbox)

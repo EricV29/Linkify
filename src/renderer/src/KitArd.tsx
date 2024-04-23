@@ -207,7 +207,8 @@ function KitArd(): JSX.Element {
     let selectedLocker = filteredLockers[0]
     //Generate document
     AlumnGenerate([numbox, userss, dateFinish, 'ArduinoCajaAlumnos', selectedLocker]).then(
-      ([outputPath, folio]) => {
+      (value) => {
+        const [outputPath, folio] = value as [any, any]
         //Save record to DB and send emails
         ipcRenderer.send('saveDBsendEM', [
           numbox,

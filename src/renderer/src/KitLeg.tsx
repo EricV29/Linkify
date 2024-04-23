@@ -101,17 +101,15 @@ function Kitleg(): JSX.Element {
 
   React.useEffect(() => {
     ipcRenderer.send('viableBoxes', [fecha, 'LegoSpike'])
-    ipcRenderer.on('viableBoxes-reply', (event, arg) => {
+    ipcRenderer.on('viableBoxes-reply', (_event, arg) => {
       //console.log(arg)
       let argNums = arg.map((row) => row.numbox.toString())
-      console.log(event)
       let newFilteredBoxes = boxes.filter((box) => !argNums.includes(box))
       setFilteredBoxes(newFilteredBoxes)
     })
 
     ipcRenderer.send('viableLockers', [fecha, 'LegoSpike'])
-    ipcRenderer.on('viableLockers-reply', (event, arg) => {
-      console.log(event)
+    ipcRenderer.on('viableLockers-reply', (_event, arg) => {
       //console.log(arg)
       let argNums = arg.map((row) => row.numlocker.toString())
       let newFilteredLockers = lockers.filter((locker) => !argNums.includes(locker))
@@ -201,7 +199,8 @@ function Kitleg(): JSX.Element {
     let selectedLocker = filteredLockers[0]
     //Generate document
     AlumnGenerate([numbox, userss, dateFinish, 'LegoSpikeCajaAlumnos', selectedLocker]).then(
-      ([outputPath, folio]) => {
+      (value) => {
+        const [outputPath, folio] = value as [any, any]
         //Save record to DB and send emails
         ipcRenderer.send('saveDBsendEM', [
           numbox,

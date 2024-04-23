@@ -14,7 +14,7 @@ import {
   alumnsforRequest,
   finishidRequest
 } from './dataConsult'
-import { deleteDoc } from './deleteDocument'
+//import { deleteDoc } from './deleteDocument'
 
 const fs = require('fs')
 const path = require('path')
@@ -43,6 +43,10 @@ app.on('ready', () => {
   }
 })
 
+ipcMain.handle('get-documents-path', async (_event) => {
+  return app.getPath('documents')
+})
+
 //TODO: LOGEARSE Y CREAR NUEVA VENTANA MENU (SECOND) NOMBRE = newWindow
 ipcMain.on('login', async (event, argumentos) => {
   //console.log(argumentos)
@@ -52,24 +56,14 @@ ipcMain.on('login', async (event, argumentos) => {
     [argumentos.user, argumentos.password],
     (err, rows) => {
       if (err) throw err
-      const notification = {
-        title: 'Linkify',
-        body: 'Bienvenido ' + err
-      }
-      new Notification(notification).show()
       if (rows.length > 0) {
         event.returnValue = true
         //console.log(rows[0].Nameuser)
         //console.log(rows)
 
-        const notification = {
-          title: 'Linkify',
-          body: 'Bienvenido ' + rows[0].Nameuser
-        }
-        new Notification(notification).show()
-
         dataUser = rows[0].Nameuser + ' ' + rows[0].ApepUser + ' ' + rows[0].ApemUser
         rolUser = rows[0].RolUser
+        console.log(dataUser)
         //idUser = rows[0].idUser
 
         //event.reply('login-reply', true, rows[0].Nameuser)
@@ -99,11 +93,6 @@ ipcMain.on('login', async (event, argumentos) => {
         mainWindow?.close()
       } else {
         event.returnValue = false
-        const notification = {
-          title: 'Linkify',
-          body: 'Tu usuario o contraseña son incorrectos'
-        }
-        new Notification(notification).show()
       }
     }
   )
@@ -111,7 +100,7 @@ ipcMain.on('login', async (event, argumentos) => {
 
 // ENVIAR NOMBRE COMPLETO DE USUARIO A MENU (newWindow)
 ipcMain.on('nameuser', (event) => {
-  event.reply('nameu', true, [dataUser, rolUser])
+  event.reply('nameu', [dataUser, rolUser])
 })
 
 // CERRAR SESION
@@ -276,12 +265,11 @@ ipcMain.on('windowArd', async () => {
 
 //TODO: FUNCTIONS FOR TOOLS
 //Message option
-ipcMain.on('msgOption', (event, arg) => {
+ipcMain.on('msgOption', (_event, arg) => {
   const notification = {
     title: 'Linkify',
     body: arg
   }
-  console.log(event)
   new Notification(notification).show()
 })
 
@@ -300,7 +288,6 @@ ipcMain.on('viableBoxes', async (event, arg) => {
 ipcMain.on('viableLockers', async (event, arg) => {
   try {
     const result = await viableLockers(arg)
-    console.log(result)
     event.reply('viableLockers-reply', result)
   } catch (error) {
     console.error(error)
@@ -338,7 +325,7 @@ ipcMain.on('saveDBsendEM', (event, arg) => {
         body: 'Error al enviar correo, verifica tu conexión de internet.'
       }
       new Notification(notification).show()
-      deleteDoc(arg[2])
+      //deleteDoc(arg[2])
       event.reply('saveDBsendEM-reply', 0)
       console.log(error)
     })

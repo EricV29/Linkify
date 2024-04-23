@@ -2,6 +2,7 @@ import PizZip from 'pizzip'
 import Docxtemplater from 'docxtemplater'
 const fs = require('fs')
 const path = require('path')
+const os = require('os')
 
 function AlumnGenerate([numbox, userss, fechalimit, kit, locker]) {
   function mesANombre(mes) {
@@ -37,9 +38,15 @@ function AlumnGenerate([numbox, userss, fechalimit, kit, locker]) {
   //let fechlimt = fechdiaa + '/' + fechmess + '/' + año
   const folio = numbox + fechdiaa + fechmess + año
 
-  return fetch('/' + kit + '.docx')
-    .then((response) => response.arrayBuffer())
-    .then((templateBuffer) => {
+  return new Promise((resolve, reject) => {
+    try {
+      const appPath =
+        process.env.NODE_ENV === 'development'
+          ? process.cwd()
+          : path.join(process.resourcesPath, 'app.asar.unpacked')
+      const docxPath = path.join(appPath, '/src/renderer/public', kit + '.docx')
+
+      const templateBuffer = fs.readFileSync(docxPath)
       const zip = new PizZip(templateBuffer)
       const doc = new Docxtemplater()
       doc.loadZip(zip)
@@ -64,15 +71,29 @@ function AlumnGenerate([numbox, userss, fechalimit, kit, locker]) {
       const documentBuffer = doc.getZip().generate({ type: 'nodebuffer' })
 
       // Define la ruta de descarga personalizada
-      let homeDir = process.env.HOME || process.env.USERPROFILE
+      //let homeDir = process.env.HOME || process.env.USERPROFILE
+      let homeDir = os.homedir()
       homeDir = homeDir?.replace(/\\/g, '/')
       homeDir = homeDir + '/Documents/Linkify'
+
+      // Crea el directorio si no existe
+      if (!fs.existsSync(homeDir)) {
+        fs.mkdirSync(homeDir, { recursive: true })
+      }
+
       const outputPath = path.join(homeDir, kit + `${folio}.docx`)
 
       // Escribe el archivo en la ruta especificada
       fs.writeFileSync(outputPath, documentBuffer)
-      return [outputPath, folio]
-    })
+
+      // Escribe el archivo en la ruta especificada
+      fs.writeFileSync(outputPath, documentBuffer)
+      resolve([outputPath, folio])
+    } catch (error) {
+      // Si hay un error, rechaza la promesa con el error
+      reject(error)
+    }
+  })
 }
 
 export default AlumnGenerate

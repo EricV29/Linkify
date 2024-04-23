@@ -1,8 +1,8 @@
 <<<<<<< HEAD
-# Linkify
-=======
-# productgest
 
+# Linkify
+
+=======
 An Electron application with React and TypeScript
 
 ## Recommended IDE Setup
@@ -35,4 +35,5 @@ $ npm run build:mac
 # For Linux
 $ npm run build:linux
 ```
->>>>>>> d421b79 (Proyecto completo)
+
+> > > > > > > d421b79 (Proyecto completo)

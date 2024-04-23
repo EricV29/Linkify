@@ -6,7 +6,7 @@ const { ipcRenderer } = require('electron')
 
 function Sidebar(): JSX.Element {
   const [activeButton, setActiveButton] = useState('Tools')
-  const [nameuser, setNameuser] = useState(null)
+  const [_nameuser, setNameuser] = useState(null)
   const [rol, setRoluser] = useState(null)
 
   // TRAER DATOS DE USUARIO
@@ -17,7 +17,6 @@ function Sidebar(): JSX.Element {
         setNameuser(arg[0])
         setRoluser(arg[1])
         //console.log(arg[1])
-        console.log(nameuser)
       } else {
         console.log('Nombre de usuario no encontrado')
       }
