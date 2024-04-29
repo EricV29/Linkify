@@ -12,8 +12,7 @@ import {
   activeRequests,
   completedRequests,
   alumnsforRequest,
-  finishidRequest,
-  users
+  finishidRequest
 } from './dataConsult'
 //import { deleteDoc } from './deleteDocument'
 
@@ -46,38 +45,6 @@ app.on('ready', () => {
 
 ipcMain.handle('get-documents-path', async (_event) => {
   return app.getPath('documents')
-})
-
-//TODO pueba
-ipcMain.on('conec', async (event, _argumentos) => {
-  try {
-    const conn = await getConnection()
-    conn.query(
-      'SELECT * FROM users WHERE BINARY Nickname = "Admin1" AND BINARY PassUser = "Admin1"',
-      (err, rows) => {
-        if (err) {
-          console.error(err)
-          event.reply('conec-reply', [rows, 'no conexion'])
-          throw err
-        } else {
-          event.reply('conec-reply', [rows, 'conexion exitosa'])
-        }
-      }
-    )
-  } catch (error) {
-    console.error('Error al obtener la conexión:', error)
-  }
-})
-
-ipcMain.on('conecd', async (event, _argumentos) => {
-  users()
-    .then((result) => {
-      event.reply('conecd-reply', [result, 'conexion exitosa'])
-    })
-    .catch((error) => {
-      event.reply('conecd-reply', [error, 'no conexion'])
-      console.error('Error al obtener la conexión:', error)
-    })
 })
 
 //TODO: LOGEARSE Y CREAR NUEVA VENTANA MENU (SECOND) NOMBRE = newWindow

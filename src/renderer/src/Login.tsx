@@ -4,7 +4,7 @@ import fondolo from './images/fondolo.webp'
 import { Button, Input } from '@nextui-org/react'
 import { Icon } from '@iconify/react'
 import { MailIcon } from './icons/Maillcon'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Formik } from 'formik'
 const { ipcRenderer } = require('electron')
 
@@ -25,14 +25,6 @@ function App(): JSX.Element {
   const [touchedFields, setTouchedFields] = useState({
     user: false,
     password: false
-  })
-
-  useEffect(() => {
-    ipcRenderer.send('conecd', 'Conectado')
-    ipcRenderer.on('conecd-reply', (_event, message) => {
-      console.log(message[0])
-      console.log(message[1])
-    })
   })
 
   const mutate = async (data: FormValues) => {
