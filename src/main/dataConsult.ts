@@ -1,5 +1,19 @@
 import { getConnection } from './database'
 
+//USERS
+export async function users() {
+  const connection = await getConnection()
+
+  let petitionQuery = `SELECT * FROM users`
+
+  return new Promise((resolve, reject) => {
+    connection.query(petitionQuery, (error, results) => {
+      if (error) reject(error)
+      resolve(results)
+    })
+  })
+}
+
 //VIABLE BOXES
 export async function viableBoxes(arg) {
   const connection = await getConnection()

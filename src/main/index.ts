@@ -12,7 +12,8 @@ import {
   activeRequests,
   completedRequests,
   alumnsforRequest,
-  finishidRequest
+  finishidRequest,
+  users
 } from './dataConsult'
 //import { deleteDoc } from './deleteDocument'
 
@@ -47,6 +48,38 @@ ipcMain.handle('get-documents-path', async (_event) => {
   return app.getPath('documents')
 })
 
+//TODO pueba
+ipcMain.on('conec', async (event, _argumentos) => {
+  try {
+    const conn = await getConnection()
+    conn.query(
+      'SELECT * FROM users WHERE BINARY Nickname = "Admin1" AND BINARY PassUser = "Admin1"',
+      (err, rows) => {
+        if (err) {
+          console.error(err)
+          event.reply('conec-reply', [rows, 'no conexion'])
+          throw err
+        } else {
+          event.reply('conec-reply', [rows, 'conexion exitosa'])
+        }
+      }
+    )
+  } catch (error) {
+    console.error('Error al obtener la conexión:', error)
+  }
+})
+
+ipcMain.on('conecd', async (event, _argumentos) => {
+  users()
+    .then((result) => {
+      event.reply('conecd-reply', [result, 'conexion exitosa'])
+    })
+    .catch((error) => {
+      event.reply('conecd-reply', [error, 'no conexion'])
+      console.error('Error al obtener la conexión:', error)
+    })
+})
+
 //TODO: LOGEARSE Y CREAR NUEVA VENTANA MENU (SECOND) NOMBRE = newWindow
 ipcMain.on('login', async (event, argumentos) => {
   //console.log(argumentos)
@@ -55,7 +88,10 @@ ipcMain.on('login', async (event, argumentos) => {
     'SELECT * FROM users WHERE BINARY Nickname = ? AND BINARY PassUser = ?',
     [argumentos.user, argumentos.password],
     (err, rows) => {
-      if (err) throw err
+      if (err) {
+        console.error(err)
+        throw err
+      }
       if (rows.length > 0) {
         event.returnValue = true
         //console.log(rows[0].Nameuser)
@@ -63,7 +99,7 @@ ipcMain.on('login', async (event, argumentos) => {
 
         dataUser = rows[0].Nameuser + ' ' + rows[0].ApepUser + ' ' + rows[0].ApemUser
         rolUser = rows[0].RolUser
-        console.log(dataUser)
+        //console.log(dataUser)
         //idUser = rows[0].idUser
 
         //event.reply('login-reply', true, rows[0].Nameuser)
@@ -72,7 +108,7 @@ ipcMain.on('login', async (event, argumentos) => {
         newWindow = new BrowserWindow({
           width: 1400,
           height: 800,
-          autoHideMenuBar: false,
+          autoHideMenuBar: true,
           ...(process.platform === 'linux' ? { icon } : { icon }),
           webPreferences: {
             preload: join(__dirname, '../preload/index.js'),
@@ -93,6 +129,7 @@ ipcMain.on('login', async (event, argumentos) => {
         mainWindow?.close()
       } else {
         event.returnValue = false
+        event.reply('conec-reply', 'return false')
       }
     }
   )
@@ -131,7 +168,7 @@ function createWindow(): void {
     minHeight: 670,
     minWidth: 900,
     show: false,
-    autoHideMenuBar: false,
+    autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : { icon }),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
@@ -195,7 +232,7 @@ ipcMain.on('windowSpike', async () => {
   legoWindow = new BrowserWindow({
     width: 1400,
     height: 800,
-    autoHideMenuBar: false,
+    autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : { icon }),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),

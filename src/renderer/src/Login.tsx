@@ -4,8 +4,7 @@ import fondolo from './images/fondolo.webp'
 import { Button, Input } from '@nextui-org/react'
 import { Icon } from '@iconify/react'
 import { MailIcon } from './icons/Maillcon'
-import { Password } from './icons/Password'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Formik } from 'formik'
 const { ipcRenderer } = require('electron')
 
@@ -28,9 +27,20 @@ function App(): JSX.Element {
     password: false
   })
 
+  useEffect(() => {
+    ipcRenderer.send('conecd', 'Conectado')
+    ipcRenderer.on('conecd-reply', (_event, message) => {
+      console.log(message[0])
+      console.log(message[1])
+    })
+  })
+
   const mutate = async (data: FormValues) => {
     //console.log(data)
     ipcRenderer.send('login', data)
+    ipcRenderer.on('login-reply', (_event, message) => {
+      console.log(message)
+    })
   }
 
   return (
@@ -119,9 +129,7 @@ function App(): JSX.Element {
                   label="Contraseña"
                   labelPlacement="outside"
                   className="w-[340px] text-[#B2B2B2]"
-                  startContent={
-                    <Password className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
-                  }
+                  startContent={<Icon icon="solar:password-bold" className="w-[30px] h-[30px]" />}
                   value={values.password}
                   onChange={handleChange}
                   onBlur={() =>
