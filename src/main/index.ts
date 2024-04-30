@@ -14,13 +14,11 @@ import {
   alumnsforRequest,
   finishidRequest
 } from './dataConsult'
-//import { deleteDoc } from './deleteDocument'
 
 const fs = require('fs')
 const path = require('path')
 let dataUser = ''
 let rolUser = ''
-//let idUser = 0
 let newWindow
 let legoWindow
 let raspWindow

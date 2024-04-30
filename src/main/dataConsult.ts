@@ -34,7 +34,7 @@ export async function viableLockers(arg) {
 export async function activeRequests(arg) {
   const connection = await getConnection()
 
-  let petitionQuery = `SELECT idPetition, numbox, namedoc, folio, fechreg, fechfinish, state FROM petition where state = 1 and tool = ?`
+  let petitionQuery = `SELECT idPetition, numbox, namedoc, folio, numlocker, fechreg, fechfinish, state FROM petition where state = 1 and tool = ?`
 
   return new Promise((resolve, reject) => {
     connection.query(petitionQuery, arg, (error, results) => {

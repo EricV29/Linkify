@@ -104,8 +104,7 @@ function KitRasp(): JSX.Element {
 
   React.useEffect(() => {
     ipcRenderer.send('viableBoxes', [fecha, 'RaspBerry'])
-    ipcRenderer.on('viableBoxes-reply', (event, arg) => {
-      console.log(event)
+    ipcRenderer.on('viableBoxes-reply', (_event, arg) => {
       //console.log(arg)
       let argNums = arg.map((row) => row.numbox.toString())
       let newFilteredBoxes = boxes.filter((box) => !argNums.includes(box))
@@ -113,8 +112,7 @@ function KitRasp(): JSX.Element {
     })
 
     ipcRenderer.send('viableLockers', [fecha, 'RaspBerry'])
-    ipcRenderer.on('viableLockers-reply', (event, arg) => {
-      console.log(event)
+    ipcRenderer.on('viableLockers-reply', (_event, arg) => {
       //console.log(arg)
       let argNums = arg.map((row) => row.numlocker.toString())
       let newFilteredLockers = lockers.filter((locker) => !argNums.includes(locker))
@@ -217,8 +215,7 @@ function KitRasp(): JSX.Element {
           'RaspBerry',
           selectedLocker
         ])
-        ipcRenderer.on('saveDBsendEM-reply', (event, arg) => {
-          console.log(event)
+        ipcRenderer.on('saveDBsendEM-reply', (_event, arg) => {
           if (arg === 1) {
             location.reload()
             toggleLoad()

@@ -209,8 +209,7 @@ function Kitleg(): JSX.Element {
           'LegoSpike',
           selectedLocker
         ])
-        ipcRenderer.on('saveDBsendEM-reply', (event, arg) => {
-          console.log(event)
+        ipcRenderer.on('saveDBsendEM-reply', (_event, arg) => {
           if (arg === 1) {
             location.reload()
             toggleLoad()

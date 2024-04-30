@@ -27,6 +27,7 @@ type Request = {
   numbox: string
   namedoc: string
   folio: string
+  numlocker: string
   fechreg: string
   fechfinish: string
   state: number
@@ -67,8 +68,7 @@ function SoliArd(): JSX.Element {
 
   useEffect(() => {
     ipcRenderer.send('AllRequests', 'Arduino')
-    ipcRenderer.on('AllRequests-reply', (event, arg) => {
-      console.log(event)
+    ipcRenderer.on('AllRequests-reply', (_event, arg) => {
       setActiveR(arg[0])
       setCompleteR(arg[1])
     })
@@ -79,8 +79,7 @@ function SoliArd(): JSX.Element {
     //console.log(arg)
     ipcRenderer.send('AlumnsRequest', arg)
     setID(arg)
-    ipcRenderer.once('AlumnsRequest-reply', (event, arg) => {
-      console.log(event)
+    ipcRenderer.once('AlumnsRequest-reply', (_event, arg) => {
       //console.log(arg)
       setFolio(folio)
       setNumbox(numbox)
@@ -99,8 +98,7 @@ function SoliArd(): JSX.Element {
     } else {
       ipcRenderer.send('msgOption', 'Error de PIN.')
     }
-    ipcRenderer.once('FinishRequest-reply', (event, arg) => {
-      console.log(event)
+    ipcRenderer.once('FinishRequest-reply', (_event, arg) => {
       if (arg === 1) {
         navigate('/arduino/kitalumnard')
         console.log(location.pathname)
@@ -148,6 +146,10 @@ function SoliArd(): JSX.Element {
                       <div className="flex flex-col font-semibold w-[130px] h-[60px] rounded-lg bg-[#00989E] items-center justify-center">
                         <p>Folio</p>
                         <p className="text-white text-[20px]">{request.folio}</p>
+                      </div>
+                      <div className="flex flex-col font-semibold w-[130px] h-[60px] rounded-lg bg-[#00989E] items-center justify-center">
+                        <p>Casillero</p>
+                        <p className="text-white text-[20px]">{request.numlocker}</p>
                       </div>
                       <div className="flex items-center justify-center space-x-2 bg-[#00989E] rounded-lg w-[250px] h-[60px]">
                         <Icon

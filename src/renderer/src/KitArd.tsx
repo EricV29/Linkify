@@ -104,19 +104,17 @@ function KitArd(): JSX.Element {
 
   React.useEffect(() => {
     ipcRenderer.send('viableBoxes', [fecha, 'Arduino'])
-    ipcRenderer.on('viableBoxes-reply', (event, arg) => {
+    ipcRenderer.on('viableBoxes-reply', (_event, arg) => {
       //console.log(arg)
       let argNums = arg.map((row) => row.numbox.toString())
-      console.log(event)
       let newFilteredBoxes = boxes.filter((box) => !argNums.includes(box))
       setFilteredBoxes(newFilteredBoxes)
     })
 
     ipcRenderer.send('viableLockers', [fecha, 'Arduino'])
-    ipcRenderer.on('viableLockers-reply', (event, arg) => {
+    ipcRenderer.on('viableLockers-reply', (_event, arg) => {
       //console.log(arg)
       let argNums = arg.map((row) => row.numlocker.toString())
-      console.log(event)
       let newFilteredLockers = lockers.filter((locker) => !argNums.includes(locker))
       setFilteredLockers(newFilteredLockers)
     })
@@ -217,8 +215,7 @@ function KitArd(): JSX.Element {
           'Arduino',
           selectedLocker
         ])
-        ipcRenderer.on('saveDBsendEM-reply', (event, arg) => {
-          console.log(event)
+        ipcRenderer.on('saveDBsendEM-reply', (_event, arg) => {
           if (arg === 1) {
             location.reload()
             toggleLoad()

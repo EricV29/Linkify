@@ -27,6 +27,7 @@ type Request = {
   numbox: string
   namedoc: string
   folio: string
+  numlocker: string
   fechreg: string
   fechfinish: string
   state: number
@@ -96,8 +97,7 @@ function SoliLego(): JSX.Element {
     } else {
       ipcRenderer.send('msgOption', 'Error de PIN.')
     }
-    ipcRenderer.once('FinishRequest-reply', (event, arg) => {
-      console.log(event)
+    ipcRenderer.once('FinishRequest-reply', (_event, arg) => {
       if (arg === 1) {
         navigate('/legospike/kitleg')
         console.log(location.pathname)
@@ -149,6 +149,10 @@ function SoliLego(): JSX.Element {
                       <div className="flex flex-col font-semibold w-[130px] h-[60px] rounded-lg bg-[#FED700] items-center justify-center">
                         <p>Folio</p>
                         <p className="text-white text-[18px]">{request.folio}</p>
+                      </div>
+                      <div className="flex flex-col font-semibold w-[130px] h-[60px] rounded-lg bg-[#FED700] items-center justify-center">
+                        <p>Casillero</p>
+                        <p className="text-white text-[18px]">{request.numlocker}</p>
                       </div>
                       <div className="flex items-center justify-center space-x-2 bg-[#FED700] rounded-lg w-[250px] h-[60px]">
                         <Icon

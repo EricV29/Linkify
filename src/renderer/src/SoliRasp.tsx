@@ -27,6 +27,7 @@ type Request = {
   numbox: string
   namedoc: string
   folio: string
+  numlocker: string
   fechreg: string
   fechfinish: string
   state: number
@@ -68,8 +69,7 @@ function SoliRasp(): JSX.Element {
 
   useEffect(() => {
     ipcRenderer.send('AllRequests', 'RaspBerry')
-    ipcRenderer.on('AllRequests-reply', (event, arg) => {
-      console.log(event)
+    ipcRenderer.on('AllRequests-reply', (_event, arg) => {
       setActiveR(arg[0])
       setCompleteR(arg[1])
     })
@@ -80,8 +80,7 @@ function SoliRasp(): JSX.Element {
     //console.log(arg)
     ipcRenderer.send('AlumnsRequest', arg)
     setID(arg)
-    ipcRenderer.once('AlumnsRequest-reply', (event, arg) => {
-      console.log(event)
+    ipcRenderer.once('AlumnsRequest-reply', (_event, arg) => {
       //console.log(arg)
       setFolio(folio)
       setNumbox(numbox)
@@ -100,8 +99,7 @@ function SoliRasp(): JSX.Element {
     } else {
       ipcRenderer.send('msgOption', 'Error de PIN.')
     }
-    ipcRenderer.once('FinishRequest-reply', (event, arg) => {
-      console.log(event)
+    ipcRenderer.once('FinishRequest-reply', (_event, arg) => {
       if (arg === 1) {
         navigate('/raspberry/kitalumnrasp')
         console.log(location.pathname)
@@ -153,6 +151,10 @@ function SoliRasp(): JSX.Element {
                       <div className="flex flex-col font-semibold w-[130px] h-[60px] rounded-lg bg-[#DC0941] items-center justify-center">
                         <p>Folio</p>
                         <p className="text-white text-[18px]">{request.folio}</p>
+                      </div>
+                      <div className="flex flex-col font-semibold w-[130px] h-[60px] rounded-lg bg-[#DC0941] items-center justify-center">
+                        <p>Casillero</p>
+                        <p className="text-white text-[18px]">{request.numlocker}</p>
                       </div>
                       <div className="flex items-center justify-center space-x-2 bg-[#DC0941] rounded-lg w-[250px] h-[60px]">
                         <Icon
