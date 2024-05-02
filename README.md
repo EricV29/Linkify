@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="400px" src="/main/public/src/images/linkilogo.png" alt="LogotipoLinkifiy"/>
+  <img width="400px" src="/src/renderer/images/linkilogo.png" alt="LogotipoLinkifiy"/>
 </p>
 
 # Linkify
