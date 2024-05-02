@@ -2,7 +2,7 @@
   <img width="400px" src="/src/renderer/src/images/linkilogo.png" alt="LogotipoLinkifiy"/>
 </p>
 
-# Linkify
+### Descripción de Linkify
 
 =======
 An Electron application with React and TypeScript
@@ -40,12 +40,7 @@ $ npm run build:linux
 
 > > > > > > > (VERSION: Linkify 1.0.0)
 
-<h1 align="center"> IEEE-ESTl Student Web Hub </h1>
 
-
-[![Deploy to GitHub Pages](https://github.com/IEEE-ESTl/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/IEEE-ESTl/actions/workflows/deploy.yml)
-
-### La Rama Estudiantil IEEE-ESTl es una comunidad de estudiantes apasionados por la programación, la innovación y el conocimiento de nuevas tecnologías. Como miembros de la rama, nos vimos en la tarea de crear la página web “IEEE-ESTL Student Web Hub”.
 
 <h2 align="center">Funcionalidades</h2>
 
