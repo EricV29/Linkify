@@ -24,7 +24,7 @@
 ### Clone Repository
 <p>Para hacer uso de este proyecto de manera local es necesario ejecutar los siguientes comandos en la terminal de visual studio code.</p>
 
-- `https://github.com/EricV29/Linkify.git`  para clonar el proyecto
+- `https://github.com/EricV29/Linkify.git`
 
 ### Install
 
