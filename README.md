@@ -15,9 +15,24 @@
 <h2 align="center">Features</h2>
 
 > [!IMPORTANT]
-> Actualmente el proyecto se encuentra en railway (producción) recibiendo constantes actualizaciones de optimización, corrección de bugs y actualización del contenido cada semana.
+> Actualmente el proyecto se encuentra en railway (producción) recibiendo constantes actualizaciones de optimización, corrección de bugs y actualización.
 
-<li>Dar a conocer los beneficios de pertenecer a la rama</li>
+<li>Gestión y solicitud de equipo Lego Spike Education</li>
+<li>Gestión y solicitud de equipo RaspBerry Pi</li>
+<li>Gestión y solicitud de equipo Arduino</li>
+<li>Generación de documentos de actas por solicitud</li>
+<li>Envío de emails </li>
+
+<h2 align="center">Objetivos</h2>
+
+> [!IMPORTANT]
+> Actualmente el proyecto se encuentra en railway (producción) recibiendo constantes actualizaciones de optimización, corrección de bugs y actualización.
+
+<h2 align="center">Próximos cambios</h2>
+
+<li>Gestión de inventario de biblioteca</li>
+<li>Gestión de tareas administrativas</li>
+
 
 <h2 align="center">Project Setup</h2>
 
