@@ -43,8 +43,8 @@ Linkify is currently a school management system for Lego Spike, Arduino, and Ras
 <h2 align="center">🔄️Upcoming updates🔄️</h2>
 
 <li>Library management.📚</li>
-<li>Control loan management.💻</li>
-<li>Laptop loan management.📱</li>
+<li>Loan management of controls for screens.📺</li>
+<li>Laptop loan management.💻</li>
 
 <h2 align="center">Project Setup</h2>
 
