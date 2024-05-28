@@ -81,10 +81,17 @@ $ npm run build:linux
 
 > > > > > > > (VERSION: Linkify 1.0.0)
 
-<div align="center">
-  <p><img alt="IEEE" style="max-width:70%; min-width:70px;" src="./resources/interfaces/welcome.png" /></p>
-</div>
+<h2 align="center">🖥️Interfaces🖥️</h2>
 
-<div align="center">
-  <p><img alt="IEEE" style="max-width:70%; min-width:70px;" src="./resources/interfaces/welcome.png" /></p>
-</div>
+|                                         |                                         |
+| --------------------------------------- | --------------------------------------- |
+| ![IEEE](./resources/interfaces/welcome.png) | ![IEEE](./resources/interfaces/welcome.png) |
+| Texto debajo de la primera imagen       | Texto debajo de la segunda imagen      |
+| ![IEEE](./resources/interfaces/menu.png) | ![IEEE](./resources/interfaces/requestLego.png) |
+| Texto debajo de la primera imagen       | Texto debajo de la segunda imagen      |
+| ![IEEE](./resources/interfaces/requestArduino.png) | ![IEEE](./resources/interfaces/requestRaspberry.png) |
+| Texto debajo de la primera imagen       | Texto debajo de la segunda imagen      |
+| ![IEEE](./resources/interfaces/loanhistoryLego.png) | ![IEEE](./resources/interfaces/loanhistoryArduino.png) |
+| Texto debajo de la primera imagen       | Texto debajo de la segunda imagen      |
+| ![IEEE](./resources/interfaces/loanhistoryRaspberry.png) | ![IEEE](./resources/interfaces/loanhistoryArduino.png) |
+| Texto debajo de la primera imagen       | Texto debajo de la segunda imagen      |
