@@ -49,6 +49,7 @@ Linkify is currently a school management system for Lego Spike, Arduino, and Ras
 <h2 align="center">Project Setup</h2>
 
 ### Clone Repository
+
 <p>To use this project locally, it is necessary to execute the following commands in your favorite code editor's terminal.</p>
 
 - `git clone https://github.com/EricV29/Linkify.git`
