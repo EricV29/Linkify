@@ -82,5 +82,9 @@ $ npm run build:linux
 > > > > > > > (VERSION: Linkify 1.0.0)
 
 <div align="center">
-  <p><img alt="IEEE" style="max-width:70%; min-width:70px;" src="./resources/interfaces/login.png" /></p>
+  <p><img alt="IEEE" style="max-width:70%; min-width:70px;" src="./resources/interfaces/welcome.png" /></p>
+</div>
+
+<div align="center">
+  <p><img alt="IEEE" style="max-width:70%; min-width:70px;" src="./resources/interfaces/welcome.png" /></p>
 </div>
