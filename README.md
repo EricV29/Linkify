@@ -79,6 +79,21 @@ $ npm run build:mac
 $ npm run build:linux
 ```
 
-> > > > > > > (VERSION: Linkify 1.0.0)
-
 <h2 align="center">🖥️Interfaces🖥️</h2>
+
+|                                         |                                         |
+| --------------------------------------- | --------------------------------------- |
+| Login: Enter username and password | Welcome: Includes logo, version, and managed tools. |
+| ![IEEE](./resources/interfaces/loginLinki.png) | ![IEEE](./resources/interfaces/welcome.png) |
+| Menu: Includes sidebar with the different functions of the system, navbar with the name and a button to exit the system and main space to show what the functions include. | Lego Spike Requests: It includes a form to add users to a team, box selection, delivery date, account number (in this case, students), email address (in this case, institutional), full name, button to add users, table with the list of added users, and button to submit the request. |
+| ![IEEE](./resources/interfaces/menu.png) | ![IEEE](./resources/interfaces/requestLego.png) |
+| Aurduino Requests: It includes a form to add users to a team, box selection, delivery date, account number (in this case, students), email address (in this case, institutional), full name, button to add users, table with the list of added users, and button to submit the request. | Raspberry Requests: It includes a form to add users to a team, box selection, delivery date, account number (in this case, students), email address (in this case, institutional), full name, button to add users, table with the list of added users, and button to submit the request. |
+| ![IEEE](./resources/interfaces/requestArduino.png) | ![IEEE](./resources/interfaces/requestRaspberry.png) |
+| Request history: Includes a switch to view active and completed requests. | Request history: Includes a switch to view active and completed requests. |
+| ![IEEE](./resources/interfaces/loanhistoryLego.png) | ![IEEE](./resources/interfaces/loanhistoryArduino.png) |
+| Request history: Includes a switch to view active and completed requests. | Popover asks: Ask to confirm if you agree to send the request. |
+| ![IEEE](./resources/interfaces/loanhistoryRaspberry.png) | ![IEEE](./resources/interfaces/confirmRequest.png) |
+| Loading: When performing functions such as sending a request, sending emails, and loading request history, the loading screen will appear. |     |
+| ![IEEE](./resources/interfaces/loadingRequest.png) |  |
+
+> > > > > > > (VERSION: Linkify 1.0.0)
