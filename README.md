@@ -86,7 +86,7 @@ $ npm run build:linux
 | Login: Enter username and password | Welcome: Includes logo, version, and managed tools. |
 | ![IEEE](./resources/interfaces/loginLinki.png) | ![IEEE](./resources/interfaces/welcome.png) |
 | Menu: Includes sidebar with the different functions of the system, navbar with the name and a button to exit the system and main space to show what the functions include. | Lego Spike Requests: It includes a form to add users to a team, box selection, delivery date, account number (in this case, students), email address (in this case, institutional), full name, button to add users, table with the list of added users, and button to submit the request. |
-| ![IEEE](./resources/interfaces/menu.png) | ![IEEE](./resources/interfaces/requestLego.png) |
+| ![IEEE](./resources/interfaces/menuLinki.png) | ![IEEE](./resources/interfaces/requestLego.png) |
 | Aurduino Requests: It includes a form to add users to a team, box selection, delivery date, account number (in this case, students), email address (in this case, institutional), full name, button to add users, table with the list of added users, and button to submit the request. | Raspberry Requests: It includes a form to add users to a team, box selection, delivery date, account number (in this case, students), email address (in this case, institutional), full name, button to add users, table with the list of added users, and button to submit the request. |
 | ![IEEE](./resources/interfaces/requestArduino.png) | ![IEEE](./resources/interfaces/requestRaspberry.png) |
 | Request history: Includes a switch to view active and completed requests. | Request history: Includes a switch to view active and completed requests. |
