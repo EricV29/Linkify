@@ -1,7 +1,7 @@
 {
   "name": "linkify",
   "version": "1.0.0",
-  "description": "An Electron application with React and TypeScript",
+  "description": "Linkify is a management system for borrowing Lego Spike, Arduino, and Raspberry Pi equipment. It allows users to send loan requests, including equipment and user details, managed by an administrator who can finalize the loans. Loan data is stored and displayed to the administrator.",
   "main": "./out/main/index.js",
   "author": "Eric Jared Villeda Reyes",
   "homepage": "https://electron-vite.org",
@@ -54,7 +54,6 @@
     "@types/react-dom": "^18.2.18",
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.16",
-    "dotenv": "^16.4.5",
     "electron": "^28.1.1",
     "electron-builder": "^24.13.3",
     "electron-vite": "^2.0.0",

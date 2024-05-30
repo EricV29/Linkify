@@ -1,3 +1,12 @@
+declare global {
+  interface ImportMetaEnv {
+    VITE_PORTEMAIL: number
+    VITE_USEREMAIL: string
+    VITE_TOKENEMAIL: string
+    VITE_ADDRESSEMAIL: string
+  }
+}
+
 const nodemailer = require('nodemailer')
 let path = require('path')
 
@@ -7,19 +16,19 @@ export function sendEmail(pathdoc, numbox, tool, ide, users, locker) {
     service: 'gmail',
     host: 'smtp.gmail.com',
     secure: true,
-    port: '465',
+    port: import.meta.env.VITE_PORTEMAIL,
     auth: {
-      user: 'elinkify@gmail.com',
-      pass: 'ymiy ttli lyla iahn'
+      user: import.meta.env.VITE_USEREMAIL,
+      pass: import.meta.env.VITE_TOKENEMAIL
     }
   })
 
   let mailOptions = {
     from: {
       name: 'Linkify (Solicitud ' + ide + ' )',
-      address: 'elinkify@gmail.com'
+      address: import.meta.env.VITE_USEREMAIL
     },
-    to: 'kevin_serrano@uaeh.edu.mx',
+    to: import.meta.env.VITE_ADDRESSEMAIL,
     subject: 'Solicitud de caja ' + numbox + ' de ' + tool,
     text: 'Documento',
     attachments: [

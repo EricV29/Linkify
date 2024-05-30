@@ -1,0 +1,12 @@
+VITE_HOST = 'host run data base'
+VITE_USER = 'user data base'
+VITE_PASSWORDDB = 'password data base'
+VITE_DB = 'name data base'
+VITE_PORTEMAIL = 465 > port email nodemailer
+VITE_USEREMAIL = 'issuer email'
+VITE_TOKENEMAIL = 'token for email sender nodemailer'
+VITE_ADDRESSEMAIL = 'system administrator email'
+
+/************************************************************
+In this case, the email address of the system's email sender is different from that of the administrator, as the system has been implemented in a school where teachers are registered in the database and the person in charge of the area is an engineer. To avoid using the credentials of the person in charge, a new email address was created exclusively for the system.
+************************************************************/
