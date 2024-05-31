@@ -86,8 +86,8 @@ ipcMain.on('login', async (event, argumentos) => {
         // Carga la ruta deseada en la nueva ventana
         newWindow.loadURL(
           is.dev
-            ? process.env['ELECTRON_RENDERER_URL'] + '#/menu/herramientas'
-            : `file://${join(__dirname, '../renderer/index.html')}#/menu/herramientas`
+            ? process.env['ELECTRON_RENDERER_URL'] + '#/menu'
+            : `file://${join(__dirname, '../renderer/index.html')}#/menu`
         )
 
         //Close window login

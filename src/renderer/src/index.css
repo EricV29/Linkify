@@ -32,6 +32,10 @@
   src: url('../public/fonts/Aileron-Bold.otf') format('opentype');
 }
 
-.p {
-  font-family: primary;
+p {
+  font-family: 'Aileron-Regular';
+}
+
+h1{
+  font-family: 'Aileron-Bold';
 }
