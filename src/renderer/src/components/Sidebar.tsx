@@ -75,7 +75,7 @@ function Sidebar(): JSX.Element {
               variant="ghost"
               onClick={() => setActiveButton('button3')}
             >
-              <Link to="/menu/biblioteca" className="w-full h-full flex items-center bg-black">
+              <Link to="/menu/biblioteca" className="w-full h-full flex items-center">
                 <Icon icon="ion:library-sharp" />
                 Biblioteca
               </Link>
