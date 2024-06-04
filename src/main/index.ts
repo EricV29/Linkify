@@ -12,7 +12,9 @@ import {
   activeRequests,
   completedRequests,
   alumnsforRequest,
-  finishidRequest
+  finishidRequest,
+  allData,
+  allBooks
 } from './dataConsult'
 
 const fs = require('fs')
@@ -73,7 +75,7 @@ ipcMain.on('login', async (event, argumentos) => {
         newWindow = new BrowserWindow({
           width: 1400,
           height: 800,
-          autoHideMenuBar: true,
+          autoHideMenuBar: false,
           ...(process.platform === 'linux' ? { icon } : { icon }),
           webPreferences: {
             preload: join(__dirname, '../preload/index.js'),
@@ -133,7 +135,7 @@ function createWindow(): void {
     minHeight: 670,
     minWidth: 900,
     show: false,
-    autoHideMenuBar: true,
+    autoHideMenuBar: false,
     ...(process.platform === 'linux' ? { icon } : { icon }),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
@@ -402,5 +404,28 @@ ipcMain.on('FinishRequest', async (event, arg) => {
       body: 'PIN incorrecto.'
     }
     new Notification(notification).show()
+  }
+})
+
+//TODO: FUNCTIONS FOR LIBRARY
+//All data
+ipcMain.on('allData', async (event) => {
+  try {
+    const result = await allData()
+    //console.log(result)
+    event.reply('allData-reply', result)
+  } catch (error) {
+    console.error(error)
+  }
+})
+
+//All books
+ipcMain.on('allBooks', async (event) => {
+  try {
+    const result = await allBooks()
+    console.log(result)
+    event.reply('allBooks-reply', result)
+  } catch (error) {
+    console.error(error)
   }
 })

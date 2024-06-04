@@ -1,14 +1,37 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Button } from '@nextui-org/react'
 import { Icon } from '@iconify/react'
-import { useState } from 'react'
 import BooksLibrary from './components/BooksLibrary'
 import LoansLibrary from './components/LoansLibrary'
 import NewLoanLibrary from './components/NewLoanLibrary'
 import NewBookLibrary from './components/NewBookLibrary'
+const { ipcRenderer } = require('electron')
+
+interface AllData {
+  Disponibles: number
+  Prestamos: number
+  Inexistentes: number
+}
 
 function Library(): JSX.Element {
   const [view, setView] = useState('books')
+  const [alldata, setAlldata] = useState<AllData | null>(null)
+
+  useEffect(() => {
+    ipcRenderer.send('allData')
+    ipcRenderer.on('allData-reply', (_event, arg) => {
+      //console.log(arg)
+      if (arg && typeof arg === 'object') {
+        setAlldata(arg)
+      } else {
+        console.error('No se recibieron datos o el objeto está vacío.')
+      }
+    })
+
+    return () => {
+      ipcRenderer.removeAllListeners('allData-reply')
+    }
+  }, [])
 
   function handleView(value) {
     return () => {
@@ -27,7 +50,7 @@ function Library(): JSX.Element {
             </div>
             <div>
               <p className="text-[#838383]">Disponibles</p>
-              <p className="font-bold">140</p>
+              <p className="font-bold">{alldata?.Disponibles}</p>
             </div>
           </div>
           <div className="h-full w-[200px] flex justify-center items-center space-x-2">
@@ -36,7 +59,7 @@ function Library(): JSX.Element {
             </div>
             <div>
               <p className="text-[#838383]">Préstamos</p>
-              <p className="font-bold">30</p>
+              <p className="font-bold">{alldata?.Prestamos}</p>
             </div>
           </div>
           <div className="h-full w-[200px] flex justify-center items-center space-x-2">
@@ -45,7 +68,7 @@ function Library(): JSX.Element {
             </div>
             <div>
               <p className="text-[#838383]">Existentes</p>
-              <p className="font-bold">140</p>
+              <p className="font-bold">{alldata?.Disponibles}</p>
             </div>
           </div>
           <div className="h-full w-[200px] flex justify-center items-center space-x-2">
@@ -54,7 +77,7 @@ function Library(): JSX.Element {
             </div>
             <div>
               <p className="text-[#838383]">Inexistentes</p>
-              <p className="font-bold">0</p>
+              <p className="font-bold">{alldata?.Inexistentes}</p>
             </div>
           </div>
         </div>

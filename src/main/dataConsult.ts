@@ -86,3 +86,43 @@ export async function finishidRequest(arg) {
     })
   })
 }
+
+//ALL DATA FOR LIBRARY
+export async function allData() {
+  const connection = await getConnection()
+
+  let petitionQuery = `SELECT COUNT(CASE WHEN statusbook = 'disponible' THEN existencia END) AS Disponibles, COUNT(CASE WHEN statusbook = 'prestamo' THEN existencia END) AS Prestamos, COUNT(CASE WHEN statusbook = 'inexistentes' THEN existencia END) AS Inexistentes FROM book;`
+
+  return new Promise((resolve, reject) => {
+    connection.query(petitionQuery, (error, results) => {
+      if (error) {
+        reject(error)
+      } else {
+        // Transforma los resultados en formato JSON
+        const jsonData = {
+          Disponibles: results[0].Disponibles,
+          Prestamos: results[0].Prestamos,
+          Inexistentes: results[0].Inexistentes
+        }
+        resolve(jsonData)
+      }
+    })
+  })
+}
+
+//ALL BOOKS
+export async function allBooks() {
+  const connection = await getConnection()
+
+  let petitionQuery = `SELECT folio, title, autor, existencia, statusbook FROM book;`
+
+  return new Promise((resolve, reject) => {
+    connection.query(petitionQuery, (error, results) => {
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}

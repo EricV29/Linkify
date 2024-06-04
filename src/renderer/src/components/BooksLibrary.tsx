@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Table,
   TableHeader,
@@ -16,6 +16,7 @@ import {
 import { DeleteIcon } from '../icons/DeleteIcon'
 import { EditIcon } from '../icons/EditIcon'
 import { Icon } from '@iconify/react'
+const { ipcRenderer } = require('electron')
 
 const statusColorMap = {
   disponible: 'success',
@@ -23,8 +24,16 @@ const statusColorMap = {
   préstamo: 'warning'
 }
 
+interface AllDataBooks {
+  id: number
+  folio: string
+  title: string
+  autor: string
+  existencia: number
+  status: string
+}
+
 function BooksLibrary(): JSX.Element {
-  //Table Books
   const renderCell = React.useCallback((user, columnKey) => {
     const cellValue = user[columnKey]
 
@@ -38,9 +47,14 @@ function BooksLibrary(): JSX.Element {
             <p className="text-bold text-sm capitalize text-default-400">{user.team}</p>
           </div>
         )
-      case 'status':
+      case 'statusbook':
         return (
-          <Chip className="capitalize" color={statusColorMap[user.status]} size="sm" variant="flat">
+          <Chip
+            className="capitalize"
+            color={statusColorMap[user.statusbook]}
+            size="sm"
+            variant="flat"
+          >
             {cellValue}
           </Chip>
         )
@@ -63,37 +77,50 @@ function BooksLibrary(): JSX.Element {
         return cellValue
     }
   }, [])
+  const [allbooks, setAllBooks] = useState<AllDataBooks[]>([])
+
+  useEffect(() => {
+    ipcRenderer.send('allBooks')
+    ipcRenderer.on('allBooks-reply', (_event, arg) => {
+      console.log(arg)
+      setAllBooks(arg)
+    })
+
+    return () => {
+      ipcRenderer.removeAllListeners('allBooks-reply')
+    }
+  }, [])
 
   const columns = [
-    { name: 'FOLIO', uid: 'id' },
+    { name: 'FOLIO', uid: 'folio' },
     { name: 'TÍTULO', uid: 'title' },
     { name: 'AUTOR', uid: 'autor' },
     { name: 'EXISTENCIA', uid: 'existencia' },
-    { name: 'ESTADO', uid: 'status' },
+    { name: 'ESTADO', uid: 'statusbook' },
     { name: 'ACCIONES', uid: 'actions' }
   ]
 
   const users = [
     {
-      id: 1,
+      folio: 'ff',
       title: 'TITULO',
       autor: 'AUTOR',
       existencia: '1',
-      status: 'disponible'
+      statusbook: 'disponible'
     },
     {
-      id: 2,
+      folio: 'sdd',
       title: 'TITULO',
       autor: 'AUTOR',
       existencia: '1',
-      status: 'inexistente'
+      statusbook: 'inexistente'
     },
     {
-      id: 3,
+      folio: 'd',
       title: 'TITULO',
       autor: 'AUTOR',
       existencia: '1',
-      status: 'préstamo'
+      statusbook: 'préstamo'
     }
   ]
 
@@ -137,9 +164,9 @@ function BooksLibrary(): JSX.Element {
               </TableColumn>
             )}
           </TableHeader>
-          <TableBody items={users}>
+          <TableBody items={allbooks}>
             {(item) => (
-              <TableRow key={item.id}>
+              <TableRow key={item.folio}>
                 {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
               </TableRow>
             )}
