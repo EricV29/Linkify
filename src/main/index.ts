@@ -420,12 +420,11 @@ ipcMain.on('allData', async (event) => {
 })
 
 //All books
-ipcMain.on('allBooks', async (event) => {
+ipcMain.on('allBooks', async (event, { limit, offset }) => {
   try {
-    const result = await allBooks()
-    console.log(result)
-    event.reply('allBooks-reply', result)
+    const results = await allBooks(limit, offset)
+    event.reply('allBooks-reply', results)
   } catch (error) {
-    console.error(error)
+    event.reply('allBooks-reply', { error })
   }
 })

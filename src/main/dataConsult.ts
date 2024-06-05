@@ -111,13 +111,13 @@ export async function allData() {
 }
 
 //ALL BOOKS
-export async function allBooks() {
+export async function allBooks(limit, offset) {
   const connection = await getConnection()
 
-  let petitionQuery = `SELECT folio, title, autor, existencia, statusbook FROM book;`
+  let petitionQuery = `SELECT folio, title, autor, existencia, statusbook FROM book LIMIT ? OFFSET ?`
 
   return new Promise((resolve, reject) => {
-    connection.query(petitionQuery, (error, results) => {
+    connection.query(petitionQuery, [limit, offset], (error, results) => {
       if (error) {
         reject(error)
       } else {

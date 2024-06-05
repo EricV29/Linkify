@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   Table,
   TableHeader,
@@ -11,8 +11,10 @@ import {
   Tooltip,
   Input,
   Select,
-  SelectItem
+  SelectItem,
+  Spinner
 } from '@nextui-org/react'
+import { useInfiniteScroll } from '@nextui-org/use-infinite-scroll'
 import { DeleteIcon } from '../icons/DeleteIcon'
 import { EditIcon } from '../icons/EditIcon'
 import { Icon } from '@iconify/react'
@@ -30,7 +32,7 @@ interface AllDataBooks {
   title: string
   autor: string
   existencia: number
-  status: string
+  statusbook: string
 }
 
 function BooksLibrary(): JSX.Element {
@@ -39,7 +41,7 @@ function BooksLibrary(): JSX.Element {
 
     switch (columnKey) {
       case 'name':
-        return <User name={cellValue}></User>
+        return <User name={cellValue} />
       case 'role':
         return (
           <div className="flex flex-col">
@@ -77,19 +79,44 @@ function BooksLibrary(): JSX.Element {
         return cellValue
     }
   }, [])
+
   const [allbooks, setAllBooks] = useState<AllDataBooks[]>([])
+  const [hasMore, setHasMore] = useState(true)
+  const [page, setPage] = useState(0)
+  const limit = 10
+  const [searchQuery, setSearchQuery] = useState('')
+  const [selectedCategory, setSelectedCategory] = useState<string | undefined>(undefined)
+
+  const loadMoreBooks = () => {
+    ipcRenderer.send('allBooks', { limit, offset: page * limit })
+    ipcRenderer.once('allBooks-reply', (_event, arg) => {
+      if (arg.error) {
+        console.error('Error fetching books:', arg.error)
+        setHasMore(false)
+      } else {
+        if (arg.length < limit) {
+          setHasMore(false)
+        }
+        setAllBooks((prevBooks) => [...prevBooks, ...arg])
+        setPage((prevPage) => prevPage + 1)
+      }
+    })
+  }
 
   useEffect(() => {
-    ipcRenderer.send('allBooks')
-    ipcRenderer.on('allBooks-reply', (_event, arg) => {
-      console.log(arg)
-      setAllBooks(arg)
-    })
+    if (page === 0 && allbooks.length === 0) {
+      loadMoreBooks()
+    }
 
     return () => {
       ipcRenderer.removeAllListeners('allBooks-reply')
     }
   }, [])
+
+  const [loaderRef, scrollerRef] = useInfiniteScroll({
+    hasMore,
+    onLoadMore: loadMoreBooks
+  })
 
   const columns = [
     { name: 'FOLIO', uid: 'folio' },
@@ -100,30 +127,6 @@ function BooksLibrary(): JSX.Element {
     { name: 'ACCIONES', uid: 'actions' }
   ]
 
-  const users = [
-    {
-      folio: 'ff',
-      title: 'TITULO',
-      autor: 'AUTOR',
-      existencia: '1',
-      statusbook: 'disponible'
-    },
-    {
-      folio: 'sdd',
-      title: 'TITULO',
-      autor: 'AUTOR',
-      existencia: '1',
-      statusbook: 'inexistente'
-    },
-    {
-      folio: 'd',
-      title: 'TITULO',
-      autor: 'AUTOR',
-      existencia: '1',
-      statusbook: 'préstamo'
-    }
-  ]
-
   const categori = [
     { key: 'folio', label: 'Folio' },
     { key: 'title', label: 'Título' },
@@ -131,6 +134,35 @@ function BooksLibrary(): JSX.Element {
     { key: 'stock', label: 'Existencia' },
     { key: 'state', label: 'Estado' }
   ]
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query)
+  }
+
+  const handleCategoryChange = (category: string | null) => {
+    setSelectedCategory(category || undefined)
+  }
+
+  const filteredBooks = allbooks.filter((book) => {
+    if (selectedCategory && searchQuery) {
+      switch (selectedCategory) {
+        case 'folio':
+          return book.folio.includes(searchQuery)
+        case 'title':
+          return book.title.includes(searchQuery)
+        case 'autor':
+          return book.autor.includes(searchQuery)
+        case 'stock':
+          return book.existencia.toString().includes(searchQuery)
+        case 'state':
+          return book.statusbook.includes(searchQuery)
+        default:
+          return true
+      }
+    } else {
+      return true
+    }
+  })
 
   return (
     <>
@@ -145,18 +177,38 @@ function BooksLibrary(): JSX.Element {
               <Icon icon="mdi:book-search" color="#00a539" className="w-[20px] h-[20px]" />
             }
             variant="bordered"
+            value={searchQuery}
+            onChange={(event) => handleSearch(event.target.value)}
           />
           <Select
             label="Elige una categoría para buscar"
             placeholder="Categoría"
             className="max-w-xs"
+            value={selectedCategory}
+            onChange={(event) => handleCategoryChange(event.target.value)}
           >
             {categori.map((categori) => (
               <SelectItem key={categori.key}>{categori.label}</SelectItem>
             ))}
           </Select>
         </div>
-        <Table aria-label="Example table with custom cells">
+
+        <Table
+          isHeaderSticky
+          aria-label="Libros de la biblioteca"
+          baseRef={scrollerRef}
+          bottomContent={
+            hasMore ? (
+              <div className="flex w-full justify-center">
+                <Spinner ref={loaderRef} color="success" />
+              </div>
+            ) : null
+          }
+          classNames={{
+            base: 'max-h-[310px] overflow-scroll',
+            table: 'min-h-[400px]'
+          }}
+        >
           <TableHeader columns={columns}>
             {(column) => (
               <TableColumn key={column.uid} align={column.uid === 'actions' ? 'center' : 'start'}>
@@ -164,7 +216,7 @@ function BooksLibrary(): JSX.Element {
               </TableColumn>
             )}
           </TableHeader>
-          <TableBody items={allbooks}>
+          <TableBody items={filteredBooks}>
             {(item) => (
               <TableRow key={item.folio}>
                 {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
