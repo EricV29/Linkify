@@ -14,7 +14,8 @@ import {
   alumnsforRequest,
   finishidRequest,
   allData,
-  allBooks
+  allBooks,
+  searchBooks
 } from './dataConsult'
 
 const fs = require('fs')
@@ -426,5 +427,15 @@ ipcMain.on('allBooks', async (event, { limit, offset }) => {
     event.reply('allBooks-reply', results)
   } catch (error) {
     event.reply('allBooks-reply', { error })
+  }
+})
+
+// En tu proceso principal
+ipcMain.on('searchBooks', async (event, query, category) => {
+  try {
+    const results = await searchBooks(query, category)
+    event.reply('searchBooks-reply', results)
+  } catch (error) {
+    event.reply('searchBooks-reply', { error })
   }
 })

@@ -126,3 +126,46 @@ export async function allBooks(limit, offset) {
     })
   })
 }
+
+// ALL BOOKS
+export async function searchBooks(query: string, category: string | null) {
+  const connection = await getConnection()
+
+  let petitionQuery = `SELECT folio, title, autor, existencia, statusbook FROM book`
+
+  if (category) {
+    switch (category) {
+      case 'folio':
+        petitionQuery += ` WHERE folio LIKE '%${query}%'`
+        break
+      case 'title':
+        petitionQuery += ` WHERE title LIKE '%${query}%'`
+        break
+      case 'autor':
+        petitionQuery += ` WHERE autor LIKE '%${query}%'`
+        break
+      case 'stock':
+        petitionQuery += ` WHERE existencia LIKE '%${query}%'`
+        break
+      case 'state':
+        petitionQuery += ` WHERE statusbook LIKE '%${query}%'`
+        break
+      default:
+        petitionQuery += ` WHERE (folio LIKE '%${query}%' OR title LIKE '%${query}%' OR autor LIKE '%${query}%' OR existencia LIKE '%${query}%' OR statusbook LIKE '%${query}%')`
+    }
+  } else {
+    petitionQuery += ` WHERE (folio LIKE '%${query}%' OR title LIKE '%${query}%' OR autor LIKE '%${query}%' OR existencia LIKE '%${query}%' OR statusbook LIKE '%${query}%')`
+  }
+
+  petitionQuery += ` LIMIT ? OFFSET ?`
+
+  return new Promise((resolve, reject) => {
+    connection.query(petitionQuery, [10, 0], (error, results) => {
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}

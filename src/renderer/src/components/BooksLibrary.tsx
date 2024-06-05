@@ -135,13 +135,20 @@ function BooksLibrary(): JSX.Element {
     { key: 'state', label: 'Estado' }
   ]
 
-  const handleSearch = (query: string) => {
+  const handleSearch = async (query: string) => {
     setSearchQuery(query)
+    ipcRenderer.send('searchBooks', query, selectedCategory)
   }
 
   const handleCategoryChange = (category: string | null) => {
     setSelectedCategory(category || undefined)
   }
+
+  useEffect(() => {
+    ipcRenderer.on('searchBooks-reply', (_event, results) => {
+      setAllBooks(results)
+    })
+  }, [])
 
   const filteredBooks = allbooks.filter((book) => {
     if (selectedCategory && searchQuery) {
