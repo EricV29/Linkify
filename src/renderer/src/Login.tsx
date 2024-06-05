@@ -30,9 +30,6 @@ function App(): JSX.Element {
   const mutate = async (data: FormValues) => {
     //console.log(data)
     ipcRenderer.send('login', data)
-    ipcRenderer.on('login-reply', (_event, message) => {
-      console.log(message)
-    })
   }
 
   return (

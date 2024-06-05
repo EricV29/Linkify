@@ -62,15 +62,14 @@ ipcMain.on('login', async (event, argumentos) => {
       }
       if (rows.length > 0) {
         event.returnValue = true
-        //console.log(rows[0].Nameuser)
-        //console.log(rows)
-
         dataUser = rows[0].Nameuser + ' ' + rows[0].ApepUser + ' ' + rows[0].ApemUser
         rolUser = rows[0].RolUser
-        //console.log(dataUser)
-        //idUser = rows[0].idUser
 
-        //event.reply('login-reply', true, rows[0].Nameuser)
+        const notification = {
+          title: 'Linkify',
+          body: 'Bienvenido ' + dataUser
+        }
+        new Notification(notification).show()
 
         // Crea una nueva ventana
         newWindow = new BrowserWindow({
@@ -97,7 +96,11 @@ ipcMain.on('login', async (event, argumentos) => {
         mainWindow?.close()
       } else {
         event.returnValue = false
-        event.reply('conec-reply', 'return false')
+        const notification = {
+          title: 'Linkify',
+          body: 'Usuario no encontrado, verifica tus datos.'
+        }
+        new Notification(notification).show()
       }
     }
   )

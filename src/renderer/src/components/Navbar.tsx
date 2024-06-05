@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-//import prep6l from '../images/prep6l.png'
 import { Button } from '@nextui-org/react'
 import { Icon } from '@iconify/react'
 const ipcRenderer = require('electron').ipcRenderer
@@ -15,9 +14,6 @@ function Navbar(): JSX.Element {
     ipcRenderer.once('nameu', (success, arg) => {
       if (success) {
         setNameuser(arg[0])
-        ipcRenderer.send('msgOption', 'Bienvenido ' + arg[0])
-      } else {
-        console.log('Nombre de usuario no encontrado')
       }
     })
   }, [])
