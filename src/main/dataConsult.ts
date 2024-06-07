@@ -201,7 +201,68 @@ export async function editBook(folio) {
         if (results.affectedRows > 0) {
           resolve(['Libro actualizado con éxito', true])
         } else {
-          reject(['No se encontró ningún libro con el folio proporcionado', null])
+          resolve(['No se encontró ningún libro con el folio proporcionado', null])
+        }
+      }
+    })
+  })
+}
+
+//DELETE BOOK
+export async function deleteBook(folio) {
+  const connection = await getConnection()
+
+  let petitionQuery = `DELETE FROM book WHERE folio = ?`
+
+  return new Promise((resolve, reject) => {
+    connection.query(petitionQuery, folio, (error, results) => {
+      if (error) {
+        reject('Error al eliminar el libro: ' + error.message)
+      } else {
+        if (results.affectedRows > 0) {
+          resolve(['Libro eliminado con éxito', true])
+        } else {
+          resolve(['No se encontró ningún libro con el folio proporcionado', null])
+        }
+      }
+    })
+  })
+}
+
+//CHECK STOCK BOOK
+export async function checkStockBook(folio) {
+  const connection = await getConnection()
+
+  let petitionQuery = `SELECT folio FROM book WHERE folio = ?`
+
+  return new Promise((resolve, reject) => {
+    connection.query(petitionQuery, folio, (error, results) => {
+      if (error) {
+        reject('Error al verificar el stock del libro: ' + error.message)
+      } else {
+        if (results.length > 0) {
+          resolve(['El libro ya existe', true])
+        } else {
+          resolve(['Libro no existe', false])
+        }
+      }
+    })
+  })
+}
+
+//NEW BOOK
+export async function addNewBook(data) {
+  const connection = await getConnection()
+
+  let petitionQuery = `INSERT INTO book (folio, title, autor, existencia, statusbook) VALUES (?, ?, ?, ?, 'disponible');`
+
+  return new Promise((resolve, reject) => {
+    connection.query(petitionQuery, [data[0], data[1], data[2], data[3]], (error, results) => {
+      if (error) {
+        reject('Error al agregar un nuevo libro: ' + error.message)
+      } else {
+        if (results.affectedRows > 0) {
+          resolve(['Libro agregado con éxito', true])
         }
       }
     })

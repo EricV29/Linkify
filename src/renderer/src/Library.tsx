@@ -18,18 +18,20 @@ function Library(): JSX.Element {
   const [alldata, setAlldata] = useState<AllData | null>(null)
 
   useEffect(() => {
-    ipcRenderer.send('allData')
-    ipcRenderer.on('allData-reply', (_event, arg) => {
+    const handleAllDataReply = (_event, arg) => {
       //console.log(arg)
       if (arg && typeof arg === 'object') {
         setAlldata(arg)
       } else {
-        console.error('No se recibieron datos o el objeto está vacío.')
+        //console.error('No se recibieron datos o el objeto está vacío.')
       }
-    })
+    }
+
+    ipcRenderer.send('allData')
+    ipcRenderer.on('allData-reply', handleAllDataReply)
 
     return () => {
-      ipcRenderer.removeAllListeners('allData-reply')
+      ipcRenderer.removeListener('allData-reply', handleAllDataReply)
     }
   }, [])
 

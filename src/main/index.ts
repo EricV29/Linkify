@@ -17,7 +17,10 @@ import {
   allBooks,
   searchBooks,
   selectBook,
-  editBook
+  editBook,
+  deleteBook,
+  checkStockBook,
+  addNewBook
 } from './dataConsult'
 
 const fs = require('fs')
@@ -462,6 +465,39 @@ ipcMain.on('editBook', async (event, arg) => {
     const result = await editBook(arg)
     //console.log(result)
     event.reply('editBook-reply', result)
+  } catch (error) {
+    console.error(error)
+  }
+})
+
+// Delete book
+ipcMain.on('deleteBook', async (event, arg) => {
+  try {
+    const result = await deleteBook(arg)
+    //console.log(result)
+    event.reply('deleteBook-reply', result)
+  } catch (error) {
+    console.error(error)
+  }
+})
+
+// Check stock book
+ipcMain.on('checkStockBook', async (event, arg) => {
+  try {
+    const result = await checkStockBook(arg)
+    //console.log(result)
+    event.reply('checkStockBook-reply', result)
+  } catch (error) {
+    console.error(error)
+  }
+})
+
+// Add new book
+ipcMain.on('addNewBook', async (event, arg) => {
+  try {
+    const result = await addNewBook(arg)
+    //console.log(result)
+    event.reply('addNewBook-reply', result)
   } catch (error) {
     console.error(error)
   }

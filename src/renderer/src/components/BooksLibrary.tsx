@@ -27,6 +27,8 @@ import {
   Button,
   useDisclosure
 } from '@nextui-org/react'
+import noti from '../store/notification'
+import msgquestion from '../store/messageqdos'
 const { ipcRenderer } = require('electron')
 
 const statusColorMap = {
@@ -100,22 +102,64 @@ function BooksLibrary(): JSX.Element {
   const limit = 10
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>(undefined)
-  const [folioBook, setfolioBook] = useState<string | undefined>(undefined)
+  const [_folioBook, setfolioBook] = useState<string | undefined>(undefined)
   const [selectedBook, setSelectedBook] = useState<AllDataBooks | null>(null)
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
+  const { setText, toggleVisiblenoti } = noti()
+  const { toggleVisiblemsgq, setTextmsgq, setToolmsgq, toggleYesmsgq, toggleNomsgq } = msgquestion()
 
   const selectEditBook = (folio) => {
     setfolioBook(folio)
     ipcRenderer.send('selectBook', folio)
-    ipcRenderer.once('selectBook-reply', (_event, arg) => {
+    const handleSelectBookReply = (_event, arg) => {
       setSelectedBook(arg.length > 0 ? arg[0] : null)
-    })
+    }
+    ipcRenderer.once('selectBook-reply', handleSelectBookReply)
     onOpen()
+
+    return () => {
+      ipcRenderer.removeListener('selectBook-reply', handleSelectBookReply)
+    }
   }
 
-  const deleteBook = (id) => {
-    console.log(id)
-    setfolioBook(id)
+  const deleteBook = async (folio) => {
+    setfolioBook(folio)
+    setTextmsgq('¿Estás seguro de eliminar este libro?')
+    setToolmsgq('Library')
+    toggleVisiblemsgq()
+
+    const userConfirmed = await new Promise((resolve) => {
+      const unsubscribe = msgquestion.subscribe((state) => {
+        if (state.yesmsgq) {
+          resolve(true)
+          toggleYesmsgq(false)
+        } else if (state.nomsgq) {
+          resolve(false)
+          toggleNomsgq(false)
+        }
+        unsubscribe()
+      })
+    })
+
+    if (userConfirmed) {
+      ipcRenderer.send('deleteBook', folio)
+      const handleDeleteBookReply = (_event, arg) => {
+        if (arg[1] === true) {
+          setText('Libro eliminado correctamente.')
+          toggleVisiblenoti()
+        } else if (arg[1] === null) {
+          setText('El folio del libro no fue encontrado.')
+          toggleVisiblenoti()
+        } else {
+          setText('Error al eliminar el libro, intentalo de nuevo.')
+          toggleVisiblenoti()
+        }
+      }
+      ipcRenderer.once('deleteBook-reply', handleDeleteBookReply)
+    } else {
+      setText('Libro no eliminado.')
+      toggleVisiblenoti()
+    }
   }
 
   const editBook = () => {
@@ -130,19 +174,26 @@ function BooksLibrary(): JSX.Element {
         selectedBook?.autor,
         existencia
       ])
-      ipcRenderer.once('editBook-reply', (_event, arg) => {
-        if ((arg[1] = true)) {
-          console.log('cerrado')
+      const handleEditBookReply = (_event, arg) => {
+        if (arg[1] === true) {
+          setText('Libro editado correctamente.')
+          toggleVisiblenoti()
           onOpenChange()
-        } else if ((arg[1] = null)) {
+        } else if (arg[1] === null) {
+          setText('El folio del libro no fue encontrado.')
+          toggleVisiblenoti()
+        } else {
+          setText('Error al editar el libro, intentalo de nuevo.')
+          toggleVisiblenoti()
         }
-      })
+      }
+      ipcRenderer.once('editBook-reply', handleEditBookReply)
     }
   }
 
   const loadMoreBooks = () => {
     ipcRenderer.send('allBooks', { limit, offset: page * limit })
-    ipcRenderer.once('allBooks-reply', (_event, arg) => {
+    const handleAllBooksReply = (_event, arg) => {
       if (arg.error) {
         console.error('Error fetching books:', arg.error)
         setHasMore(false)
@@ -153,7 +204,12 @@ function BooksLibrary(): JSX.Element {
         setAllBooks((prevBooks) => [...prevBooks, ...arg])
         setPage((prevPage) => prevPage + 1)
       }
-    })
+    }
+    ipcRenderer.once('allBooks-reply', handleAllBooksReply)
+
+    return () => {
+      ipcRenderer.removeListener('allBooks-reply', handleAllBooksReply)
+    }
   }
 
   useEffect(() => {
@@ -198,9 +254,14 @@ function BooksLibrary(): JSX.Element {
   }
 
   useEffect(() => {
-    ipcRenderer.on('searchBooks-reply', (_event, results) => {
+    const handleSearchBooksReply = (_event, results) => {
       setAllBooks(results)
-    })
+    }
+    ipcRenderer.on('searchBooks-reply', handleSearchBooksReply)
+
+    return () => {
+      ipcRenderer.removeListener('searchBooks-reply', handleSearchBooksReply)
+    }
   }, [])
 
   const filteredBooks = allbooks.filter((book) => {
@@ -327,7 +388,6 @@ function BooksLibrary(): JSX.Element {
             ))}
           </Select>
         </div>
-
         <Table
           isHeaderSticky
           aria-label="Libros de la biblioteca"
