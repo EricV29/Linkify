@@ -127,7 +127,7 @@ export async function allBooks(limit, offset) {
   })
 }
 
-// ALL BOOKS
+// SEARCH BOOKS
 export async function searchBooks(query: string, category: string | null) {
   const connection = await getConnection()
 
@@ -165,6 +165,44 @@ export async function searchBooks(query: string, category: string | null) {
         reject(error)
       } else {
         resolve(results)
+      }
+    })
+  })
+}
+
+//SELECT BOOK
+export async function selectBook(folio) {
+  const connection = await getConnection()
+
+  let petitionQuery = `SELECT folio, title, autor, existencia FROM book WHERE folio = ?`
+
+  return new Promise((resolve, reject) => {
+    connection.query(petitionQuery, folio, (error, results) => {
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}
+
+//EDIT BOOK
+export async function editBook(folio) {
+  const connection = await getConnection()
+
+  let petitionQuery = `UPDATE book SET title = ?, autor = ?, existencia = ? WHERE folio = ?`
+
+  return new Promise((resolve, reject) => {
+    connection.query(petitionQuery, [folio[1], folio[2], folio[3], folio[0]], (error, results) => {
+      if (error) {
+        reject('Error al actualizar el libro: ' + error.message)
+      } else {
+        if (results.affectedRows > 0) {
+          resolve(['Libro actualizado con éxito', true])
+        } else {
+          reject(['No se encontró ningún libro con el folio proporcionado', null])
+        }
       }
     })
   })

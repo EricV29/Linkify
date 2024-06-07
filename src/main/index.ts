@@ -15,7 +15,9 @@ import {
   finishidRequest,
   allData,
   allBooks,
-  searchBooks
+  searchBooks,
+  selectBook,
+  editBook
 } from './dataConsult'
 
 const fs = require('fs')
@@ -433,12 +435,34 @@ ipcMain.on('allBooks', async (event, { limit, offset }) => {
   }
 })
 
-// En tu proceso principal
+// Search books
 ipcMain.on('searchBooks', async (event, query, category) => {
   try {
     const results = await searchBooks(query, category)
     event.reply('searchBooks-reply', results)
   } catch (error) {
     event.reply('searchBooks-reply', { error })
+  }
+})
+
+// Select book
+ipcMain.on('selectBook', async (event, arg) => {
+  try {
+    const result = await selectBook(arg)
+    //console.log(result)
+    event.reply('selectBook-reply', result)
+  } catch (error) {
+    console.error(error)
+  }
+})
+
+// Edit book
+ipcMain.on('editBook', async (event, arg) => {
+  try {
+    const result = await editBook(arg)
+    //console.log(result)
+    event.reply('editBook-reply', result)
+  } catch (error) {
+    console.error(error)
   }
 })

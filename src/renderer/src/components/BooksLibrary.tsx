@@ -18,6 +18,15 @@ import { useInfiniteScroll } from '@nextui-org/use-infinite-scroll'
 import { DeleteIcon } from '../icons/DeleteIcon'
 import { EditIcon } from '../icons/EditIcon'
 import { Icon } from '@iconify/react'
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+  useDisclosure
+} from '@nextui-org/react'
 const { ipcRenderer } = require('electron')
 
 const statusColorMap = {
@@ -38,7 +47,6 @@ interface AllDataBooks {
 function BooksLibrary(): JSX.Element {
   const renderCell = React.useCallback((user, columnKey) => {
     const cellValue = user[columnKey]
-
     switch (columnKey) {
       case 'name':
         return <User name={cellValue} />
@@ -64,12 +72,18 @@ function BooksLibrary(): JSX.Element {
         return (
           <div className="relative flex items-center gap-2">
             <Tooltip content="Editar ejemplar">
-              <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+              <span
+                className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                onClick={() => selectEditBook(user.folio)}
+              >
                 <EditIcon />
               </span>
             </Tooltip>
             <Tooltip color="danger" content="Eliminar ejemplar">
-              <span className="text-lg text-danger cursor-pointer active:opacity-50">
+              <span
+                className="text-lg text-danger cursor-pointer active:opacity-50"
+                onClick={() => deleteBook(user.folio)}
+              >
                 <DeleteIcon />
               </span>
             </Tooltip>
@@ -86,6 +100,45 @@ function BooksLibrary(): JSX.Element {
   const limit = 10
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>(undefined)
+  const [folioBook, setfolioBook] = useState<string | undefined>(undefined)
+  const [selectedBook, setSelectedBook] = useState<AllDataBooks | null>(null)
+  const { isOpen, onOpen, onOpenChange } = useDisclosure()
+
+  const selectEditBook = (folio) => {
+    setfolioBook(folio)
+    ipcRenderer.send('selectBook', folio)
+    ipcRenderer.once('selectBook-reply', (_event, arg) => {
+      setSelectedBook(arg.length > 0 ? arg[0] : null)
+    })
+    onOpen()
+  }
+
+  const deleteBook = (id) => {
+    console.log(id)
+    setfolioBook(id)
+  }
+
+  const editBook = () => {
+    const existencia = selectedBook?.existencia ?? 0
+    if (existencia < 0) {
+      console.log('La existencia no puede ser menor a 0')
+      return
+    } else {
+      ipcRenderer.send('editBook', [
+        selectedBook?.folio,
+        selectedBook?.title,
+        selectedBook?.autor,
+        existencia
+      ])
+      ipcRenderer.once('editBook-reply', (_event, arg) => {
+        if ((arg[1] = true)) {
+          console.log('cerrado')
+          onOpenChange()
+        } else if ((arg[1] = null)) {
+        }
+      })
+    }
+  }
 
   const loadMoreBooks = () => {
     ipcRenderer.send('allBooks', { limit, offset: page * limit })
@@ -171,9 +224,84 @@ function BooksLibrary(): JSX.Element {
     }
   })
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target
+    setSelectedBook((prevBook) => (prevBook ? { ...prevBook, [name]: value } : null))
+  }
+
   return (
     <>
       <div className="space-y-3">
+        <Modal isOpen={isOpen} onOpenChange={onOpenChange} backdrop="blur">
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalHeader className="flex items-center gap-1 font-bold">
+                  <Icon icon="mdi:book-edit" className="w-[30px] h-[30px]" color="00a539" /> Editar
+                  Libro
+                </ModalHeader>
+                <ModalBody>
+                  <p>Estos son los datos del libro seleccionado, puedes editarlos y guardar.</p>
+                  <p className="text-[#00a539]">Folio</p>
+                  <Input
+                    isRequired
+                    readOnly
+                    type="text"
+                    placeholder="Folio"
+                    labelPlacement="outside"
+                    className="w-[400px]"
+                    variant="bordered"
+                    name="folio"
+                    value={selectedBook?.folio ?? ''}
+                    onChange={handleInputChange}
+                  />
+                  <p className="text-[#00a539]">Título</p>
+                  <Input
+                    isRequired
+                    type="text"
+                    placeholder="Título del libro"
+                    labelPlacement="outside"
+                    className="w-[400px]"
+                    variant="bordered"
+                    name="title"
+                    value={selectedBook?.title ?? ''}
+                    onChange={handleInputChange}
+                  />
+                  <p className="text-[#00a539]">Autor</p>
+                  <Input
+                    isRequired
+                    type="text"
+                    placeholder="Autor del libro"
+                    labelPlacement="outside"
+                    className="w-[400px]"
+                    variant="bordered"
+                    name="autor"
+                    value={selectedBook?.autor ?? ''}
+                    onChange={handleInputChange}
+                  />
+                  <p className="text-[#00a539]">Existencia</p>
+                  <Input
+                    isRequired
+                    type="number"
+                    placeholder="Número de ejemplares"
+                    labelPlacement="outside"
+                    className="w-[400px]"
+                    variant="bordered"
+                    name="existencia"
+                    value={selectedBook?.existencia?.toString() ?? ''}
+                    onChange={handleInputChange}
+                    min={0}
+                  />
+                </ModalBody>
+                <ModalFooter>
+                  <Button color="success" className="text-white font-bold" onPress={editBook}>
+                    Editar
+                  </Button>
+                </ModalFooter>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
         <div className="w-full flex justify-between space-x-5">
           <Input
             type="text"
