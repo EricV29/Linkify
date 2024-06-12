@@ -20,7 +20,9 @@ import {
   editBook,
   deleteBook,
   checkStockBook,
-  addNewBook
+  addNewBook,
+  newLoan,
+  allLoans
 } from './dataConsult'
 
 const fs = require('fs')
@@ -498,6 +500,28 @@ ipcMain.on('addNewBook', async (event, arg) => {
     const result = await addNewBook(arg)
     //console.log(result)
     event.reply('addNewBook-reply', result)
+  } catch (error) {
+    console.error(error)
+  }
+})
+
+// New loan
+ipcMain.on('newLoan', async (event, arg) => {
+  try {
+    const result = await newLoan(arg)
+    //console.log(result)
+    event.reply('newLoan-reply', result)
+  } catch (error) {
+    console.error(error)
+  }
+})
+
+// All loans
+ipcMain.on('allLoans', async (event) => {
+  try {
+    const result = await allLoans()
+    //console.log(result)
+    event.reply('allLoans-reply', result)
   } catch (error) {
     console.error(error)
   }

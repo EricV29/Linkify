@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Table,
   TableHeader,
@@ -16,11 +16,21 @@ import {
 import { DeleteIcon } from '../icons/DeleteIcon'
 import { EditIcon } from '../icons/EditIcon'
 import { Icon } from '@iconify/react'
+const { ipcRenderer } = require('electron')
 
 const statusColorMap = {
-  disponible: 'success',
-  inexistente: 'danger',
-  préstamo: 'warning'
+  activo: 'success',
+  terminado: 'danger'
+}
+
+type Loans = {
+  numaccount: number
+  completename: string
+  title: string
+  autor: string
+  fechloan: string
+  fechdev: string
+  statusloan: string
 }
 
 function LoansLibrary(): JSX.Element {
@@ -63,13 +73,25 @@ function LoansLibrary(): JSX.Element {
         return cellValue
     }
   }, [])
+  const [loans, setLoans] = useState<Loans[]>([])
+
+  useEffect(() => {
+    ipcRenderer.send('allLoans')
+    const handleAllLoansReply = (_event, arg) => {
+      console.log(arg)
+      setLoans(arg)
+    }
+    ipcRenderer.once('allLoans-reply', handleAllLoansReply)
+  }, [])
 
   const columnsloan = [
-    { name: 'NÚMERO DE CUENTA', uid: 'id' },
-    { name: 'NOMBRE', uid: 'name' },
+    { name: 'NÚMERO DE CUENTA', uid: 'numaccount' },
+    { name: 'NOMBRE', uid: 'completename' },
     { name: 'TÍTULO', uid: 'title' },
     { name: 'AUTOR', uid: 'autor' },
-    { name: 'FECHA DE DEVOLUCIÓN', uid: 'fechdev' }
+    { name: 'FECHA DE PRESTAMO', uid: 'fechloan' },
+    { name: 'FECHA DE DEVOLUCIÓN', uid: 'fechdev' },
+    { name: 'ESTADO', uid: 'statusloan' }
   ]
 
   const usersloan = [
@@ -137,9 +159,9 @@ function LoansLibrary(): JSX.Element {
               </TableColumn>
             )}
           </TableHeader>
-          <TableBody items={usersloan}>
+          <TableBody items={loans}>
             {(item) => (
-              <TableRow key={item.id}>
+              <TableRow key={item.numaccount}>
                 {(columnKey) => <TableCell>{renderCellloan(item, columnKey)}</TableCell>}
               </TableRow>
             )}

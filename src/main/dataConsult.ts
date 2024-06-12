@@ -174,7 +174,7 @@ export async function searchBooks(query: string, category: string | null) {
 export async function selectBook(folio) {
   const connection = await getConnection()
 
-  let petitionQuery = `SELECT folio, title, autor, existencia FROM book WHERE folio = ?`
+  let petitionQuery = `SELECT folio, title, autor, existencia, statusbook FROM book WHERE folio = ?`
 
   return new Promise((resolve, reject) => {
     connection.query(petitionQuery, folio, (error, results) => {
@@ -264,6 +264,87 @@ export async function addNewBook(data) {
         if (results.affectedRows > 0) {
           resolve(['Libro agregado con éxito', true])
         }
+      }
+    })
+  })
+}
+
+//NEW LOAN
+export async function newLoan(data: any) {
+  const connection = await getConnection()
+
+  try {
+    await connection.beginTransaction()
+
+    const resultex = await connection.query(`SELECT * FROM user_client WHERE numaccount = ?`, [
+      data.numaccount
+    ])
+
+    if (resultex.length === 0) {
+      const insertResult = await connection.query(
+        `INSERT INTO user_client (numaccount, nameuserc, secondnamec, apepuserc, apemuserc, degreec, emailuserc, fechreguserc) 
+          VALUES (?, ?, ?, ?, ?, ?, ?, NOW())`,
+        [
+          data.numaccount,
+          data.firstname,
+          data.secondname,
+          data.firstlastname,
+          data.secondlastname,
+          data.degree,
+          data.email
+        ]
+      )
+
+      if (insertResult.affectedRows === 1) {
+        //console.log('El usuario se agregó correctamente')
+      } else {
+        //console.log('No se pudo agregar el usuario')
+      }
+    }
+
+    const loanResult = await connection.query(
+      `INSERT INTO loan (numaccount, fechloan, fechdevloan, statusloan, idUser) 
+      VALUES (?, ?, ?, ?, ?)`,
+      [data.numaccount, data.fechaloan, data.fechdev, 'activo', data.idUser]
+    )
+    const loanId = loanResult.insertId
+
+    for (const book of data.books) {
+      const bookFol = book.folio.toString()
+      await connection.query(`INSERT INTO userc_book (idLoan, folio, numcopies) VALUES (?, ?, ?)`, [
+        loanId,
+        bookFol,
+        1
+      ])
+
+      await connection.query(`UPDATE book SET existencia = existencia - 1 WHERE folio = ?`, [
+        bookFol
+      ])
+    }
+
+    await connection.commit()
+
+    return ['Préstamo registrado exitosamente', true]
+  } catch (error: any) {
+    await connection.rollback()
+    throw new Error('Error al registrar el préstamo: ' + error.message)
+  } finally {
+    await connection.end()
+  }
+}
+
+//ALL LOANS
+export async function allLoans() {
+  const connection = await getConnection()
+
+  let petitionQuery = `SELECT uc.numaccount, CONCAT(uc.nameuserc, ' ', uc.secondnamec, ' ', uc.apepuserc, ' ', uc.apemuserc) AS 'completename', b.title, b.autor, l.fechloan, l.fechdevloan, l.statusloan  FROM  user_client uc JOIN loan l ON uc.numaccount = l.numaccount JOIN userc_book ub ON l.idLoan = ub.idLoan JOIN book b ON ub.folio = b.folio;`
+
+  return new Promise((resolve, reject) => {
+    connection.query(petitionQuery, (error, results) => {
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
       }
     })
   })

@@ -42,6 +42,7 @@
     "pizzip": "^3.1.6",
     "promise-mysql": "^5.2.0",
     "react-router-dom": "^6.21.3",
+    "uuid": "^10.0.0",
     "zustand": "^4.5.0"
   },
   "devDependencies": {

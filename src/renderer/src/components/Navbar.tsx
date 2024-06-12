@@ -4,9 +4,11 @@ import { Icon } from '@iconify/react'
 const ipcRenderer = require('electron').ipcRenderer
 import { Link } from 'react-router-dom'
 import linkilogo from '../images/linkilogo.png'
+import usercred from '../store/usercred'
 
 function Navbar(): JSX.Element {
   const [nameuser, setNameuser] = useState(null)
+  const { setTextn, setTexti } = usercred()
 
   // TRAER NOMBRE COMPLETO DEL USUARIO
   useEffect(() => {
@@ -14,6 +16,8 @@ function Navbar(): JSX.Element {
     ipcRenderer.once('nameu', (success, arg) => {
       if (success) {
         setNameuser(arg[0])
+        setTextn(arg[0])
+        setTexti(arg[1])
       }
     })
   }, [])
