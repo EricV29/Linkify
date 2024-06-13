@@ -91,7 +91,14 @@ export async function finishidRequest(arg) {
 export async function allData() {
   const connection = await getConnection()
 
-  let petitionQuery = `SELECT COUNT(CASE WHEN statusbook = 'disponible' THEN existencia END) AS Disponibles, COUNT(CASE WHEN statusbook = 'prestamo' THEN existencia END) AS Prestamos, COUNT(CASE WHEN statusbook = 'inexistentes' THEN existencia END) AS Inexistentes FROM book;`
+  let petitionQuery = `
+  SELECT 
+    COUNT(CASE WHEN statusbook IN ('disponible', 'prestamo') THEN 1 END) AS Existentes,
+    SUM(CASE WHEN existencia THEN existencia ELSE 0 END) AS Disponibles,
+    COUNT(CASE WHEN statusbook = 'prestamo' THEN existencia END) AS Prestamos,
+    COUNT(CASE WHEN statusbook = 'inexistente' THEN existencia END) AS Inexistentes
+  FROM book
+`
 
   return new Promise((resolve, reject) => {
     connection.query(petitionQuery, (error, results) => {
@@ -100,6 +107,7 @@ export async function allData() {
       } else {
         // Transforma los resultados en formato JSON
         const jsonData = {
+          Existentes: results[0].Existentes,
           Disponibles: results[0].Disponibles,
           Prestamos: results[0].Prestamos,
           Inexistentes: results[0].Inexistentes
@@ -188,23 +196,33 @@ export async function selectBook(folio) {
 }
 
 //EDIT BOOK
-export async function editBook(folio) {
+export async function editBook(data) {
   const connection = await getConnection()
+  let status = ''
+  if (data[3] === '0') {
+    status = 'inexistente'
+  } else {
+    status = 'disponible'
+  }
 
-  let petitionQuery = `UPDATE book SET title = ?, autor = ?, existencia = ? WHERE folio = ?`
+  let petitionQuery = `UPDATE book SET title = ?, autor = ?, existencia = ?, statusbook = ? WHERE folio = ?`
 
   return new Promise((resolve, reject) => {
-    connection.query(petitionQuery, [folio[1], folio[2], folio[3], folio[0]], (error, results) => {
-      if (error) {
-        reject('Error al actualizar el libro: ' + error.message)
-      } else {
-        if (results.affectedRows > 0) {
-          resolve(['Libro actualizado con éxito', true])
+    connection.query(
+      petitionQuery,
+      [data[1], data[2], data[3], status, data[0]],
+      (error, results) => {
+        if (error) {
+          reject('Error al actualizar el libro: ' + error.message)
         } else {
-          resolve(['No se encontró ningún libro con el folio proporcionado', null])
+          if (results.affectedRows > 0) {
+            resolve(['Libro actualizado con éxito', true])
+          } else {
+            resolve(['No se encontró ningún libro con el folio proporcionado', null])
+          }
         }
       }
-    })
+    )
   })
 }
 
@@ -269,8 +287,8 @@ export async function addNewBook(data) {
   })
 }
 
-//NEW LOAN
-export async function newLoan(data: any) {
+// NEW LOAN
+export async function newLoan(data) {
   const connection = await getConnection()
 
   try {
@@ -296,9 +314,9 @@ export async function newLoan(data: any) {
       )
 
       if (insertResult.affectedRows === 1) {
-        //console.log('El usuario se agregó correctamente')
+        // console.log('El usuario se agregó correctamente')
       } else {
-        //console.log('No se pudo agregar el usuario')
+        // console.log('No se pudo agregar el usuario')
       }
     }
 
@@ -320,16 +338,28 @@ export async function newLoan(data: any) {
       await connection.query(`UPDATE book SET existencia = existencia - 1 WHERE folio = ?`, [
         bookFol
       ])
+
+      await changeLoan(bookFol, connection)
     }
 
     await connection.commit()
 
     return ['Préstamo registrado exitosamente', true]
-  } catch (error: any) {
+  } catch (error) {
     await connection.rollback()
-    throw new Error('Error al registrar el préstamo: ' + error.message)
-  } finally {
-    await connection.end()
+    throw new Error('Error al registrar el préstamo: ' + error)
+  }
+}
+
+// CHANGE LOAN
+export async function changeLoan(folio, connection) {
+  const petitionQuery = `SELECT existencia FROM book WHERE folio = ?`
+
+  const results = await connection.query(petitionQuery, [folio])
+
+  if (results[0].existencia === 0) {
+    const petitionQuery2 = `UPDATE book SET statusbook = 'préstamo' WHERE folio = ?`
+    await connection.query(petitionQuery2, [folio])
   }
 }
 
@@ -337,7 +367,7 @@ export async function newLoan(data: any) {
 export async function allLoans() {
   const connection = await getConnection()
 
-  let petitionQuery = `SELECT uc.numaccount, CONCAT(uc.nameuserc, ' ', uc.secondnamec, ' ', uc.apepuserc, ' ', uc.apemuserc) AS 'completename', b.title, b.autor, l.fechloan, l.fechdevloan, l.statusloan  FROM  user_client uc JOIN loan l ON uc.numaccount = l.numaccount JOIN userc_book ub ON l.idLoan = ub.idLoan JOIN book b ON ub.folio = b.folio;`
+  let petitionQuery = `SELECT ub.iduserc_book, l.idLoan, uc.numaccount, CONCAT(uc.nameuserc, ' ', uc.secondnamec, ' ', uc.apepuserc, ' ', uc.apemuserc) AS 'completename', b.title, b.autor, b.folio, l.fechloan, l.fechdevloan, l.statusloan  FROM  user_client uc JOIN loan l ON uc.numaccount = l.numaccount JOIN userc_book ub ON l.idLoan = ub.idLoan JOIN book b ON ub.folio = b.folio;`
 
   return new Promise((resolve, reject) => {
     connection.query(petitionQuery, (error, results) => {
@@ -345,6 +375,111 @@ export async function allLoans() {
         reject(error)
       } else {
         resolve(results)
+      }
+    })
+  })
+}
+
+//FINISH LOAN
+export async function finishLoan(arg) {
+  const connection = await getConnection()
+
+  let updateQuery = 'UPDATE loan SET statusloan = "finalizado" WHERE idLoan = ?'
+
+  try {
+    const updateResult = await new Promise((resolve, reject) => {
+      connection.query(updateQuery, arg, (error, results) => {
+        if (error) {
+          reject('Error al finalizar préstamo: ' + error.message)
+        } else {
+          if (results.affectedRows > 0) {
+            resolve(['Préstamo finalizado con éxito', true])
+          } else {
+            resolve(['No se encontró ningún préstamo con el ID proporcionado', null])
+          }
+        }
+      })
+    })
+
+    // Después de finalizar el préstamo, actualizar los libros
+    await addBooksFinishLoan(arg)
+
+    return updateResult
+  } catch (error) {
+    throw new Error('Error al finalizar préstamo: ' + error)
+  }
+}
+
+//ADD BOOKS FINISH LOAN
+export async function addBooksFinishLoan(arg: any) {
+  const connection = await getConnection() // Obtener conexión desde tu función de conexión
+
+  let selectQuery = `SELECT folio FROM userc_book WHERE idLoan = ?`
+
+  return new Promise<void>((resolve, reject) => {
+    connection.query(selectQuery, arg, async (error, results) => {
+      if (error) {
+        reject('Error al verificar el stock del libro: ' + error.message)
+      } else {
+        try {
+          // Obtener un objeto que contenga la cantidad de repeticiones de cada folio
+          let folioCounts: Record<string, number> = results.reduce(
+            (acc: Record<string, number>, result: any) => {
+              let folio = result.folio
+              acc[folio] = acc[folio] ? acc[folio] + 1 : 1
+              return acc
+            },
+            {}
+          )
+
+          // Array de promesas para las actualizaciones
+          let updatePromises: Promise<any>[] = []
+
+          // Actualizar la existencia en la tabla `book`
+          Object.keys(folioCounts).forEach((folio) => {
+            let updateQuery = `UPDATE book SET existencia = existencia + ? WHERE folio = ?`
+            let increaseAmount = folioCounts[folio]
+            let promise = new Promise((innerResolve, innerReject) => {
+              connection.query(
+                updateQuery,
+                [increaseAmount, folio],
+                (updateError, updateResults) => {
+                  if (updateError) {
+                    innerReject(
+                      'Error al actualizar la existencia del libro: ' + updateError.message
+                    )
+                  } else {
+                    innerResolve(updateResults)
+                  }
+                }
+              )
+            })
+            updatePromises.push(promise)
+          })
+
+          // Actualizar el estado del libro a "disponible" en la tabla `statusbook`
+          let updateStatusQuery = `UPDATE book SET statusbook = 'disponible' WHERE folio IN (?)`
+          let folios = Object.keys(folioCounts)
+
+          // Ejecutar la consulta de actualización de estado
+          let statusPromise = new Promise((innerResolve, innerReject) => {
+            connection.query(updateStatusQuery, [folios], (statusError, statusResults) => {
+              if (statusError) {
+                innerReject('Error al actualizar el estado del libro: ' + statusError.message)
+              } else {
+                innerResolve(statusResults)
+              }
+            })
+          })
+
+          updatePromises.push(statusPromise)
+
+          // Ejecutar todas las actualizaciones en paralelo
+          await Promise.all(updatePromises)
+          resolve() // Resolver la promesa sin datos adicionales
+        } catch (updateError) {
+          reject(updateError) // Rechazar la promesa en caso de error
+        }
       }
     })
   })

@@ -22,7 +22,8 @@ import {
   checkStockBook,
   addNewBook,
   newLoan,
-  allLoans
+  allLoans,
+  finishLoan
 } from './dataConsult'
 
 const fs = require('fs')
@@ -520,8 +521,37 @@ ipcMain.on('newLoan', async (event, arg) => {
 ipcMain.on('allLoans', async (event) => {
   try {
     const result = await allLoans()
+
+    if (Array.isArray(result) && result.every((item) => typeof item === 'object')) {
+      let options: Intl.DateTimeFormatOptions = {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      }
+
+      ;(result as Array<any>).forEach((item) => {
+        let fechloan = new Date(item.fechloan)
+        let fechdevloan = new Date(item.fechdevloan)
+        item.fechloan = fechloan.toLocaleString('es-ES', options)
+        item.fechdevloan = fechdevloan.toLocaleString('es-ES', options)
+      })
+      event.reply('allLoans-reply', result)
+    }
+  } catch (error) {
+    console.error(error)
+  }
+})
+
+// Finish loan
+ipcMain.on('finishLoan', async (event, arg) => {
+  try {
+    const result = await finishLoan(arg)
     //console.log(result)
-    event.reply('allLoans-reply', result)
+    event.reply('finishLoan-reply', result)
   } catch (error) {
     console.error(error)
   }

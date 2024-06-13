@@ -13,17 +13,19 @@ import {
   Select,
   SelectItem
 } from '@nextui-org/react'
-import { DeleteIcon } from '../icons/DeleteIcon'
-import { EditIcon } from '../icons/EditIcon'
 import { Icon } from '@iconify/react'
+import noti from '../store/notification'
+import msgquestion from '../store/messageqdos'
 const { ipcRenderer } = require('electron')
 
 const statusColorMap = {
   activo: 'success',
-  terminado: 'danger'
+  finalizado: 'danger'
 }
 
 type Loans = {
+  iduserc_book: number
+  idLoan: number
   numaccount: number
   completename: string
   title: string
@@ -34,37 +36,32 @@ type Loans = {
 }
 
 function LoansLibrary(): JSX.Element {
-  //Table Loans
   const renderCellloan = React.useCallback((user, columnKey) => {
     const cellValue = user[columnKey]
 
     switch (columnKey) {
       case 'name':
         return <User name={cellValue}></User>
-      case 'role':
+      case 'statusloan':
         return (
-          <div className="flex flex-col">
-            <p className="text-bold text-sm capitalize">{cellValue}</p>
-            <p className="text-bold text-sm capitalize text-default-400">{user.team}</p>
-          </div>
-        )
-      case 'status':
-        return (
-          <Chip className="capitalize" color={statusColorMap[user.status]} size="sm" variant="flat">
+          <Chip
+            className="capitalize"
+            color={statusColorMap[user.statusloan] || 'default'}
+            size="sm"
+            variant="flat"
+          >
             {cellValue}
           </Chip>
         )
       case 'actions':
         return (
-          <div className="relative flex items-center gap-2">
-            <Tooltip content="Editar ejemplar">
-              <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                <EditIcon />
-              </span>
-            </Tooltip>
-            <Tooltip color="danger" content="Eliminar ejemplar">
-              <span className="text-lg text-danger cursor-pointer active:opacity-50">
-                <DeleteIcon />
+          <div className="relative flex items-center gap-2 justify-center">
+            <Tooltip content="Terminar Prestamo">
+              <span
+                className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                onClick={() => finishLoan(user.idLoan)}
+              >
+                <Icon icon="mdi:book-play-outline" className="w-[30px] h-[30px]" color="#00a539" />
               </span>
             </Tooltip>
           </div>
@@ -74,15 +71,31 @@ function LoansLibrary(): JSX.Element {
     }
   }, [])
   const [loans, setLoans] = useState<Loans[]>([])
+  const { setText, toggleVisiblenoti } = noti()
+  const { toggleVisiblemsgq, setTextmsgq, setToolmsgq, toggleYesmsgq, toggleNomsgq } = msgquestion()
+
+  const [searchValue, setSearchValue] = useState('')
+  const [selectedCategory, setSelectedCategory] = useState('')
+  const [filteredLoans, setFilteredLoans] = useState<Loans[]>([])
 
   useEffect(() => {
     ipcRenderer.send('allLoans')
     const handleAllLoansReply = (_event, arg) => {
-      console.log(arg)
       setLoans(arg)
     }
     ipcRenderer.once('allLoans-reply', handleAllLoansReply)
   }, [])
+
+  useEffect(() => {
+    if (searchValue && selectedCategory) {
+      const filtered = loans.filter((loan) =>
+        loan[selectedCategory].toString().toLowerCase().includes(searchValue.toLowerCase())
+      )
+      setFilteredLoans(filtered)
+    } else {
+      setFilteredLoans(loans)
+    }
+  }, [searchValue, selectedCategory, loans])
 
   const columnsloan = [
     { name: 'NÚMERO DE CUENTA', uid: 'numaccount' },
@@ -90,46 +103,64 @@ function LoansLibrary(): JSX.Element {
     { name: 'TÍTULO', uid: 'title' },
     { name: 'AUTOR', uid: 'autor' },
     { name: 'FECHA DE PRESTAMO', uid: 'fechloan' },
-    { name: 'FECHA DE DEVOLUCIÓN', uid: 'fechdev' },
-    { name: 'ESTADO', uid: 'statusloan' }
-  ]
-
-  const usersloan = [
-    {
-      id: 1,
-      name: 'NOMBRE COMPLETO',
-      title: 'TITULO DEL LIBRO',
-      autor: 'AUTOR DEL LIBRO',
-      fechdev: '20 de Junio de 2024'
-    },
-    {
-      id: 2,
-      name: 'NOMBRE COMPLETO',
-      title: 'TITULO DEL LIBRO',
-      autor: 'AUTOR DEL LIBRO',
-      fechdev: '20 de Junio de 2024'
-    },
-    {
-      id: 3,
-      name: 'NOMBRE COMPLETO',
-      title: 'TITULO DEL LIBRO',
-      autor: 'AUTOR DEL LIBRO',
-      fechdev: '20 de Junio de 2024'
-    }
+    { name: 'FECHA DE DEVOLUCIÓN', uid: 'fechdevloan' },
+    { name: 'ESTADO', uid: 'statusloan' },
+    { name: 'FINALIZAR PRESTAMO', uid: 'actions' }
   ]
 
   const categoriloan = [
     { key: 'numaccount', label: 'Número de cuenta' },
-    { key: 'name', label: 'Nombre' },
+    { key: 'completename', label: 'Nombre' },
     { key: 'title', label: 'Título' },
     { key: 'autor', label: 'Autor' },
-    { key: 'fechdev', label: 'Fecha de devolución' }
+    { key: 'fechloan', label: 'Fecha de prestamo' },
+    { key: 'fechdevloan', label: 'Fecha de devolución' },
+    { key: 'statusloan', label: 'Estado' }
   ]
+
+  const finishLoan = async (iduserc_book) => {
+    setTextmsgq('¿Estás seguro de eliminar este libro?')
+    setToolmsgq('Library')
+    toggleVisiblemsgq()
+
+    const userConfirmed = await new Promise((resolve) => {
+      const unsubscribe = msgquestion.subscribe((state) => {
+        if (state.yesmsgq) {
+          resolve(true)
+          toggleYesmsgq(false)
+        } else if (state.nomsgq) {
+          resolve(false)
+          toggleNomsgq(false)
+        }
+        unsubscribe()
+      })
+    })
+
+    if (userConfirmed) {
+      console.log(iduserc_book)
+      ipcRenderer.send('finishLoan', iduserc_book)
+      const handleFinishLoanReply = (_event, arg) => {
+        if (arg[1] === true) {
+          setText('Prestamo finalizado correctamente.')
+          toggleVisiblenoti()
+        } else if (arg[1] === null) {
+          setText('El id del prestamo no fue encontrado.')
+          toggleVisiblenoti()
+        } else {
+          setText('Error al finalizar el prestamo, intentalo de nuevo.')
+          toggleVisiblenoti()
+        }
+      }
+      ipcRenderer.once('finishLoan-reply', handleFinishLoanReply)
+    } else {
+      setText('Prestamo no finalizado.')
+      toggleVisiblenoti()
+    }
+  }
 
   return (
     <>
       <div className="space-y-3">
-        {' '}
         <div className="w-full flex justify-between space-x-5">
           <Input
             type="text"
@@ -140,14 +171,19 @@ function LoansLibrary(): JSX.Element {
               <Icon icon="fa-solid:book-reader" color="#00a539" className="w-[20px] h-[20px]" />
             }
             variant="bordered"
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
           />
           <Select
             label="Elige una categoría para buscar"
             placeholder="Categoría"
             className="max-w-xs"
+            onChange={(e) => setSelectedCategory(e.target.value)}
           >
             {categoriloan.map((loan) => (
-              <SelectItem key={loan.key}>{loan.label}</SelectItem>
+              <SelectItem key={loan.key} value={loan.key}>
+                {loan.label}
+              </SelectItem>
             ))}
           </Select>
         </div>
@@ -159,9 +195,9 @@ function LoansLibrary(): JSX.Element {
               </TableColumn>
             )}
           </TableHeader>
-          <TableBody items={loans}>
+          <TableBody items={filteredLoans}>
             {(item) => (
-              <TableRow key={item.numaccount}>
+              <TableRow key={item.iduserc_book}>
                 {(columnKey) => <TableCell>{renderCellloan(item, columnKey)}</TableCell>}
               </TableRow>
             )}

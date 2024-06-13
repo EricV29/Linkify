@@ -8,6 +8,7 @@ import NewBookLibrary from './components/NewBookLibrary'
 const { ipcRenderer } = require('electron')
 
 interface AllData {
+  Existentes: number
   Disponibles: number
   Prestamos: number
   Inexistentes: number
@@ -70,7 +71,7 @@ function Library(): JSX.Element {
             </div>
             <div>
               <p className="text-[#838383]">Existentes</p>
-              <p className="font-bold">{alldata?.Disponibles}</p>
+              <p className="font-bold">{alldata?.Existentes}</p>
             </div>
           </div>
           <div className="h-full w-[200px] flex justify-center items-center space-x-2">

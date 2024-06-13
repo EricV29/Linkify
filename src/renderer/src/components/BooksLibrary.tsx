@@ -164,6 +164,7 @@ function BooksLibrary(): JSX.Element {
 
   const editBook = () => {
     const existencia = selectedBook?.existencia ?? 0
+
     if (existencia < 0) {
       console.log('La existencia no puede ser menor a 0')
       return
