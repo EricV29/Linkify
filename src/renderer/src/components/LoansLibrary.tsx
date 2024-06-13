@@ -56,14 +56,33 @@ function LoansLibrary(): JSX.Element {
       case 'actions':
         return (
           <div className="relative flex items-center gap-2 justify-center">
-            <Tooltip content="Terminar Prestamo">
-              <span
-                className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                onClick={() => finishLoan(user.idLoan)}
-              >
-                <Icon icon="mdi:book-play-outline" className="w-[30px] h-[30px]" color="#00a539" />
-              </span>
-            </Tooltip>
+            {user.statusloan === 'activo' ? (
+              <Tooltip content="Terminar Prestamo">
+                <span
+                  className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                  onClick={() => finishLoan(user.idLoan)}
+                >
+                  <Icon
+                    icon="mdi:book-play-outline"
+                    className="w-[30px] h-[30px]"
+                    color="#00a539"
+                  />
+                </span>
+              </Tooltip>
+            ) : user.statusloan === 'finalizado' ? (
+              <Tooltip content="Terminar Prestamo">
+                <span
+                  className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                  onClick={() => finishLoan(user.idLoan)}
+                >
+                  <Icon
+                    icon="mdi:book-play-outline"
+                    className="w-[30px] h-[30px] hidden"
+                    color="#00a539"
+                  />
+                </span>
+              </Tooltip>
+            ) : null}
           </div>
         )
       default:
@@ -81,7 +100,16 @@ function LoansLibrary(): JSX.Element {
   useEffect(() => {
     ipcRenderer.send('allLoans')
     const handleAllLoansReply = (_event, arg) => {
-      setLoans(arg)
+      const sortedLoans = arg.sort((a, b) => {
+        if (a.statusloan === 'activo' && b.statusloan !== 'activo') {
+          return -1
+        }
+        if (a.statusloan !== 'activo' && b.statusloan === 'activo') {
+          return 1
+        }
+        return 0
+      })
+      setLoans(sortedLoans)
     }
     ipcRenderer.once('allLoans-reply', handleAllLoansReply)
   }, [])
@@ -143,6 +171,9 @@ function LoansLibrary(): JSX.Element {
         if (arg[1] === true) {
           setText('Prestamo finalizado correctamente.')
           toggleVisiblenoti()
+          setTimeout(function () {
+            location.reload()
+          }, 2000)
         } else if (arg[1] === null) {
           setText('El id del prestamo no fue encontrado.')
           toggleVisiblenoti()

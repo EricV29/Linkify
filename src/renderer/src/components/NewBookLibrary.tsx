@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Button, Input } from '@nextui-org/react'
 import { Icon } from '@iconify/react'
 import noti from '../store/notification'
@@ -11,6 +11,17 @@ function NewBookLibrary(): JSX.Element {
   const [existencia, setExistencia] = useState('')
   const { setText, toggleVisiblenoti } = noti()
   const [isButtonDisabled, setIsButtonDisabled] = useState(true)
+
+  useEffect(() => {
+    const savedfolio = localStorage.getItem('folio')
+    if (savedfolio) {
+      setFolio(savedfolio)
+    }
+  }, [])
+
+  useEffect(() => {
+    localStorage.setItem('folio', folio)
+  }, [folio])
 
   const handleFolioChange = (event) => {
     setFolio(event.target.value.toUpperCase())
@@ -50,10 +61,13 @@ function NewBookLibrary(): JSX.Element {
           if (arg[1] === true) {
             setText('El libro fue agregado correctamente.')
             toggleVisiblenoti()
-            setFolio('')
+            setTimeout(function () {
+              location.reload()
+            }, 2000)
+            /*setFolio('')
             setTitle('')
             setAutor('')
-            setExistencia('')
+            setExistencia('')*/
           } else {
             setText('Ocurrio un error al agregar el libro.')
             toggleVisiblenoti()
@@ -75,6 +89,7 @@ function NewBookLibrary(): JSX.Element {
         <div className=" w-full p-5 flex">
           <div className=" w-1/2 space-y-2">
             <p>Folio</p>
+
             <Input
               type="text"
               placeholder="FOLIO"

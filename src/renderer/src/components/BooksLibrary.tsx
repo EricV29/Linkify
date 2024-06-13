@@ -147,6 +147,9 @@ function BooksLibrary(): JSX.Element {
         if (arg[1] === true) {
           setText('Libro eliminado correctamente.')
           toggleVisiblenoti()
+          setTimeout(function () {
+            location.reload()
+          }, 2000)
         } else if (arg[1] === null) {
           setText('El folio del libro no fue encontrado.')
           toggleVisiblenoti()
@@ -180,6 +183,9 @@ function BooksLibrary(): JSX.Element {
           setText('Libro editado correctamente.')
           toggleVisiblenoti()
           onOpenChange()
+          setTimeout(function () {
+            location.reload()
+          }, 2000)
         } else if (arg[1] === null) {
           setText('El folio del libro no fue encontrado.')
           toggleVisiblenoti()

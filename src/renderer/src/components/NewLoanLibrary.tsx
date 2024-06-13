@@ -82,7 +82,10 @@ function NewLoansLibrary(): JSX.Element {
         if (arg[1] === true) {
           setText('Prestamo realizado correctamente.')
           toggleVisiblenoti()
-          setFormData({
+          setTimeout(function () {
+            location.reload()
+          }, 2000)
+          /*setFormData({
             firstname: '',
             secondname: '',
             firstlastname: '',
@@ -93,7 +96,7 @@ function NewLoansLibrary(): JSX.Element {
             fechdev: ''
           })
           setFolio('')
-          setBookData([])
+          setBookData([])*/
         } else {
           setText('Error al realizar el prestamo, intentalo de nuevo.')
           toggleVisiblenoti()
@@ -355,8 +358,10 @@ function NewLoansLibrary(): JSX.Element {
               variant="bordered"
               name="fechdev"
               value={formData.fechdev}
+              min={new Date().toISOString().split('T')[0]}
               onChange={handleInputChange}
             />
+
             <h2 className="text-[#00a539] ml-[-10px]">Libros</h2>
             <p>
               Ingresa el folio del libro <span className="text-[#ff2929]">*</span>
