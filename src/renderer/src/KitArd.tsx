@@ -14,7 +14,7 @@ import {
 } from '@nextui-org/react'
 import { DeleteIcon } from './icons/DeleteIcon'
 import { useState } from 'react'
-import Message from './components/Message'
+import Message from './components/message'
 import msgLego from './store/message'
 import AlumnGenerate from './functions/AlumnGenerate'
 const { ipcRenderer } = require('electron')
