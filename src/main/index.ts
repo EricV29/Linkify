@@ -84,7 +84,7 @@ ipcMain.on('login', async (event, argumentos) => {
         newWindow = new BrowserWindow({
           width: 1400,
           height: 800,
-          autoHideMenuBar: false,
+          autoHideMenuBar: true,
           ...(process.platform === 'linux' ? { icon } : { icon }),
           webPreferences: {
             preload: join(__dirname, '../preload/index.js'),
@@ -148,7 +148,7 @@ function createWindow(): void {
     minHeight: 670,
     minWidth: 900,
     show: false,
-    autoHideMenuBar: false,
+    autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : { icon }),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
