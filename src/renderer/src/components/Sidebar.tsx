@@ -8,10 +8,10 @@ function Sidebar(): JSX.Element {
   const [activeButton, setActiveButton] = useState('button1')
   const [_nameuser, setNameuser] = useState(null)
   const [rol, setRoluser] = useState(null)
-
+  /*
   const handleButtonClick = (buttonName) => {
     setActiveButton(buttonName)
-  }
+  }*/
 
   // TRAER DATOS DE USUARIO
   useEffect(() => {

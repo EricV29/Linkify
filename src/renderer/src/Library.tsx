@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@nextui-org/react'
 import { Icon } from '@iconify/react'
 import BooksLibrary from './components/BooksLibrary'

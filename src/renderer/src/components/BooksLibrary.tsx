@@ -302,7 +302,7 @@ function BooksLibrary(): JSX.Element {
       <div className="space-y-3">
         <Modal isOpen={isOpen} onOpenChange={onOpenChange} backdrop="blur">
           <ModalContent>
-            {(onClose) => (
+            {(_onClose) => (
               <>
                 <ModalHeader className="flex items-center gap-1 font-bold">
                   <Icon icon="mdi:book-edit" className="w-[30px] h-[30px]" color="00a539" /> Editar
