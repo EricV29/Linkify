@@ -5,6 +5,7 @@ import icon from '../../resources/linki.ico?asset'
 import './database'
 import { getConnection } from './database'
 import { sendEmail } from './mail'
+import { sendEmailLoan } from './mailLibraryLoan'
 import { insertData } from './petitionSQL'
 import {
   viableBoxes,
@@ -510,6 +511,22 @@ ipcMain.on('addNewBook', async (event, arg) => {
 ipcMain.on('newLoan', async (event, arg) => {
   try {
     const result = await newLoan(arg)
+    sendEmailLoan(arg)
+      .then(() => {
+        const notification = {
+          title: 'Linkify',
+          body: 'Prestamo realizado y correo enviado correctamente.'
+        }
+        new Notification(notification).show()
+      })
+      .catch((error) => {
+        const notification = {
+          title: 'Linkify',
+          body: 'Error al enviar correo, verifica tu conexión de internet.'
+        }
+        new Notification(notification).show()
+        console.log(error)
+      })
     //console.log(result)
     event.reply('newLoan-reply', result)
   } catch (error) {

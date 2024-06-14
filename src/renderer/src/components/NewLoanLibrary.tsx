@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import {
   Table,
   TableHeader,
@@ -16,6 +16,7 @@ import { Icon } from '@iconify/react'
 import noti from '../store/notification'
 import { v4 as uuidv4 } from 'uuid'
 import usercred from '../store/usercred'
+import { useLocalStorage } from '../functions/useLocalStorage'
 const { ipcRenderer } = require('electron')
 
 type Book = {
@@ -28,7 +29,7 @@ type Book = {
 }
 
 function NewLoansLibrary(): JSX.Element {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useLocalStorage('formData', {
     firstname: '',
     secondname: '',
     firstlastname: '',
@@ -38,6 +39,7 @@ function NewLoansLibrary(): JSX.Element {
     email: '',
     fechdev: ''
   })
+
   const [folio, setFolio] = useState('')
   const [bookData, setBookData] = useState<Book[]>([])
   const { setText, toggleVisiblenoti } = noti()
@@ -85,7 +87,8 @@ function NewLoansLibrary(): JSX.Element {
           setTimeout(function () {
             location.reload()
           }, 2000)
-          /*setFormData({
+          localStorage.removeItem('formData')
+          setFormData({
             firstname: '',
             secondname: '',
             firstlastname: '',
@@ -96,7 +99,7 @@ function NewLoansLibrary(): JSX.Element {
             fechdev: ''
           })
           setFolio('')
-          setBookData([])*/
+          setBookData([])
         } else {
           setText('Error al realizar el prestamo, intentalo de nuevo.')
           toggleVisiblenoti()

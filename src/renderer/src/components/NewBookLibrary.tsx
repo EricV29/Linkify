@@ -1,27 +1,17 @@
-import React, { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Button, Input } from '@nextui-org/react'
 import { Icon } from '@iconify/react'
 import noti from '../store/notification'
+import { useLocalStorage } from '../functions/useLocalStorage'
 const { ipcRenderer } = require('electron')
 
 function NewBookLibrary(): JSX.Element {
-  const [folio, setFolio] = useState('')
-  const [title, setTitle] = useState('')
-  const [autor, setAutor] = useState('')
-  const [existencia, setExistencia] = useState('')
+  const [folio, setFolio] = useLocalStorage('folio', '')
+  const [title, setTitle] = useLocalStorage('title', '')
+  const [autor, setAutor] = useLocalStorage('autor', '')
+  const [existencia, setExistencia] = useLocalStorage('existencia', '')
   const { setText, toggleVisiblenoti } = noti()
   const [isButtonDisabled, setIsButtonDisabled] = useState(true)
-
-  useEffect(() => {
-    const savedfolio = localStorage.getItem('folio')
-    if (savedfolio) {
-      setFolio(savedfolio)
-    }
-  }, [])
-
-  useEffect(() => {
-    localStorage.setItem('folio', folio)
-  }, [folio])
 
   const handleFolioChange = (event) => {
     setFolio(event.target.value.toUpperCase())
@@ -64,10 +54,11 @@ function NewBookLibrary(): JSX.Element {
             setTimeout(function () {
               location.reload()
             }, 2000)
-            /*setFolio('')
+            clearLocalStorage()
+            setFolio('')
             setTitle('')
             setAutor('')
-            setExistencia('')*/
+            setExistencia('')
           } else {
             setText('Ocurrio un error al agregar el libro.')
             toggleVisiblenoti()
@@ -76,6 +67,13 @@ function NewBookLibrary(): JSX.Element {
         ipcRenderer.once('addNewBook-reply', handleaddNewBookReply)
       }
     }
+  }
+
+  const clearLocalStorage = () => {
+    localStorage.removeItem('folio')
+    localStorage.removeItem('title')
+    localStorage.removeItem('autor')
+    localStorage.removeItem('existencia')
   }
 
   return (
@@ -89,7 +87,6 @@ function NewBookLibrary(): JSX.Element {
         <div className=" w-full p-5 flex">
           <div className=" w-1/2 space-y-2">
             <p>Folio</p>
-
             <Input
               type="text"
               placeholder="FOLIO"

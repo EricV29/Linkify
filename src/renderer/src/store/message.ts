@@ -6,7 +6,7 @@ interface State {
 }
 
 const msgLego = create<State>((set) => ({
-  visible: true,
+  visible: false,
   toggleVisible: () => set((state) => ({ visible: !state.visible }))
 }))
 
