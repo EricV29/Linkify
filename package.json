@@ -34,6 +34,7 @@
     "@types/react": "^18.2.47",
     "@types/react-dom": "^18.2.18",
     "@vitejs/plugin-react": "^4.2.1",
+    "caniuse-lite": "^1.0.30001636",
     "docxtemplater": "^3.46.2",
     "dotenv": "^16.4.5",
     "formik": "^2.4.5",
