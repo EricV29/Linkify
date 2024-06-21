@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   Button,
   Input,
@@ -13,24 +13,71 @@ import {
   User,
   Chip,
   Tooltip,
-  getKeyValue
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure
 } from '@nextui-org/react'
 import { Icon } from '@iconify/react'
 import noti from './store/notification'
+import usercred from './store/usercred'
 import remotec from './images/remotec.png'
+const { ipcRenderer } = require('electron')
 
 const LoanRemotec = () => {
   const { setText, toggleVisiblenoti } = noti()
   const [dataloan, setDataloan] = useState({
     numemp: '',
     nipemp: '',
-    numequip: ''
+    numequip: '',
+    fechloanequip: ''
   })
+  const [filteredEquip, setFilteredEquip] = React.useState<string[]>([])
+  let equips = ['A1', 'A2', 'A3', 'A4', 'A5', 'A6']
+  const [loans, setLoans] = useState([])
+  const { idul } = usercred()
+  const { isOpen, onOpen, onOpenChange } = useDisclosure()
+  const [nip, setNip] = useState('')
+  const [idLoanequip, setIdLoanequip] = useState('')
+  const [numProf, setNumProf] = useState('')
+  const [numequip, setNumE] = useState('')
 
-  const categori = [
-    { key: '1', label: 'A1' },
-    { key: '2', label: 'A2' }
-  ]
+  useEffect(() => {
+    ipcRenderer.send('viableEquip', 2)
+    ipcRenderer.on('viableEquip-reply', (_event, arg) => {
+      //onsole.log(arg)
+      let argNums = arg.map((row) => row.numequip)
+      let newFilteredEquip = equips.filter((equip) => !argNums.includes(equip))
+      setFilteredEquip(newFilteredEquip)
+    })
+
+    ipcRenderer.send('loansEquip', 2)
+    ipcRenderer.on('loansEquip-reply', (_event, arg) => {
+      const formattedArg = arg.map((loan) => ({
+        ...loan,
+        fechloanequip: formattedDate(new Date(loan.fechloanequip)),
+        fechdevloanequip:
+          loan.fechdevloanequip === null ? ' ' : formattedDate(new Date(loan.fechdevloanequip))
+      }))
+      setLoans(formattedArg)
+    })
+  }, [])
+
+  const formattedDate = (date) => {
+    const options = {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZone: 'America/Mexico_City'
+    }
+
+    return date ? date.toLocaleString('es-ES', options) : ' '
+  }
 
   const statusColorMap = {
     activo: 'success',
@@ -47,22 +94,35 @@ const LoanRemotec = () => {
             {user.numemp}
           </User>
         )
-      case 'status':
+      case 'statusloanequip':
         return (
-          <Chip className="capitalize" color={statusColorMap[user.status]} size="sm" variant="flat">
+          <Chip
+            className="capitalize"
+            color={statusColorMap[user.statusloanequip]}
+            size="sm"
+            variant="flat"
+          >
             {cellValue}
           </Chip>
         )
       case 'actions':
         return (
           <div className="relative flex items-center">
-            {user.status === 'activo' ? (
+            {user.statusloanequip === 'activo' ? (
               <Tooltip content="Finalizar prestamo">
-                <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                <span
+                  className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                  onClick={() => {
+                    onOpen()
+                    setIdLoanequip(user.idLoanequip)
+                    setNumProf(user.numempprof)
+                    setNumE(user.numequip)
+                  }}
+                >
                   <Icon icon="ph:seal-check-bold" color="#00a539" className="w-[30px] h-[30px]" />
                 </span>
               </Tooltip>
-            ) : user.status === 'finalizado' ? (
+            ) : user.statusloanequip === 'finalizado' ? (
               <Tooltip content="Prestamo finalizado">
                 <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
                   <Icon icon="ph:seal-check-fill" color="#00a539" className="w-[30px] h-[30px]" />
@@ -77,39 +137,23 @@ const LoanRemotec = () => {
   }, [])
 
   const columns = [
-    { name: 'NOMBRE', uid: 'name' },
-    { name: 'PRESTAMO', uid: 'datetloan' },
-    { name: 'DEVOLUCIÓN', uid: 'datetdloan' },
-    { name: 'ESTADO', uid: 'status' },
+    { name: 'NOMBRE', uid: 'nameprof' },
+    { name: 'NUM. EQUIPO', uid: 'numequip' },
+    { name: 'PRESTAMO', uid: 'fechloanequip' },
+    { name: 'DEVOLUCIÓN', uid: 'fechdevloanequip' },
+    { name: 'ESTADO', uid: 'statusloanequip' },
     { name: 'ACCIONES', uid: 'actions' }
   ]
 
-  const users = [
-    {
-      id: 1,
-      name: 'Eric',
-      numemp: '440248',
-      datetloan: '2022-10-10 10:00:00 am',
-      datetdloan: '2022-10-10 11:00:00 am',
-      status: 'activo'
-    },
-    {
-      id: 2,
-      name: 'Jared',
-      numemp: '34827',
-      datetloan: '2022-10-10 10:00:00 am',
-      datetdloan: '2022-10-10 11:00:00 am',
-      status: 'finalizado'
-    },
-    {
-      id: 3,
-      name: 'Jared',
-      numemp: '34827',
-      datetloan: '2022-10-10 10:00:00 am',
-      datetdloan: '2022-10-10 11:00:00 am',
-      status: 'finalizado'
-    }
-  ]
+  function formatDate() {
+    const date = new Date()
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    const hours = String(date.getHours()).padStart(2, '0')
+    const minutes = String(date.getMinutes()).padStart(2, '0')
+    return `${year}-${month}-${day} ${hours}:${minutes}`
+  }
 
   const loanRemotec = () => {
     if (dataloan.numemp === '' || dataloan.nipemp === '' || dataloan.numequip === '') {
@@ -117,14 +161,97 @@ const LoanRemotec = () => {
       toggleVisiblenoti()
       return
     } else {
-      setText('Prestamo realizado correctamente.')
+      //console.log(dataloan.numemp)
+      dataloan.fechloanequip = formatDate()
+      ipcRenderer.send('verifyEmployee', [
+        dataloan.numemp,
+        dataloan.nipemp,
+        dataloan.numequip,
+        dataloan.fechloanequip,
+        idul
+      ])
+      ipcRenderer.once('verifyEmployee-reply', (_event, arg) => {
+        if (arg === false) {
+          setText('Datos incorrectos.')
+          toggleVisiblenoti()
+        } else if (arg === true) {
+          //console.log(arg)
+          setTimeout(function () {
+            location.reload()
+          }, 2000)
+          setText('Prestamo realizado.')
+          toggleVisiblenoti()
+        }
+      })
+    }
+  }
+
+  const finishLoanEquip = () => {
+    if (nip === '' || idLoanequip === '') {
+      setText('Ingresa el NIP.')
       toggleVisiblenoti()
+      return
+    } else {
+      const fechdev = new Date()
+      ipcRenderer.send('finishLoanEquip', [fechdev, idLoanequip, numProf, nip, numequip])
+      ipcRenderer.once('finishLoanEquip-reply', (_event, arg) => {
+        if (arg === false) {
+          setText('El NIP no es correcto.')
+          toggleVisiblenoti()
+          setNip('')
+        } else if (arg === true) {
+          setTimeout(function () {
+            location.reload()
+          }, 2000)
+          setNip('')
+          setText('Prestamo finalizado.')
+          toggleVisiblenoti()
+        }
+      })
     }
   }
 
   return (
     <>
       <div className="w-full h-full p-4 flex justify-center items-start overflow-y-auto animate-fade animate-once animate-ease-in">
+        <Modal isOpen={isOpen} onOpenChange={onOpenChange} backdrop={'blur'}>
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalHeader className="flex flex-col gap-1">Finalizar prestamo</ModalHeader>
+                <ModalBody>
+                  <p>Para poder finalizar tu préstamo, ingresa el NIP.</p>
+                  <Input
+                    isRequired
+                    type="password"
+                    placeholder="****"
+                    labelPlacement="outside"
+                    className="w-full"
+                    variant="bordered"
+                    aria-label="NIP"
+                    value={nip}
+                    onChange={(e) => {
+                      const sanitizedValue = e.target.value.replace(/[^0-9]/g, '')
+                      if (/^\d{0,4}$/.test(sanitizedValue)) {
+                        setNip(sanitizedValue)
+                      }
+                    }}
+                  />
+                </ModalBody>
+                <ModalFooter>
+                  <Button
+                    color="success"
+                    className="text-white"
+                    onPress={onClose}
+                    onClick={finishLoanEquip}
+                  >
+                    Aceptar
+                  </Button>
+                </ModalFooter>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
         <div className="w-1/3 p-3 space-y-4">
           <Button
             isIconOnly
@@ -141,26 +268,36 @@ const LoanRemotec = () => {
             <p>Número de Empleado</p>
             <Input
               isRequired
-              type="number"
+              type="text"
               placeholder="000000"
               labelPlacement="outside"
               className="w-full"
               variant="bordered"
               aria-label="Número de empleado"
               value={dataloan.numemp}
-              onChange={(e) => setDataloan({ ...dataloan, numemp: e.target.value })}
+              onChange={(e) => {
+                const sanitizedValue = e.target.value.replace(/-/g, '')
+                if (/^\d{0,6}$/.test(sanitizedValue)) {
+                  setDataloan({ ...dataloan, numemp: sanitizedValue })
+                }
+              }}
             />
             <p>NIP de Empleado</p>
             <Input
               isRequired
               type="password"
-              placeholder="******"
+              placeholder="****"
               labelPlacement="outside"
               className="w-full"
               variant="bordered"
               aria-label="Nip de empleado"
               value={dataloan.nipemp}
-              onChange={(e) => setDataloan({ ...dataloan, nipemp: e.target.value })}
+              onChange={(e) => {
+                const sanitizedValue = e.target.value.replace(/[^0-9]/g, '')
+                if (/^\d{0,4}$/.test(sanitizedValue)) {
+                  setDataloan({ ...dataloan, nipemp: sanitizedValue })
+                }
+              }}
             />
             <p>Número de Control</p>
             <Select
@@ -170,9 +307,9 @@ const LoanRemotec = () => {
               aria-label="Número de laptop"
               onChange={(e) => setDataloan({ ...dataloan, numequip: e.target.value })}
             >
-              {categori.map((categori) => (
-                <SelectItem key={categori.key} value={categori.label}>
-                  {categori.label}
+              {filteredEquip.map((equip) => (
+                <SelectItem key={equip} value={equip}>
+                  {equip}
                 </SelectItem>
               ))}
             </Select>
@@ -188,9 +325,9 @@ const LoanRemotec = () => {
                 </TableColumn>
               )}
             </TableHeader>
-            <TableBody items={users}>
-              {(item) => (
-                <TableRow key={item.id}>
+            <TableBody items={loans}>
+              {(item: any) => (
+                <TableRow key={item.idLoanequip}>
                   {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
                 </TableRow>
               )}
