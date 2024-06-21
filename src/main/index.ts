@@ -24,7 +24,11 @@ import {
   addNewBook,
   newLoan,
   allLoans,
-  finishLoan
+  finishLoan,
+  viableEquip,
+  loansEquip,
+  verifyEmployee,
+  finishLoanEquip
 } from './dataConsult'
 
 const fs = require('fs')
@@ -569,6 +573,50 @@ ipcMain.on('finishLoan', async (event, arg) => {
     const result = await finishLoan(arg)
     //console.log(result)
     event.reply('finishLoan-reply', result)
+  } catch (error) {
+    console.error(error)
+  }
+})
+
+//Viable laptops
+ipcMain.on('viableEquip', async (event, arg) => {
+  try {
+    const result = await viableEquip(arg)
+    //console.log(result)
+    event.reply('viableEquip-reply', result)
+  } catch (error) {
+    console.error(error)
+  }
+})
+
+//All loans equip
+ipcMain.on('loansEquip', async (event, arg) => {
+  try {
+    const result = await loansEquip(arg)
+    //console.log(result)
+    event.reply('loansEquip-reply', result)
+  } catch (error) {
+    console.error(error)
+  }
+})
+
+//Exist employee number and new loan
+ipcMain.on('verifyEmployee', async (event, arg) => {
+  try {
+    const result = await verifyEmployee(arg)
+    //console.log(result)
+    event.reply('verifyEmployee-reply', result)
+  } catch (error) {
+    console.error(error)
+  }
+})
+
+//Finish
+ipcMain.on('finishLoanEquip', async (event, arg) => {
+  try {
+    const result = await finishLoanEquip(arg)
+    //console.log(result)
+    event.reply('finishLoanEquip-reply', result)
   } catch (error) {
     console.error(error)
   }

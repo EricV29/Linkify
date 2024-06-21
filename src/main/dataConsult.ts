@@ -484,3 +484,122 @@ export async function addBooksFinishLoan(arg: any) {
     })
   })
 }
+
+//VIABLE EQUIPS
+export async function viableEquip(arg) {
+  const connection = await getConnection()
+
+  let petitionQuery = `SELECT numequip FROM loanequipment AS lo
+  INNER JOIN equipment AS eq ON lo.idEquip = eq.idEquip
+  WHERE statusloanequip = 'activo' AND idCategory = ?;`
+
+  return new Promise((resolve, reject) => {
+    connection.query(petitionQuery, arg, (error, results) => {
+      if (error) reject(error)
+      resolve(results)
+    })
+  })
+}
+
+//ALL LOANS EQUIP
+export async function loansEquip(arg) {
+  const connection = await getConnection()
+
+  let petitionQuery = `SELECT 
+  lo.idLoanequip,
+  CONCAT(p.nameprof, ' ', p.apepuserprof) AS nameprof, 
+    p.numempprof, 
+    e.numequip,
+    lo.fechloanequip, 
+    lo.fechdevloanequip, 
+    lo.statusloanequip 
+  FROM loanequipment AS lo
+  JOIN professor AS p ON lo.numempprof = p.numempprof
+  JOIN equipment AS e ON lo.idEquip = e.idEquip
+  WHERE e.idCategory = ?;`
+
+  return new Promise((resolve, reject) => {
+    connection.query(petitionQuery, arg, (error, results) => {
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}
+
+// COMPARE NUMBER AND PASSWORD WITH EXISTENCE CHECK
+export async function verifyEmployee(arg) {
+  const connection = await getConnection()
+
+  let checkExistenceQuery = `SELECT * FROM professor WHERE numempprof = ?;`
+  let verifyCredentialsQuery = `SELECT * FROM professor WHERE numempprof = ? AND nipprof = ?;`
+  let getidEquipQuery = 'SELECT idEquip FROM equipment WHERE numequip = ?;'
+  let newLoanEquipmentQuery = `INSERT INTO loanequipment (numempprof, idEquip, fechloanequip, fechdevloanequip, statusloanequip, idUser) VALUES (?, ?, ?, NULL, 'activo', ?);`
+  let changeStatusEquipQuery = `UPDATE equipment SET statusequip = 'préstamo' WHERE idEquip = ?;`
+
+  try {
+    // Verificar si el empleado existe
+    const existenceResults = await connection.query(checkExistenceQuery, [arg[0]])
+    if (existenceResults.length === 0) {
+      return false // Empleado no encontrado
+    }
+
+    // Verificar credenciales
+    const credentialsResults = await connection.query(verifyCredentialsQuery, [arg[0], arg[1]])
+    if (credentialsResults.length === 0) {
+      return false // Credenciales incorrectas
+    }
+
+    // Obtener ID del equipo
+    const equipResults = await connection.query(getidEquipQuery, [arg[2]])
+    if (equipResults.length === 0) {
+      return false // Equipo no encontrado
+    }
+    const idEquip = equipResults[0].idEquip
+
+    // Insertar nuevo préstamo de equipo
+    await connection.query(newLoanEquipmentQuery, [arg[0], idEquip, arg[3], arg[4]])
+
+    // Cambiar estado del equipo a 'prestamo'
+    const changeStatusResults = await connection.query(changeStatusEquipQuery, [idEquip])
+
+    return changeStatusResults.affectedRows > 0
+  } catch (error) {
+    throw error
+  }
+}
+
+// FINISH LOAN EQUIPMENT
+export async function finishLoanEquip(arg) {
+  const connection = await getConnection()
+
+  let verifyCredentialsQuery = `SELECT * FROM professor WHERE numempprof = ? AND nipprof = ?;`
+  let updateLoanEquipment = `UPDATE loanequipment SET statusloanequip = 'finalizado', fechdevloanequip = ? WHERE idLoanequip = ?;`
+  let updateBookStatus = `UPDATE equipment SET statusequip = 'activo' WHERE numequip = ?;`
+
+  try {
+    // Verificar credenciales
+    const credentialsResults = await connection.query(verifyCredentialsQuery, [arg[2], arg[3]])
+    if (credentialsResults.length === 0) {
+      return false
+    }
+
+    //Actualizar estado y fechadev del prestamo
+    const upLEResults = await connection.query(updateLoanEquipment, [arg[0], arg[1]])
+    if (upLEResults.length === 0) {
+      return false
+    }
+
+    // ACtualizar stado del equipo
+    const upBSResults = await connection.query(updateBookStatus, [arg[4]])
+    if (upBSResults.length === 0) {
+      return false
+    }
+
+    return upBSResults.affectedRows > 0
+  } catch (error) {
+    throw error
+  }
+}
