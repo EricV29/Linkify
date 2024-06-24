@@ -147,7 +147,7 @@ function LoansLibrary(): JSX.Element {
   ]
 
   const finishLoan = async (iduserc_book) => {
-    setTextmsgq('¿Estás seguro de eliminar este libro?')
+    setTextmsgq('¿Estás seguro de finalizar el préstamo?')
     setToolmsgq('Library')
     toggleVisiblemsgq()
 

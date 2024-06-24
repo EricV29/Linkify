@@ -1,6 +1,6 @@
 {
   "name": "linkify",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Linkify is a management system for borrowing Lego Spike, Arduino, and Raspberry Pi equipment. It allows users to send loan requests, including equipment and user details, managed by an administrator who can finalize the loans. Loan data is stored and displayed to the administrator.",
   "main": "./out/main/index.js",
   "author": "Eric Jared Villeda Reyes",

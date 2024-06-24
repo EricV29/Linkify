@@ -6,6 +6,8 @@ VITE_PORTEMAIL = 465 > port email nodemailer
 VITE_USEREMAIL = 'issuer email'
 VITE_TOKENEMAIL = 'token for email sender nodemailer'
 VITE_ADDRESSEMAIL = 'system administrator email'
+VITE_ADDRESSEMAILLIBRARY = 'adnministrator email library'
+
 
 /************************************************************
 In this case, the email address of the system's email sender is different from that of the administrator, as the system has been implemented in a school where teachers are registered in the database and the person in charge of the area is an engineer. To avoid using the credentials of the person in charge, a new email address was created exclusively for the system.
