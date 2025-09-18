@@ -113,31 +113,28 @@ export async function finishidRequest(arg: any) {
 export async function allData() {
   const connection = await getConnection()
 
-  let petitionQuery = `
-  SELECT 
-    COUNT(CASE WHEN statusbook IN ('disponible', 'prestamo') THEN 1 END) AS Existentes,
-    SUM(CASE WHEN existencia THEN existencia ELSE 0 END) AS Disponibles,
-    COUNT(CASE WHEN statusbook = 'prestamo' THEN existencia END) AS Prestamos,
-    COUNT(CASE WHEN statusbook = 'inexistente' THEN existencia END) AS Inexistentes
-  FROM book
-`
+  const petitionQuery = `
+    SELECT 
+      COUNT(CASE WHEN statusbook IN ('disponible', 'prestamo') THEN 1 END) AS Existentes,
+      SUM(CASE WHEN existencia THEN existencia ELSE 0 END) AS Disponibles,
+      COUNT(CASE WHEN statusbook = 'prestamo' THEN existencia END) AS Prestamos,
+      COUNT(CASE WHEN statusbook = 'inexistente' THEN existencia END) AS Inexistentes
+    FROM book
+  `
 
-  return new Promise((resolve, reject) => {
-    connection.query(petitionQuery, (error, results) => {
-      if (error) {
-        reject(error)
-      } else {
-        // Transforma los resultados en formato JSON
-        const jsonData = {
-          Existentes: results[0].Existentes,
-          Disponibles: results[0].Disponibles,
-          Prestamos: results[0].Prestamos,
-          Inexistentes: results[0].Inexistentes
-        }
-        resolve(jsonData)
-      }
-    })
-  })
+  try {
+    const [results]: any = await connection.query(petitionQuery)
+
+    // Transforma los resultados en formato JSON
+    return {
+      Existentes: results[0].Existentes,
+      Disponibles: results[0].Disponibles,
+      Prestamos: results[0].Prestamos,
+      Inexistentes: results[0].Inexistentes
+    }
+  } catch (error) {
+    throw error
+  }
 }
 
 //ALL BOOKS
