@@ -5,6 +5,7 @@ import icon from '../../resources/linki.ico?asset'
 import './database'
 import { getConnection } from './database'
 import { sendEmail } from './mail'
+import { sendEmailLoan } from './mailLibraryLoan'
 import { insertData } from './petitionSQL'
 import {
   viableBoxes,
@@ -12,7 +13,18 @@ import {
   activeRequests,
   completedRequests,
   alumnsforRequest,
-  finishidRequest
+  finishidRequest,
+  allData,
+  allBooks,
+  searchBooks,
+  selectBook,
+  editBook,
+  deleteBook,
+  checkStockBook,
+  addNewBook,
+  newLoan,
+  allLoans,
+  finishLoan
 } from './dataConsult'
 
 const fs = require('fs')
@@ -47,22 +59,18 @@ ipcMain.handle('get-documents-path', async (_event) => {
 
 //TODO: LOGEARSE Y CREAR NUEVA VENTANA MENU (SECOND) NOMBRE = newWindow
 ipcMain.on('login', async (event, argumentos) => {
-  console.log('Datos recibidos:', argumentos)
-
   try {
     const conn = await getConnection()
 
-    // Ejecutamos la query usando await
-    const [rows] = await conn.query(
+    // Ejecutamos la consulta usando await y parámetros seguros
+    const [rows]: any = await conn.query(
       'SELECT * FROM users WHERE BINARY Nickname = ? AND BINARY PassUser = ?',
       [argumentos.user, argumentos.password]
     )
 
     if (rows.length > 0) {
-      // Usuario válido
-      event.reply('login-reply', { success: true, user: rows[0] })
+      event.returnValue = true
 
-      // Guardamos datos de usuario globales
       dataUser = `${rows[0].Nameuser} ${rows[0].ApepUser} ${rows[0].ApemUser}`
       rolUser = rows[0].RolUser
 
@@ -98,7 +106,7 @@ ipcMain.on('login', async (event, argumentos) => {
       // Usuario o contraseña incorrectos
       event.reply('login-reply', { success: false, message: 'Usuario o contraseña incorrectos' })
     }
-  } catch (err) {
+  } catch (err: any) {
     console.error('Error en login:', err)
     event.reply('login-reply', { success: false, error: err.message })
   }
@@ -406,5 +414,159 @@ ipcMain.on('FinishRequest', async (event, arg) => {
       body: 'PIN incorrecto.'
     }
     new Notification(notification).show()
+  }
+})
+
+//TODO: FUNCTIONS FOR LIBRARY
+//All data
+ipcMain.on('allData', async (event) => {
+  try {
+    const result = await allData()
+    //console.log(result)
+    event.reply('allData-reply', result)
+  } catch (error) {
+    console.error(error)
+  }
+})
+
+//All books
+ipcMain.on('allBooks', async (event, { limit, offset }) => {
+  try {
+    const results = await allBooks(limit, offset)
+    event.reply('allBooks-reply', results)
+  } catch (error) {
+    event.reply('allBooks-reply', { error })
+  }
+})
+
+// Search books
+ipcMain.on('searchBooks', async (event, query, category) => {
+  try {
+    const results = await searchBooks(query, category)
+    event.reply('searchBooks-reply', results)
+  } catch (error) {
+    event.reply('searchBooks-reply', { error })
+  }
+})
+
+// Select book
+ipcMain.on('selectBook', async (event, arg) => {
+  try {
+    const result = await selectBook(arg)
+    //console.log(result)
+    event.reply('selectBook-reply', result)
+  } catch (error) {
+    console.error(error)
+  }
+})
+
+// Edit book
+ipcMain.on('editBook', async (event, arg) => {
+  try {
+    const result = await editBook(arg)
+    //console.log(result)
+    event.reply('editBook-reply', result)
+  } catch (error) {
+    console.error(error)
+  }
+})
+
+// Delete book
+ipcMain.on('deleteBook', async (event, arg) => {
+  try {
+    const result = await deleteBook(arg)
+    //console.log(result)
+    event.reply('deleteBook-reply', result)
+  } catch (error) {
+    console.error(error)
+  }
+})
+
+// Check stock book
+ipcMain.on('checkStockBook', async (event, arg) => {
+  try {
+    const result = await checkStockBook(arg)
+    //console.log(result)
+    event.reply('checkStockBook-reply', result)
+  } catch (error) {
+    console.error(error)
+  }
+})
+
+// Add new book
+ipcMain.on('addNewBook', async (event, arg) => {
+  try {
+    const result = await addNewBook(arg)
+    //console.log(result)
+    event.reply('addNewBook-reply', result)
+  } catch (error) {
+    console.error(error)
+  }
+})
+
+// New loan
+ipcMain.on('newLoan', async (event, arg) => {
+  try {
+    const result = await newLoan(arg)
+    sendEmailLoan(arg)
+      .then(() => {
+        const notification = {
+          title: 'Linkify',
+          body: 'Prestamo realizado y correo enviado correctamente.'
+        }
+        new Notification(notification).show()
+      })
+      .catch((error) => {
+        const notification = {
+          title: 'Linkify',
+          body: 'Error al enviar correo, verifica tu conexión de internet.'
+        }
+        new Notification(notification).show()
+        console.log(error)
+      })
+    //console.log(result)
+    event.reply('newLoan-reply', result)
+  } catch (error) {
+    console.error(error)
+  }
+})
+
+// All loans
+ipcMain.on('allLoans', async (event) => {
+  try {
+    const result = await allLoans()
+
+    if (Array.isArray(result) && result.every((item) => typeof item === 'object')) {
+      let options: Intl.DateTimeFormatOptions = {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      }
+
+      ;(result as Array<any>).forEach((item) => {
+        let fechloan = new Date(item.fechloan)
+        let fechdevloan = new Date(item.fechdevloan)
+        item.fechloan = fechloan.toLocaleString('es-ES', options)
+        item.fechdevloan = fechdevloan.toLocaleString('es-ES', options)
+      })
+      event.reply('allLoans-reply', result)
+    }
+  } catch (error) {
+    console.error(error)
+  }
+})
+
+// Finish loan
+ipcMain.on('finishLoan', async (event, arg) => {
+  try {
+    const result = await finishLoan(arg)
+    //console.log(result)
+    event.reply('finishLoan-reply', result)
+  } catch (error) {
+    console.error(error)
   }
 })

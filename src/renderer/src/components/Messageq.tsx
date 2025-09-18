@@ -8,7 +8,7 @@ interface Props {
   tool: string
 }
 
-const Message = ({ textMsg, onYes, onNo, tool }: Props) => {
+const Messageq = ({ textMsg, onYes, onNo, tool }: Props) => {
   const { toggleVisible } = msgLego()
 
   const sty = {
@@ -21,6 +21,10 @@ const Message = ({ textMsg, onYes, onNo, tool }: Props) => {
       borderColor: '#ccfafc'
     },
     RaspBerry: {
+      backgroundColor: '#E1E1E1',
+      borderColor: '#E1E1E1'
+    },
+    Library: {
       backgroundColor: '#E1E1E1',
       borderColor: '#E1E1E1'
     }
@@ -61,4 +65,4 @@ const Message = ({ textMsg, onYes, onNo, tool }: Props) => {
   )
 }
 
-export default Message
+export default Messageq

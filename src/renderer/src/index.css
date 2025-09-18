@@ -19,19 +19,27 @@
 
 @font-face {
   font-family: 'Aileron-Regular';
-  src: url('../public/fonts/Aileron-Regular.otf') format('opentype');
+  src: url('/fonts/Aileron-Regular.otf') format('opentype');
 }
 
 @font-face {
   font-family: 'Aileron-SemiBold';
-  src: url('../public/fonts/Aileron-SemiBold.otf') format('opentype');
+  src: url('/fonts/Aileron-SemiBold.otf') format('opentype');
 }
 
 @font-face {
   font-family: 'Aileron-Bold';
-  src: url('../public/fonts/Aileron-Bold.otf') format('opentype');
+  src: url('/fonts/Aileron-Bold.otf') format('opentype');
 }
 
-.p {
-  font-family: primary;
+p {
+  font-family: 'Aileron-Regular';
+}
+
+h1{
+  font-family: 'Aileron-Bold';
+}
+
+h2{
+  font-family: 'Aileron-SemiBold';
 }

@@ -14,7 +14,7 @@ import {
 } from '@nextui-org/react'
 import { DeleteIcon } from './icons/DeleteIcon'
 import { useState } from 'react'
-import Message from './components/message'
+import Messageq from './components/Messageq'
 import msgLego from './store/message'
 import AlumnGenerate from './functions/AlumnGenerate'
 const { ipcRenderer } = require('electron')
@@ -255,7 +255,7 @@ function KitRasp(): JSX.Element {
 
   return (
     <>
-      {visible && <Message textMsg={textMsg} onYes={handleYes} onNo={handleNo} tool={tool} />}
+      {visible && <Messageq textMsg={textMsg} onYes={handleYes} onNo={handleNo} tool={tool} />}
       <div className="w-full h-full flex flex-col m-0 p-5 justify-start items-center overflow-y-scroll">
         <p className="text-[#DC0941] font-bold text-[40px]">Kit RaspBerry para Alumno</p>
         <div className="flex flex-col justify-start p-5 w-full">

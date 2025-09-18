@@ -1,3 +1,5 @@
+import config from './config'
+
 declare global {
   interface ImportMetaEnv {
     VITE_PORTEMAIL: number
@@ -16,19 +18,19 @@ export function sendEmail(pathdoc, numbox, tool, ide, users, locker) {
     service: 'gmail',
     host: 'smtp.gmail.com',
     secure: true,
-    port: import.meta.env.VITE_PORTEMAIL,
+    port: import.meta.env.VITE_PORTEMAIL || config.vitportemail,
     auth: {
-      user: import.meta.env.VITE_USEREMAIL,
-      pass: import.meta.env.VITE_TOKENEMAIL
+      user: import.meta.env.VITE_USEREMAIL || config.vituseremail,
+      pass: import.meta.env.VITE_TOKENEMAIL || config.vittokenemail
     }
   })
 
   let mailOptions = {
     from: {
       name: 'Linkify (Solicitud ' + ide + ' )',
-      address: import.meta.env.VITE_USEREMAIL
+      address: import.meta.env.VITE_USEREMAIL || config.vituseremail
     },
-    to: import.meta.env.VITE_ADDRESSEMAIL,
+    to: import.meta.env.VITE_ADDRESSEMAIL || config.vitaddressemail,
     subject: 'Solicitud de caja ' + numbox + ' de ' + tool,
     text: 'Documento',
     attachments: [

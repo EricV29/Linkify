@@ -5,9 +5,13 @@ import { useState, useEffect } from 'react'
 const { ipcRenderer } = require('electron')
 
 function Sidebar(): JSX.Element {
-  const [activeButton, setActiveButton] = useState('Tools')
+  const [activeButton, setActiveButton] = useState('button1')
   const [_nameuser, setNameuser] = useState(null)
   const [rol, setRoluser] = useState(null)
+  /*
+  const handleButtonClick = (buttonName) => {
+    setActiveButton(buttonName)
+  }*/
 
   // TRAER DATOS DE USUARIO
   useEffect(() => {
@@ -29,9 +33,9 @@ function Sidebar(): JSX.Element {
         {rol === 1 && (
           <>
             <Button
-              className={`font-bold w-[170px] ${activeButton === 'Tools' ? 'text-[#fff] bg-[#00a539]' : 'text-[#ffffff] hover:text-[#00a539]'}`}
+              className={`font-bold w-[170px] ${activeButton === 'button2' ? 'text-[#fff] bg-[#00a539]' : 'text-[#ffffff] hover:text-[#00a539]'}`}
               variant="ghost"
-              onClick={() => setActiveButton('Tools')}
+              onClick={() => setActiveButton('button2')}
             >
               <Link to="/menu/herramientas" className="w-full h-full flex items-center">
                 <Icon icon="jam:tools-f" />
@@ -39,13 +43,13 @@ function Sidebar(): JSX.Element {
               </Link>
             </Button>
             <Button
-              className={`font-bold w-[170px] ${activeButton === 'Admin' ? 'text-[#fff] bg-[#00a539]' : 'text-[#ffffff] hover:text-[#00a539]'}`}
+              className={`font-bold w-[170px] ${activeButton === 'button3' ? 'text-[#fff] bg-[#00a539]' : 'text-[#ffffff] hover:text-[#00a539]'}`}
               variant="ghost"
-              onClick={() => setActiveButton('Admin')}
+              onClick={() => setActiveButton('button3')}
             >
-              <Link to="/menu" className="w-full h-full flex items-center">
-                <Icon icon="jam:tools-f" />
-                Admin Prueba
+              <Link to="/menu/biblioteca" className="w-full h-full flex items-center">
+                <Icon icon="ion:library-sharp" />
+                Biblioteca
               </Link>
             </Button>
           </>
@@ -53,13 +57,27 @@ function Sidebar(): JSX.Element {
         {rol === 2 && (
           <>
             <Button
-              className={`font-bold w-[170px] ${activeButton === 'Tools' ? 'text-[#fff] bg-[#00a539]' : 'text-[#ffffff] hover:text-[#00a539]'}`}
+              className={`font-bold w-[170px] ${activeButton === 'button2' ? 'text-[#fff] bg-[#00a539]' : 'text-[#ffffff] hover:text-[#00a539]'}`}
               variant="ghost"
-              onClick={() => setActiveButton('Tools')}
+              onClick={() => setActiveButton('button2')}
             >
               <Link to="/menu/herramientas" className="w-full h-full flex items-center">
                 <Icon icon="jam:tools-f" />
                 Kits Tecnológicos
+              </Link>
+            </Button>
+          </>
+        )}
+        {rol === 3 && (
+          <>
+            <Button
+              className={`font-bold w-[170px] ${activeButton === 'button3' ? 'text-[#fff] bg-[#00a539]' : 'text-[#ffffff] hover:text-[#00a539]'}`}
+              variant="ghost"
+              onClick={() => setActiveButton('button3')}
+            >
+              <Link to="/menu/biblioteca" className="w-full h-full flex items-center">
+                <Icon icon="ion:library-sharp" />
+                Biblioteca
               </Link>
             </Button>
           </>

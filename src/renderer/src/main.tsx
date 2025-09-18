@@ -16,6 +16,7 @@ import KitRasp from './KitRasp'
 import SoliRasp from './SoliRasp'
 import KitArd from './KitArd'
 import SoliArd from './SoliArd'
+import Library from './Library'
 
 const rootElement = document.getElementById('root')
 
@@ -33,6 +34,7 @@ root.render(
         <Route path="/menu" element={<Menu />}>
           <Route path="/menu" element={<Welcome />} />
           <Route path="herramientas" element={<Herramientas />} />
+          <Route path="biblioteca" element={<Library />} />
         </Route>
         <Route path="/legospike" element={<LegoSpike />}>
           <Route path="kitleg" element={<Kitleg />} />

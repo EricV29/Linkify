@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react'
-//import prep6l from '../images/prep6l.png'
 import { Button } from '@nextui-org/react'
 import { Icon } from '@iconify/react'
 const ipcRenderer = require('electron').ipcRenderer
 import { Link } from 'react-router-dom'
 import linkilogo from '../images/linkilogo.png'
+import usercred from '../store/usercred'
 
 function Navbar(): JSX.Element {
   const [nameuser, setNameuser] = useState(null)
+  const { setTextn, setTexti } = usercred()
 
   // TRAER NOMBRE COMPLETO DEL USUARIO
   useEffect(() => {
@@ -15,9 +16,8 @@ function Navbar(): JSX.Element {
     ipcRenderer.once('nameu', (success, arg) => {
       if (success) {
         setNameuser(arg[0])
-        ipcRenderer.send('msgOption', 'Bienvenido ' + arg[0])
-      } else {
-        console.log('Nombre de usuario no encontrado')
+        setTextn(arg[0])
+        setTexti(arg[1])
       }
     })
   }, [])

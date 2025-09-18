@@ -1,10 +1,19 @@
 import Navbar from './components/Navbar'
 import Sidebar from './components/Sidebar'
 import { Outlet } from 'react-router-dom'
+import Notification from './components/Notification'
+import noti from './store/notification'
+import Messageqdos from './components/Messageqdos'
+import msgquestion from './store/messageqdos'
 
 function Menu(): JSX.Element {
+  const { visiblenoti } = noti()
+  const { visiblemsgq } = msgquestion()
+
   return (
     <>
+      {visiblenoti && <Notification />}
+      {visiblemsgq && <Messageqdos />}
       <div className="w-screen h-screen flex flex-col m-0 p-0 justify-center overflow-hidden">
         <div className="w-full h-[100px] z-10">
           <Navbar />
