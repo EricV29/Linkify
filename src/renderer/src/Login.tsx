@@ -39,11 +39,17 @@ function App(): JSX.Element {
     <>
       <div className="w-screen h-screen flex m-0 p-0 justify-center items-center space">
         <div className=" h-full w-3/6 flex justify-between items-start flex-col">
-          <img src={fondolo} alt="" className="w-full h-full object-cover" />
+          <img src={fondolo} alt="logotipo" className="w-full h-full object-cover" />
           <div className="absolute w-1/2 h-full flex justify-center items-center">
             <p className="text-white text-center text-[15px] w-[400px] top-[160px] absolute animate-fade animate-once animate-duration-1000 animate-ease-in">
-              “Construye tu camino hacia el conocimiento con bloques de creatividad, desafíos
-              electrónicos y exploración ¡El Futuro está en tus manos!”
+              “Linkify es actualmente un sistema de gestión escolar para equipos Lego Spike, Arduino
+              y Raspberry Pi. Este sistema permite a los usuarios enviar solicitudes de préstamo del
+              equipo mencionado a uno o varios usuarios. Incluye el registro del número de caja, la
+              fecha de entrega, el número de cuenta del usuario, el correo electrónico del usuario y
+              el nombre completo del usuario. Los préstamos se registran y se muestran al
+              administrador, quien también puede dar por terminado el préstamo en cualquier momento.
+              Linkify fue implementado en una institución educativa publica para la administración
+              de diferentes areas.”
             </p>
           </div>
         </div>

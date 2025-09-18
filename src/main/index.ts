@@ -47,57 +47,61 @@ ipcMain.handle('get-documents-path', async (_event) => {
 
 //TODO: LOGEARSE Y CREAR NUEVA VENTANA MENU (SECOND) NOMBRE = newWindow
 ipcMain.on('login', async (event, argumentos) => {
-  //console.log(argumentos)
-  const conn = await getConnection()
-  conn.query(
-    'SELECT * FROM users WHERE BINARY Nickname = ? AND BINARY PassUser = ?',
-    [argumentos.user, argumentos.password],
-    (err, rows) => {
-      if (err) {
-        console.error(err)
-        throw err
-      }
-      if (rows.length > 0) {
-        event.returnValue = true
-        //console.log(rows[0].Nameuser)
-        //console.log(rows)
+  console.log('Datos recibidos:', argumentos)
 
-        dataUser = rows[0].Nameuser + ' ' + rows[0].ApepUser + ' ' + rows[0].ApemUser
-        rolUser = rows[0].RolUser
-        //console.log(dataUser)
-        //idUser = rows[0].idUser
+  try {
+    const conn = await getConnection()
 
-        //event.reply('login-reply', true, rows[0].Nameuser)
+    // Ejecutamos la query usando await
+    const [rows] = await conn.query(
+      'SELECT * FROM users WHERE BINARY Nickname = ? AND BINARY PassUser = ?',
+      [argumentos.user, argumentos.password]
+    )
 
-        // Crea una nueva ventana
-        newWindow = new BrowserWindow({
-          width: 1400,
-          height: 800,
-          autoHideMenuBar: true,
-          ...(process.platform === 'linux' ? { icon } : { icon }),
-          webPreferences: {
-            preload: join(__dirname, '../preload/index.js'),
-            sandbox: false,
-            nodeIntegration: true,
-            contextIsolation: false
-          }
-        })
+    if (rows.length > 0) {
+      // Usuario válido
+      event.reply('login-reply', { success: true, user: rows[0] })
 
-        // Carga la ruta deseada en la nueva ventana
-        newWindow.loadURL(
-          is.dev
-            ? process.env['ELECTRON_RENDERER_URL'] + '#/menu/herramientas'
-            : `file://${join(__dirname, '../renderer/index.html')}#/menu/herramientas`
-        )
+      // Guardamos datos de usuario globales
+      dataUser = `${rows[0].Nameuser} ${rows[0].ApepUser} ${rows[0].ApemUser}`
+      rolUser = rows[0].RolUser
 
-        //Close window login
-        mainWindow?.close()
-      } else {
-        event.returnValue = false
-        event.reply('conec-reply', 'return false')
-      }
+      // Creamos la nueva ventana
+      newWindow = new BrowserWindow({
+        width: 1400,
+        height: 800,
+        autoHideMenuBar: true,
+        ...(process.platform === 'linux' ? { icon } : { icon }),
+        webPreferences: {
+          preload: join(__dirname, '../preload/index.js'),
+          sandbox: false,
+          nodeIntegration: true,
+          contextIsolation: false
+        }
+      })
+
+      // Cargamos la URL según entorno
+      newWindow.loadURL(
+        is.dev
+          ? process.env['ELECTRON_RENDERER_URL'] + '#/menu/herramientas'
+          : `file://${join(__dirname, '../renderer/index.html')}#/menu/herramientas`
+      )
+
+      // Limpiar referencia al cerrar la ventana
+      newWindow.on('closed', () => {
+        newWindow = null
+      })
+
+      // Cerramos la ventana de login
+      mainWindow?.close()
+    } else {
+      // Usuario o contraseña incorrectos
+      event.reply('login-reply', { success: false, message: 'Usuario o contraseña incorrectos' })
     }
-  )
+  } catch (err) {
+    console.error('Error en login:', err)
+    event.reply('login-reply', { success: false, error: err.message })
+  }
 })
 
 // ENVIAR NOMBRE COMPLETO DE USUARIO A MENU (newWindow)
