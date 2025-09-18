@@ -9,10 +9,11 @@ function Welcome(): JSX.Element {
           alt="LinkiLogotipo"
           className="w-[300px] animate-shake animate-infinite animate-duration-[4000ms] animate-ease-in"
         />
-        <p className="text-[#00a539] text-[50px] font-semibold">Bienvenido a Linkify 1.0.0</p>
-        <p className="text-[#000] text-[20px]">
-          Un sistema para la solicitud de préstamos de kits educativos como LegoSpike, Arduino y
-          Raspberry Pi.
+        <p className="text-[#00a539] text-[50px] font-semibold">Bienvenido a Linkify 1.0.2</p>
+        <p className="text-[#000] text-[20px] text-center">
+          Un sistema para la solicitud de préstamos de kits educativos como Lego Spike, Arduino y
+          Raspberry Pi. También gestiona una biblioteca y el préstamo de laptops y controles
+          remotos.
         </p>
       </div>
     </>

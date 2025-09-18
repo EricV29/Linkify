@@ -433,16 +433,16 @@ export async function allLoans() {
 }
 
 //FINISH LOAN
-export async function finishLoan(idLoan: number) {
+export async function finishLoan(arg: number) {
   const connection = await getConnection()
 
   const updateQuery = 'UPDATE loan SET statusloan = "finalizado" WHERE idLoan = ?'
 
   try {
-    // Ejecutamos la query de actualización
-    const [results]: any = await connection.query(updateQuery, [idLoan])
+    const [results]: any = await connection.query(updateQuery, [arg])
 
-    let updateResult
+    let updateResult: [string, boolean | null]
+
     if (results.affectedRows > 0) {
       updateResult = ['Préstamo finalizado con éxito', true]
     } else {
@@ -450,7 +450,7 @@ export async function finishLoan(idLoan: number) {
     }
 
     // Después de finalizar el préstamo, actualizar los libros
-    await addBooksFinishLoan(idLoan)
+    await addBooksFinishLoan(arg)
 
     return updateResult
   } catch (error: any) {
@@ -460,43 +460,185 @@ export async function finishLoan(idLoan: number) {
 }
 
 //ADD BOOKS FINISH LOAN
-export async function addBooksFinishLoan(idLoan: number) {
+
+export async function addBooksFinishLoan(arg: number) {
   const connection = await getConnection()
 
-  try {
-    // Obtener los folios del préstamo
-    const [results]: any = await connection.query(`SELECT folio FROM userc_book WHERE idLoan = ?`, [
-      idLoan
-    ])
+  const selectQuery = `SELECT folio FROM userc_book WHERE idLoan = ?`
 
-    // Contar cuántas veces se repite cada folio
+  try {
+    const [results]: any = await connection.query(selectQuery, [arg])
+
+    // Contar cuántas veces aparece cada folio
     const folioCounts: Record<string, number> = results.reduce(
-      (acc: Record<string, number>, result: any) => {
-        const folio = result.folio
+      (acc: Record<string, number>, row: any) => {
+        const folio = row.folio
         acc[folio] = acc[folio] ? acc[folio] + 1 : 1
         return acc
       },
       {}
     )
 
-    // Actualizar existencia de cada libro
-    for (const folio of Object.keys(folioCounts)) {
-      const increaseAmount = folioCounts[folio]
-      await connection.query(`UPDATE book SET existencia = existencia + ? WHERE folio = ?`, [
-        increaseAmount,
-        folio
-      ])
-    }
+    // Actualizar existencia en `book`
+    const updatePromises = Object.entries(folioCounts).map(([folio, increaseAmount]) => {
+      const updateQuery = `UPDATE book SET existencia = existencia + ? WHERE folio = ?`
+      return connection.query(updateQuery, [increaseAmount, folio])
+    })
 
-    // Actualizar estado de los libros a "disponible"
+    // Actualizar estado a "disponible"
     const folios = Object.keys(folioCounts)
     if (folios.length > 0) {
-      await connection.query(`UPDATE book SET statusbook = 'disponible' WHERE folio IN (?)`, [
-        folios
-      ])
+      const updateStatusQuery = `UPDATE book SET statusbook = 'disponible' WHERE folio IN (?)`
+      updatePromises.push(connection.query(updateStatusQuery, [folios]))
     }
+
+    // Ejecutar todas las actualizaciones en paralelo
+    await Promise.all(updatePromises)
   } catch (error: any) {
     console.error('Error en addBooksFinishLoan:', error)
-    throw new Error('Error al actualizar los libros del préstamo: ' + error.message)
+    throw new Error('Error al actualizar libros en finishLoan: ' + error.message)
+  }
+}
+
+//VIABLE EQUIPS
+export async function viableEquip(arg: number) {
+  const connection = await getConnection()
+
+  const petitionQuery = `
+    SELECT numequip 
+    FROM loanequipment AS lo
+    INNER JOIN equipment AS eq ON lo.idEquip = eq.idEquip
+    WHERE statusloanequip = 'activo' 
+      AND idCategory = ?;
+  `
+
+  try {
+    const [results]: any = await connection.query(petitionQuery, [arg])
+    return results
+  } catch (error: any) {
+    console.error('Error en viableEquip:', error)
+    throw new Error('Error al consultar equipos viables: ' + error.message)
+  }
+}
+
+//ALL LOANS EQUIP
+export async function loansEquip(arg: number) {
+  const connection = await getConnection()
+
+  const petitionQuery = `
+    SELECT 
+      lo.idLoanequip,
+      CONCAT(p.nameprof, ' ', p.apepuserprof) AS nameprof, 
+      p.numempprof, 
+      e.numequip,
+      lo.fechloanequip, 
+      lo.fechdevloanequip, 
+      lo.statusloanequip 
+    FROM loanequipment AS lo
+    JOIN professor AS p ON lo.numempprof = p.numempprof
+    JOIN equipment AS e ON lo.idEquip = e.idEquip
+    WHERE e.idCategory = ?;
+  `
+
+  try {
+    const [results]: any = await connection.query(petitionQuery, [arg])
+    return results
+  } catch (error: any) {
+    console.error('Error en loansEquip:', error)
+    throw new Error('Error al consultar préstamos de equipo: ' + error.message)
+  }
+}
+
+// COMPARE NUMBER AND PASSWORD WITH EXISTENCE CHECK
+export async function verifyEmployee(arg: any[]) {
+  const connection = await getConnection()
+
+  const checkExistenceQuery = `SELECT * FROM professor WHERE numempprof = ?;`
+  const verifyCredentialsQuery = `SELECT * FROM professor WHERE numempprof = ? AND nipprof = ?;`
+  const getidEquipQuery = `SELECT idEquip FROM equipment WHERE numequip = ?;`
+  const newLoanEquipmentQuery = `
+    INSERT INTO loanequipment (numempprof, idEquip, fechloanequip, fechdevloanequip, statusloanequip, idUser) 
+    VALUES (?, ?, ?, NULL, 'activo', ?);
+  `
+  const changeStatusEquipQuery = `UPDATE equipment SET statusequip = 'préstamo' WHERE idEquip = ?;`
+
+  try {
+    // Verificar si el empleado existe
+    const [existenceResults]: any = await connection.query(checkExistenceQuery, [arg[0]])
+    if (existenceResults.length === 0) {
+      return false // Empleado no encontrado
+    }
+
+    // Verificar credenciales
+    const [credentialsResults]: any = await connection.query(verifyCredentialsQuery, [
+      arg[0],
+      arg[1]
+    ])
+    if (credentialsResults.length === 0) {
+      return false // Credenciales incorrectas
+    }
+
+    // Obtener ID del equipo
+    const [equipResults]: any = await connection.query(getidEquipQuery, [arg[2]])
+    if (equipResults.length === 0) {
+      return false // Equipo no encontrado
+    }
+    const idEquip = equipResults[0].idEquip
+
+    // Insertar nuevo préstamo de equipo
+    await connection.query(newLoanEquipmentQuery, [arg[0], idEquip, arg[3], arg[4]])
+
+    // Cambiar estado del equipo a 'préstamo'
+    const [changeStatusResults]: any = await connection.query(changeStatusEquipQuery, [idEquip])
+
+    return changeStatusResults.affectedRows > 0
+  } catch (error) {
+    console.error('Error en verifyEmployee:', error)
+    throw error
+  }
+}
+
+// FINISH LOAN EQUIPMENT
+export async function finishLoanEquip(arg: any[]) {
+  const connection = await getConnection()
+
+  const verifyCredentialsQuery = `
+    SELECT * FROM professor WHERE numempprof = ? AND nipprof = ?;
+  `
+  const updateLoanEquipment = `
+    UPDATE loanequipment 
+    SET statusloanequip = 'finalizado', fechdevloanequip = ? 
+    WHERE idLoanequip = ?;
+  `
+  const updateEquipStatus = `
+    UPDATE equipment SET statusequip = 'activo' WHERE numequip = ?;
+  `
+
+  try {
+    // Verificar credenciales
+    const [credentialsResults]: any = await connection.query(verifyCredentialsQuery, [
+      arg[2],
+      arg[3]
+    ])
+    if (credentialsResults.length === 0) {
+      return false // Credenciales inválidas
+    }
+
+    // Actualizar estado y fecha de devolución del préstamo
+    const [upLEResults]: any = await connection.query(updateLoanEquipment, [arg[0], arg[1]])
+    if (upLEResults.affectedRows === 0) {
+      return false // No se actualizó el préstamo
+    }
+
+    // Actualizar estado del equipo
+    const [upESResults]: any = await connection.query(updateEquipStatus, [arg[4]])
+    if (upESResults.affectedRows === 0) {
+      return false // No se actualizó el equipo
+    }
+
+    return true
+  } catch (error) {
+    console.error('Error en finishLoanEquip:', error)
+    throw error
   }
 }

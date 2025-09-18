@@ -12,6 +12,10 @@ function Sidebar(): JSX.Element {
   const handleButtonClick = (buttonName) => {
     setActiveButton(buttonName)
   }*/
+  /*
+  const handleButtonClick = (buttonName) => {
+    setActiveButton(buttonName)
+  }*/
 
   // TRAER DATOS DE USUARIO
   useEffect(() => {
@@ -33,7 +37,11 @@ function Sidebar(): JSX.Element {
         {rol === 1 && (
           <>
             <Button
-              className={`font-bold w-[170px] ${activeButton === 'button2' ? 'text-[#fff] bg-[#00a539]' : 'text-[#ffffff] hover:text-[#00a539]'}`}
+              className={`font-bold w-[170px] ${
+                activeButton === 'button2'
+                  ? 'text-[#fff] bg-[#00a539]'
+                  : 'text-[#ffffff] hover:text-[#00a539]'
+              }`}
               variant="ghost"
               onClick={() => setActiveButton('button2')}
             >
@@ -43,7 +51,11 @@ function Sidebar(): JSX.Element {
               </Link>
             </Button>
             <Button
-              className={`font-bold w-[170px] ${activeButton === 'button3' ? 'text-[#fff] bg-[#00a539]' : 'text-[#ffffff] hover:text-[#00a539]'}`}
+              className={`font-bold w-[170px] ${
+                activeButton === 'button3'
+                  ? 'text-[#fff] bg-[#00a539]'
+                  : 'text-[#ffffff] hover:text-[#00a539]'
+              }`}
               variant="ghost"
               onClick={() => setActiveButton('button3')}
             >
@@ -52,12 +64,44 @@ function Sidebar(): JSX.Element {
                 Biblioteca
               </Link>
             </Button>
+            <Button
+              className={`font-bold w-[170px] ${
+                activeButton === 'button4'
+                  ? 'text-[#fff] bg-[#00a539]'
+                  : 'text-[#ffffff] hover:text-[#00a539]'
+              }`}
+              variant="ghost"
+              onClick={() => setActiveButton('button4')}
+            >
+              <Link to="/menu/loanlaptop" className="w-full h-full flex items-center">
+                <Icon icon="solar:laptop-bold" />
+                Laptops
+              </Link>
+            </Button>
+            <Button
+              className={`font-bold w-[170px] ${
+                activeButton === 'button5'
+                  ? 'text-[#fff] bg-[#00a539]'
+                  : 'text-[#ffffff] hover:text-[#00a539]'
+              }`}
+              variant="ghost"
+              onClick={() => setActiveButton('button5')}
+            >
+              <Link to="/menu/loanremotec" className="w-full h-full flex items-center">
+                <Icon icon="material-symbols:remote-gen" />
+                Control Remoto
+              </Link>
+            </Button>
           </>
         )}
         {rol === 2 && (
           <>
             <Button
-              className={`font-bold w-[170px] ${activeButton === 'button2' ? 'text-[#fff] bg-[#00a539]' : 'text-[#ffffff] hover:text-[#00a539]'}`}
+              className={`font-bold w-[170px] ${
+                activeButton === 'button2'
+                  ? 'text-[#fff] bg-[#00a539]'
+                  : 'text-[#ffffff] hover:text-[#00a539]'
+              }`}
               variant="ghost"
               onClick={() => setActiveButton('button2')}
             >
@@ -71,13 +115,49 @@ function Sidebar(): JSX.Element {
         {rol === 3 && (
           <>
             <Button
-              className={`font-bold w-[170px] ${activeButton === 'button3' ? 'text-[#fff] bg-[#00a539]' : 'text-[#ffffff] hover:text-[#00a539]'}`}
+              className={`font-bold w-[170px] ${
+                activeButton === 'button3'
+                  ? 'text-[#fff] bg-[#00a539]'
+                  : 'text-[#ffffff] hover:text-[#00a539]'
+              }`}
               variant="ghost"
               onClick={() => setActiveButton('button3')}
             >
               <Link to="/menu/biblioteca" className="w-full h-full flex items-center">
                 <Icon icon="ion:library-sharp" />
                 Biblioteca
+              </Link>
+            </Button>
+          </>
+        )}
+        {rol === 4 && (
+          <>
+            <Button
+              className={`font-bold w-[170px] ${
+                activeButton === 'button4'
+                  ? 'text-[#fff] bg-[#00a539]'
+                  : 'text-[#ffffff] hover:text-[#00a539]'
+              }`}
+              variant="ghost"
+              onClick={() => setActiveButton('button4')}
+            >
+              <Link to="/menu/loanlaptop" className="w-full h-full flex items-center">
+                <Icon icon="solar:laptop-bold" />
+                Laptop
+              </Link>
+            </Button>
+            <Button
+              className={`font-bold w-[170px] ${
+                activeButton === 'button5'
+                  ? 'text-[#fff] bg-[#00a539]'
+                  : 'text-[#ffffff] hover:text-[#00a539]'
+              }`}
+              variant="ghost"
+              onClick={() => setActiveButton('button5')}
+            >
+              <Link to="/menu/loanremotec" className="w-full h-full flex items-center">
+                <Icon icon="solar:laptop-bold" />
+                Control Remoto
               </Link>
             </Button>
           </>

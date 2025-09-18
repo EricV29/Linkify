@@ -17,6 +17,8 @@ import SoliRasp from './SoliRasp'
 import KitArd from './KitArd'
 import SoliArd from './SoliArd'
 import Library from './Library'
+import LoanLaptop from './LoanLaptop'
+import LoanRemotec from './LoanRemotec'
 
 const rootElement = document.getElementById('root')
 
@@ -49,6 +51,12 @@ root.render(
         <Route path="/arduino" element={<Arduino />}>
           <Route path="kitalumnard" element={<KitArd />} />
           <Route path="soliard" element={<SoliArd />} />
+        </Route>
+        <Route path="/menu" element={<Menu />}>
+          <Route path="/menu/loanlaptop" element={<LoanLaptop />} />
+        </Route>
+        <Route path="/menu" element={<Menu />}>
+          <Route path="/menu/loanremotec" element={<LoanRemotec />} />
         </Route>
       </Routes>
     </HashRouter>
