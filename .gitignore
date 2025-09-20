@@ -1,8 +1,8 @@
 node_modules
-dist
+/dist
 out
 .DS_Store
 *.log*
 .env
 .vscode/settings.json
-build
+/build
