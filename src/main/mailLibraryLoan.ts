@@ -73,11 +73,11 @@ export function sendEmailLoan(data) {
 
     mailOptions.to = data.email
     mailOptions.text =
-      'Alumno(a) de la Escuela Preparatoria Número 6, se te informa que adquiriste los libros ' +
+      'Alumno(a) de la Escuela (Nombre de la Escuela), se te informa que adquiriste los libros ' +
       result +
-      ' en calidad de préstamo, precisando que el libro es propiedad de la Escuela Preparatoria Número 6. Alumno(a) asumes la responsabilidad del cuidado y seguridad del material, deberas reponer el libro conforme lo dispone la normativa universitaria. Recuerda que la fecha de entrega del libro es ' +
+      ' en calidad de préstamo, precisando que el libro es propiedad de la Escuela (Nombre de la Escuela). Alumno(a) asumes la responsabilidad del cuidado y seguridad del material, deberas reponer el libro conforme lo dispone la normativa universitaria. Recuerda que la fecha de entrega del libro es ' +
       data.fechdev +
-      '. El equipo deberá ser devuelto en las mismas condiciones a Gregorio Guadalupe Diaz Moreno, responsable del Biblioteca de la Escuela Preparatoria Número 6, para su debido resguardo.'
+      '. El equipo deberá ser devuelto en las mismas condiciones a (Nombre encargado de biblioteca), responsable del Biblioteca de la Escuela (Nombre de la Escuela), para su debido resguardo.'
 
     transporter.sendMail(mailOptions, function (error, info) {
       if (error) {

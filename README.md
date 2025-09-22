@@ -76,12 +76,17 @@ $ npm install
 You need to create a `.env` file based on the example `.envExample`, with the following variables:
 
 - **PORTEMAIL** → Port assigned for sending emails.
+
 - **USEREMAIL** → System administrator email address.
+
 - **TOKENEMAIL** → App Password generated from Google:
+
   1. Go to your **Google Account → Security**
-  2. Under **App Passwords**, choose **Mail** and select a device (e.g., PC).
-  3. Google will generate a **16-character key** → this is your `TOKENEMAIL`.
-- **ADDRESSEMAIL** → Email address of the system administrator (**Role 1**).
+  2. Activate 2-Steps Verification.
+  3. Serch **App Passwords**, create and copy **16-character key** → this is your `TOKENEMAIL`.
+
+- **ADDRESSEMAIL** → System administrator email address.
+
 - **ADDRESSEMAILLIBRARY** → Email address of the library administrator (**Role 3**).
 
 ### </> Development

@@ -160,7 +160,7 @@ function App(): JSX.Element {
               </form>
             )}
           </Formik>
-          <img src={prep6l} alt="Prepa6Logotipo" className="w-[150px] bottom-10 absolute" />
+          <img src="" alt="logoInstitción" className="w-[150px] bottom-10 absolute" />
         </div>
       </div>
     </>

@@ -2,9 +2,11 @@ VITE_HOST = 'host run data base'
 VITE_USER = 'user data base'
 VITE_PASSWORDDB = 'password data base'
 VITE_DB = 'name data base'
+
 VITE_PORTEMAIL = 465 > port email nodemailer
-VITE_USEREMAIL = 'sender email'
+VITE_USEREMAIL = 'system administrator email'
 VITE_TOKENEMAIL = 'token for email sender nodemailer'
+
 VITE_ADDRESSEMAIL = 'system administrator email'
 VITE_ADDRESSEMAILLIBRARY = 'adnministrator email library'
 

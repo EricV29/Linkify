@@ -353,6 +353,7 @@ ipcMain.on('saveDBsendEM', (event, arg) => {
 //All requests
 ipcMain.on('AllRequests', async (event, arg) => {
   try {
+    //console.log(arg)
     const resultactiveRequests = (await activeRequests(arg)) as Request[]
     resultactiveRequests.forEach((item) => {
       let fechar = new Date(item.fechreg)

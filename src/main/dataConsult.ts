@@ -51,7 +51,7 @@ export async function activeRequests(arg: any) {
 
     const petitionQuery = `SELECT idPetition, numbox, namedoc, folio, numlocker, fechreg, fechfinish, state FROM petition where state = 1 and tool = ?`
 
-    const [results] = await connection.query(petitionQuery, [arg[1]])
+    const [results] = await connection.query(petitionQuery, arg)
 
     return results
   } catch (error) {
@@ -67,7 +67,7 @@ export async function completedRequests(arg: any) {
 
     const petitionQuery = `SELECT idPetition, numbox, namedoc, folio, fechreg, fechfinish, state FROM petition where state = 0 and tool = ?`
 
-    const [results] = await connection.query(petitionQuery, [arg[1]])
+    const [results] = await connection.query(petitionQuery, arg)
 
     return results
   } catch (error) {
@@ -84,7 +84,7 @@ export async function alumnsforRequest(arg: any) {
     let petitionQuery =
       'SELECT numaccount, nameAlumn FROM petition_users as ptu inner join petition as pet on ptu.idPetition = pet.idPetition where ptu.idPetition = ?'
 
-    const [results] = await connection.query(petitionQuery, [arg[1]])
+    const [results] = await connection.query(petitionQuery, arg)
 
     return results
   } catch (error) {
@@ -416,17 +416,30 @@ export async function changeLoan(folio, connection) {
 export async function allLoans() {
   const connection = await getConnection()
 
-  let petitionQuery = `SELECT ub.iduserc_book, l.idLoan, uc.numaccount, CONCAT(uc.nameuserc, ' ', uc.secondnamec, ' ', uc.apepuserc, ' ', uc.apemuserc) AS 'completename', b.title, b.autor, b.folio, l.fechloan, l.fechdevloan, l.statusloan  FROM  user_client uc JOIN loan l ON uc.numaccount = l.numaccount JOIN userc_book ub ON l.idLoan = ub.idLoan JOIN book b ON ub.folio = b.folio;`
+  const petitionQuery = `
+    SELECT 
+      ub.iduserc_book,
+      l.idLoan,
+      uc.numaccount,
+      CONCAT(uc.nameuserc, ' ', uc.secondnamec, ' ', uc.apepuserc, ' ', uc.apemuserc) AS completename,
+      b.title,
+      b.autor,
+      b.folio,
+      l.fechloan,
+      l.fechdevloan,
+      l.statusloan
+    FROM user_client uc
+    JOIN loan l ON uc.numaccount = l.numaccount
+    JOIN userc_book ub ON l.idLoan = ub.idLoan
+    JOIN book b ON ub.folio = b.folio;
+  `
 
-  return new Promise((resolve, reject) => {
-    connection.query(petitionQuery, (error, results) => {
-      if (error) {
-        reject(error)
-      } else {
-        resolve(results)
-      }
-    })
-  })
+  try {
+    const [results] = await connection.query(petitionQuery)
+    return results
+  } catch (error) {
+    throw error
+  }
 }
 
 //FINISH LOAN
@@ -436,7 +449,7 @@ export async function finishLoan(arg: number) {
   const updateQuery = 'UPDATE loan SET statusloan = "finalizado" WHERE idLoan = ?'
 
   try {
-    const [results]: any = await connection.query(updateQuery, [arg])
+    const [results]: any = await connection.query(updateQuery, [arg[1]])
 
     let updateResult: [string, boolean | null]
 
@@ -457,14 +470,13 @@ export async function finishLoan(arg: number) {
 }
 
 //ADD BOOKS FINISH LOAN
-
 export async function addBooksFinishLoan(arg: number) {
   const connection = await getConnection()
 
   const selectQuery = `SELECT folio FROM userc_book WHERE idLoan = ?`
 
   try {
-    const [results]: any = await connection.query(selectQuery, [arg])
+    const [results]: any = await connection.query(selectQuery, [arg[1]])
 
     // Contar cuántas veces aparece cada folio
     const folioCounts: Record<string, number> = results.reduce(
@@ -510,7 +522,7 @@ export async function viableEquip(arg: number) {
   `
 
   try {
-    const [results]: any = await connection.query(petitionQuery, [arg])
+    const [results]: any = await connection.query(petitionQuery, [arg[1]])
     return results
   } catch (error: any) {
     console.error('Error en viableEquip:', error)
@@ -538,7 +550,7 @@ export async function loansEquip(arg: number) {
   `
 
   try {
-    const [results]: any = await connection.query(petitionQuery, [arg])
+    const [results]: any = await connection.query(petitionQuery, arg)
     return results
   } catch (error: any) {
     console.error('Error en loansEquip:', error)

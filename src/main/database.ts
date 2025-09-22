@@ -21,9 +21,9 @@ export const getConnection = async () => {
         password: import.meta.env.VITE_PASSWORDDB,
         database: import.meta.env.VITE_DB
       })
-      console.log('Conexión a la base de datos establecida')
+      console.log('Database Connection Established')
     } catch (err) {
-      console.error('Error conectando a la base de datos:', err)
+      console.error('Error database connection:', err)
       throw err
     }
   }

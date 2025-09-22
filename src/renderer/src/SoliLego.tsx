@@ -71,6 +71,7 @@ function SoliLego(): JSX.Element {
     ipcRenderer.on('AllRequests-reply', (_event, arg) => {
       setActiveR(arg[0])
       setCompleteR(arg[1])
+      console.log(arg[0])
     })
   }, [])
 
