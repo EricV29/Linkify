@@ -1,6 +1,6 @@
 {
   "name": "linkify",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Linkify is a management system for borrowing Lego Spike, Arduino, and Raspberry Pi equipment. It allows users to send loan requests, including equipment and user details, managed by an administrator who can finalize the loans. Loan data is stored and displayed to the administrator.",
   "main": "./out/main/index.js",
   "author": "Eric Jared Villeda Reyes",
@@ -23,10 +23,18 @@
     "asar": true,
     "asarUnpack": "**/*.docx"
   },
+  "overrides": {
+    "minimatch": "^9.0.3",
+    "tar": "^6.2.1",
+    "glob": "^10.3.10",
+    "axios": "^1.7.4",
+    "@tootallnate/once": "2.0.0",
+    "http-proxy-agent": "^7.0.0"
+  },
   "dependencies": {
     "@electron-toolkit/preload": "3.0.0",
     "@electron-toolkit/utils": "3.0.0",
-    "@iconify/tools": "4.0.0",
+    "@iconify/tools": "^4.2.0",
     "@nextui-org/react": "2.2.9",
     "@types/node": "18.19.5",
     "@types/react": "18.2.47",
@@ -37,9 +45,9 @@
     "framer-motion": "11.0.3",
     "ldrs": "1.0.1",
     "mysql2": "^3.15.0",
-    "nodemailer": "6.9.13",
+    "nodemailer": "^8.0.3",
     "pizzip": "3.1.6",
-    "react-router-dom": "6.21.3",
+    "react-router-dom": "^6.30.3",
     "uuid": "^13.0.0",
     "zustand": "4.5.0"
   },
@@ -56,7 +64,7 @@
     "@vitejs/plugin-react": "^4.7.0",
     "autoprefixer": "10.4.16",
     "electron": "^38.1.1",
-    "electron-builder": "24.13.3",
+    "electron-builder": "^26.8.1",
     "electron-vite": "^3.1.0",
     "eslint": "8.56.0",
     "eslint-plugin-react": "7.33.2",
@@ -68,7 +76,7 @@
     "tailwindcss": "3.4.1",
     "tailwindcss-animated": "1.0.1",
     "typescript": "5.3.3",
-    "vite": "6.3.6"
+    "vite": "^6.4.1"
   },
   "include": [
     "src/**/*",

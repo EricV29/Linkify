@@ -6,7 +6,6 @@ import './database'
 import { getConnection } from './database'
 import { sendEmail } from './mail'
 import { sendEmailLoan } from './mailLibraryLoan'
-import { sendEmailLoan } from './mailLibraryLoan'
 import { insertData } from './petitionSQL'
 import {
   viableBoxes,
